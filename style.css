@@ -22,11 +22,16 @@ div#game {
     padding-right: 10px;
 }
 
+#middle {
+    overflow: auto;
+}
+
 #bottom_controls {
     padding-bottom:10px;
     padding-top:5px;
     width: 100%;
 }
+
 
 .error {
   background-color: 000;
@@ -42,7 +47,7 @@ div#side {
 }
 
 #side table {
-    width: 96%;
+
     margin-left: 10px;
     margin-top: 10px;
     border: solid 1px black;
