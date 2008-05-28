@@ -14,6 +14,8 @@
 <body>
 <h1> Processed Tower Defense </h1>
 
+<div id="game_over"></div>
+
 <div id="game">
 <div id="top_controls">
   <span> Lives: <span id="lives">20</span></span>
@@ -71,18 +73,30 @@
 </div>
 
 <div id="bottom_controls">
-  <button onclick="pause_resume();"> Pause / Resume </button>
+  <button id='pause_button' onclick="pause();">Pause</button>
   <button onclick="reset_game();">Reset Game</button>
   <button onclick="spawn_wave();">Spawn Next Wave</button>
   </div>
 </div>
 
+<h4>Hotkeys:</h4>
 <ul>
-  <li> <strong> Source </strong> </li>
+    <li>L – Build laser tower</li>
+    <li>M – Build missile tower</li>
+    <li>S – Fire Small Missile</li>
+    <li>N – Launch Nuke</li>
+    <li>W – Spawn Next Wave</li>
+    <li>[space] – Pause/Resume</li>
+    <li>[esc] – Cancel Tower/Missile</li>
+</ul>
+
+<h4>Source:</h4>
+<ul>
   <li> <a href="ptd.js">ptd.js</a> </li>
   <li> <a href="jsfprocessing.js">jsfprocessing.js</a> </li>
   <li> <a href="http://ejohn.org/blog/processingjs/">Processing.js</a> </li>
 </ul>
+
 
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function() {
@@ -98,7 +112,7 @@
           case 78: nuke_creeps(); break;
           case 32: pause(); break;
           case 27: unselect(); break;
-          case 87: spawn_next_wave(); break;
+          case 87: spawn_wave(); break;
           default: return true;
         }
         // if we handled the key press, return false
@@ -125,6 +139,13 @@
             }, 3000);
         });
     });
+    $('#game_over').hide();
+    $('').bind('game_over', function(e,hide){
+        if (hide == true)
+            $('#game_over').html("Game Over!").fadeIn();
+        else
+            $('#game_over').html("Just once more...").fadeOut();
+    })
 </script>
 
 <hr>

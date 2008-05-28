@@ -860,6 +860,7 @@ var game_lost = function() {
   SET.score += SET.gold;
   SET.gold = 0;
   SET.state = SET.game_over_state;
+  $('').trigger("game_over",true);
 }
 
 /*
@@ -875,6 +876,7 @@ var reset_game = function() {
   SET.creep_wave_controller = CreepWaveController();
   SET.entrance = Square(0, random(SET.gheight-1), SET.entrance_color);
   SET.exit = Square(SET.gwidth-1, random(SET.gheight-1), SET.exit_color);
+  $('').trigger("game_over",false);
 };
 
 /*

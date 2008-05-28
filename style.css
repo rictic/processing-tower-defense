@@ -63,6 +63,11 @@ div#game {
     width: 100%;
 }
 
+#game_over {
+  font-size: 150%;
+  background-color: 000;
+  color: #f73;
+}
 
 .error {
   background-color: 000;
