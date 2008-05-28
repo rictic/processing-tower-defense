@@ -636,7 +636,7 @@ var build_tower_mode = function() {
   SET.state_draw = function(x,y) {
     var gpos = pixel_to_grid(x,y);
     var mid = center_of_square(gpos);
-    var radius = SET.pixels_per_square;
+    var radius = SET.pixels_per_square / 2;
     SET.rendering_groups[SET.killzone_render_level] = [];
     BuildRadius(mid.x,mid.y,radius);
   }
@@ -777,6 +777,11 @@ var on_mouse_press = function() {
     set_state_normal();
   }
 };
+
+var unselect = function() {
+  if ([SET.aiming_missile_state, SET.placing_tower_state].indexOf(SET.state) != -1)
+    set_state_normal();
+}
 
 /* 
    Main game loop.

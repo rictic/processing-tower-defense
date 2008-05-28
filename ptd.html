@@ -65,13 +65,20 @@
   <li> <a href="http://ejohn.org/blog/processingjs/">Processing.js</a> </li>
   <script type="text/javascript" charset="utf-8">
     $("body").bind("keydown", function(e) {
-        // L
-        if (e.keyCode == 76) build_laser_tower();
-        if (e.keyCode == 77) build_missile_tower();
-        if (e.keyCode == 83) aim_missile();
-        if (e.keyCode == 78) nuke_creeps();
-        if (e.keyCode == 32) pause();
+        
+        switch(e.keyCode){
+          case 76: build_laser_tower(); break;
+          case 77: build_missile_tower(); break;
+          case 83: aim_missile(); break;
+          case 78: nuke_creeps(); break;
+          case 32: pause(); break;
+          case 27: unselect(); break;
+          default: return true;
+        }
+        // if we handled the key press, return false
+        return false;
     });
+    
     var paused = false;
     function pause() {
         paused = !paused;
