@@ -44,7 +44,7 @@ mixing the two together can cause ample confusion.
   General utility functions.
  */
 
-// return a random number (n <= max)
+// return a random number (0 <= n <= max)
 var random = function(max) {
   return Math.floor(Math.random()*(max+1));
 };
@@ -126,13 +126,13 @@ var draw_circle_in_grid = function(gx,gy) {
   
 var can_build_here = function(gx,gy) {
   var possible_conflicts = [SET.rendering_groups[SET.square_render_level],
-			    SET.rendering_groups[SET.tower_render_level]];
+          SET.rendering_groups[SET.tower_render_level]];
   for (var i=0; i<possible_conflicts.length;i++) {
     var array = possible_conflicts[i];
     if (array != undefined) {
       for (var j=0; j<array.length; j++) {
-	var obj = array[j];
-	if (obj.gx == gx && obj.gy == gy) return false;
+  var obj = array[j];
+  if (obj.gx == gx && obj.gy == gy) return false;
       }
     }
   }
@@ -204,8 +204,8 @@ var default_set = function() {
 
   // colors
   set.bg_colors = {neutral:color(90,80,70),
-		  positive:color(60,80,250),
-		  negative:color(250,80,60)};
+      positive:color(90,80,70),
+      negative:color(250,80,60)};
   set.bg_color = set.bg_colors.neutral;
   set.grid_color = color(255,255,255);
   set.entrance_color = color(255,100,100);
@@ -466,16 +466,16 @@ var Tower = function(settings) {
   tower.update = function() {
     var creeps = SET.rendering_groups[SET.creep_render_level];
     var creeps_in_range = creeps.filter(function(creep) {
-	var distance = dist(tower.x_mid,tower.y_mid,creep.x,creep.y);
-	if (distance < tower.prange) return true;
-	return false;
-      });
+      var distance = dist(tower.x_mid,tower.y_mid,creep.x,creep.y);
+      if (distance < tower.prange) return true;
+      return false;
+    });
     if (creeps_in_range.length > 0) {
       var creep = creeps_in_range[0];
       var lowest_hp = creep.hp;
       creeps_in_range.forEach(function(c) {
-	  if (c.hp < lowest_hp) creep = c;
-	});
+    if (c.hp < lowest_hp) creep = c;
+  });
       if (tower.weapon_ready() == true) tower.attack(creep);
     }
   }
@@ -687,9 +687,9 @@ var aim_missile = function(x,y) {
     SET.state_action = function(x,y) {
       var creeps = SET.rendering_groups[SET.creep_render_level];
       creeps.forEach(function(creep) {
-	  var distance = dist(x,y,creep.x,creep.y);
-	  if (distance <= radius) creep.hp = Math.floor(creep.hp / 2);
-	});
+    var distance = dist(x,y,creep.x,creep.y);
+    if (distance <= radius) creep.hp = Math.floor(creep.hp / 2);
+  });
 
       SET.gold -= cost;
     }
@@ -704,8 +704,8 @@ var nuke_creeps = function() {
   if (SET.nukes > 0) {
     var creeps = SET.rendering_groups[SET.creep_render_level];
     creeps.forEach(function(x) { 
-	x.hp = -1; 
-	x.value = 0; // no gold for nuked creeps
+  x.hp = -1; 
+  x.value = 0; // no gold for nuked creeps
       });
     SET.nukes--;
   }
