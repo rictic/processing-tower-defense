@@ -640,6 +640,8 @@ var build_tower_mode = function() {
     SET.rendering_groups[SET.killzone_render_level] = [];
     BuildRadius(mid.x,mid.y,radius);
   }
+  var pos = mouse_pos();
+  SET.state_draw(pos.x,pos.y);
 };
 
 var build_missile_tower = function() {
@@ -653,6 +655,7 @@ var build_missile_tower = function() {
       set_state_normal();
     }
   }
+  else {error("Not enough gold, you need at least 100")}
 };
   
 var build_laser_tower = function() {
@@ -665,6 +668,7 @@ var build_laser_tower = function() {
       set_state_normal(); 
     }
   }
+  else {error("Not enough gold, you need at least 50")}
 };
 
 var select_tower = function(tower) {
@@ -680,21 +684,24 @@ var aim_missile = function(x,y) {
     SET.state_draw = function(x,y) {
       SET.rendering_groups[SET.killzone_render_level] = [];
       MissileRadius(x,y,radius);
-    }
+    };
     SET.state_action = function(x,y) {
       var creeps = SET.rendering_groups[SET.creep_render_level];
       creeps.forEach(function(creep) {
-    var distance = dist(x,y,creep.x,creep.y);
-    if (distance <= radius) creep.hp = Math.floor(creep.hp / 2);
-  });
+        var distance = dist(x,y,creep.x,creep.y);
+        if (distance <= radius) creep.hp = Math.floor(creep.hp / 2);
+      });
 
       SET.gold -= cost;
-    }
+    };
     SET.state_legal = function(x,y) {
       var gpos = pixel_to_grid(x,y);
       return can_build_here(gpos.gx,gpos.gy);
     };
+    var pos = mouse_pos();
+    SET.state_draw(pos.x,pos.y);
   }
+  else {error("Not enough gold, you need at least 50")}
 };
 
 var nuke_creeps = function() {
@@ -706,6 +713,7 @@ var nuke_creeps = function() {
       });
     SET.nukes--;
   }
+  else {error("You have no more nukes!")}
 };
 
 var pause_resume = function() {
@@ -773,6 +781,14 @@ var on_mouse_press = function() {
 /* 
    Main game loop.
  */
+
+var message = function(msg) {
+  $('').trigger("message", msg);
+}
+
+var error = function(msg) {
+  $('').trigger("error", msg);
+}
 
 var start_tower_defense = function() {
   setup = function() {

@@ -1,0 +1,23 @@
+#tower_defense {
+  float:left;
+}
+
+div#game {
+  background-color: #888; 
+  padding-left: 10px; 
+  padding-top: 20px; 
+  padding-bottom: 20px;
+}
+
+#game div {
+  overflow:auto
+}
+
+#menu {
+  float: left;
+}
+
+.error {
+  background-color: 000;
+  color: #f73;
+}
