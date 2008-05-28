@@ -465,19 +465,16 @@ var Tower = function(settings) {
   };
   tower.update = function() {
     var creeps = SET.rendering_groups[SET.creep_render_level];
-    var creeps_in_range = creeps.filter(function(creep) {
-      var distance = dist(tower.x_mid,tower.y_mid,creep.x,creep.y);
-      if (distance < tower.prange) return true;
-      return false;
+    if (creeps.length == 0) return;
+    var closest_creep = null;
+    var closest = 100000000;
+    creeps.forEach(function(c) {
+      var c_dist = dist(tower.x_mid, tower.y_mid, c.x, c.y);
+      if (c_dist <= closest && c_dist < tower.prange)
+        closest_creep = c; closest = c_dist;
     });
-    if (creeps_in_range.length > 0) {
-      var creep = creeps_in_range[0];
-      var lowest_hp = creep.hp;
-      creeps_in_range.forEach(function(c) {
-    if (c.hp < lowest_hp) creep = c;
-  });
-      if (tower.weapon_ready() == true) tower.attack(creep);
-    }
+    if (closest_creep != null && tower.weapon_ready()) 
+      tower.attack(closest_creep);
   }
   tower.draw = function() {
     noStroke();
