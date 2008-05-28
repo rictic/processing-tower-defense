@@ -2,6 +2,37 @@
   float:left;
 }
 
+/*
+   From the always helpful article on styling buttons.
+   http://particletree.com/features/rediscovering-the-button-element/
+   */
+
+button{
+    margin:0 7px 0 0;
+    background-color:#f5f5f5;
+    border:1px solid #dedede;
+    border-top:1px solid #eee;
+    border-left:1px solid #eee;
+    font-size:100%;
+    line-height:110%;
+    text-decoration:none;
+    font-weight:bold;
+    color:#565656;
+    cursor:pointer;
+    padding:5px 10px 6px 7px; /* Links */
+}
+button:hover {
+    background-color:#dff4ff;
+    border:1px solid #c2e1ef;
+    color:#336699;
+}
+button:active{
+    background-color:#6299c5;
+    border:1px solid #6299c5;
+    color:#fff;
+}
+
+
 div#game {
     background-color: #888; 
     padding-left: 10px; 

@@ -236,7 +236,7 @@ var default_set = function() {
   // game values
   set.creep_variety = "Normal Creeps";
   set.creep_size = 10;
-  set.creep_hp = 25;
+  set.creep_hp = 10;
   set.creep_value = 1;
   set.creep_speed = 2;
   set.missile_blast_radius = 5;
@@ -337,11 +337,11 @@ var CreepWaveController = function() {
     else if (this.wave % 3 == 0) FizCreepWave(settings);
     else CreepWave(settings);
     this.wave++;
+    cwc.last = SET.now;
   };
   cwc.update = function() {
     if (SET.now - cwc.last > cwc.delay) {
       this.spawn_wave();
-      cwc.last = SET.now;
     }
   }
   assign_to_depth(cwc, SET.system_render_level);
@@ -823,6 +823,10 @@ var aim_missile = function(x,y) {
   }
 };
 
+var spawn_wave = function() {
+  SET.creep_wave_controller.spawn_wave();
+}
+
 var nuke_creeps = function() {
   if (SET.nukes > 0) {
     var creeps = SET.rendering_groups[SET.creep_render_level];
@@ -856,7 +860,7 @@ var reset_game = function() {
   SettingUpdater();
   UIUpdater();
   Grid();
-  CreepWaveController();
+  SET.creep_wave_controller = CreepWaveController();
   SET.entrance = Square(0, random(SET.gheight-1), SET.entrance_color);
   SET.exit = Square(SET.gwidth-1, random(SET.gheight-1), SET.exit_color);
 };
