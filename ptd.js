@@ -648,8 +648,10 @@ var Missile = function(tower,target) {
     var tx = target.x;
     var ty = target.y;
     var tth = Math.atan((ty-my)/(tx-mx));
-    //why does this render exactly the same as it did before?
-    triangle(mx,my,mx+size * Math.cos(tth + 135),my+size * Math.sin(tth - 135),mx+size * Math.cos(tth - 135),my-size * Math.sin(tth + 135));
+    var angle = 2.35619449; // 135 degrees in radians
+    triangle(mx,my,
+            mx+size * Math.cos(tth - 2.35619449), my+size * Math.sin(tth + 2.35619449),
+            mx+size * Math.cos(tth + 2.35619449), my+size * Math.sin(tth - 2.35619449));
   }
   return m;
 };
