@@ -313,6 +313,7 @@ var UIUpdater = function() {
 
 var CreepWaveController = function() {
   var cwc = new Object();
+  SET.creep_controller = cwc;
   Object.extend(cwc, InertDrawable);
   cwc.delay = 25000;
   cwc.last = millis()-20000;
@@ -320,11 +321,11 @@ var CreepWaveController = function() {
   cwc.spawn_wave = function() {
     CreepWave({wave:this.wave});
     this.wave++;
+    this.last = SET.now;
   };
   cwc.update = function() {
     if (SET.now - cwc.last > cwc.delay) {
       this.spawn_wave();
-      cwc.last = SET.now;
     }
   }
   assign_to_depth(cwc, SET.system_render_level);
@@ -766,6 +767,10 @@ var reset_game = function() {
   SET.entrance = Square(0, random(SET.gheight-1), SET.entrance_color);
   SET.exit = Square(SET.gwidth-1, random(SET.gheight-1), SET.exit_color);
 };
+
+var spawn_next_wave = function() {
+  SET.creep_controller.spawn_wave();
+}
 
 /*
   Mouse functions.

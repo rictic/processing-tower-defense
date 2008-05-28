@@ -43,6 +43,12 @@
       <td id="nukes_left"> 3 remaining </td>
     </tr>
     <tr><td> Kill everything, but no loot. </td></tr>
+    <tr>
+      <td> <button onclick="spawn_next_wave();" accesskey="W"> Spawn Next <strong>W</strong>ave </button></td>
+      <td> </td>
+    </tr>
+    <tr><td> Spawn the next wave of enemies immediately! </td></tr>
+
     
     <tr><td><div class='error'></div></td></tr>
     <tr><td><div class='message'></div></td></tr>
@@ -73,12 +79,12 @@
           case 78: nuke_creeps(); break;
           case 32: pause(); break;
           case 27: unselect(); break;
+          case 87: spawn_next_wave(); break;
           default: return true;
         }
         // if we handled the key press, return false
         return false;
     });
-    
     var paused = false;
     function pause() {
         paused = !paused;
