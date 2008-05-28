@@ -781,6 +781,7 @@ var build_missile_tower = function() {
       set_state_normal();
     }
   }
+  else {error("Not enough gold, you need at least 100")}
 };
   
 var build_laser_tower = function() {
@@ -793,6 +794,7 @@ var build_laser_tower = function() {
       set_state_normal();
     }
   }
+  else {error("Not enough gold, you need at least 50")}
 };
 
 var select_tower = function(tower) {
@@ -825,6 +827,7 @@ var aim_missile = function(x,y) {
       return can_build_here(gpos.gx,gpos.gy);
     };
   }
+  else {error("Not enough gold, you need at least 50")}
 };
 
 var nuke_creeps = function() {
@@ -836,6 +839,7 @@ var nuke_creeps = function() {
       });
     SET.nukes--;
   }
+  else {error("You're all out of nukes!")}
 };
 
 var pause_resume = function() {
@@ -895,6 +899,19 @@ var on_mouse_press = function() {
     set_state_normal();
   }
 };
+
+var unselect = function() {
+  if ([SET.aiming_missile_state, SET.placing_tower_state].indexOf(SET.state) != -1)
+    set_state_normal();
+}
+
+var message = function(msg) {
+  $('').trigger("message", msg);
+}
+
+var error = function(msg) {
+  $('').trigger("error", msg);
+}
 
 /* 
    Main game loop.

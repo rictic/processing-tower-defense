@@ -71,7 +71,7 @@
 </div>
 
 <div id="bottom_controls">
-  <span><strong> Options </strong></span><button onclick="pause_resume();"> Pause / Resume </button>
+  <span><strong> Options </strong></span><button id='pause_button' onclick="pause_resume();">Pause</button>
   <button onclick="reset_game();">Reset Game</button></td>
   </div>
 </div>
@@ -113,6 +113,7 @@
     //Temporary messages are a bit of a pain
     var timeToHide = null;
     ["error","message"].forEach(function(s){
+        $('.'+s).hide();
         $('').bind(s,function(e,message){
             timeToHide = new Date().getTime() + 2500;
             var el = $('.'+s);
