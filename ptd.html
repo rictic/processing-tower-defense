@@ -142,7 +142,7 @@
     $('#game_over').hide();
     $('').bind('game_over', function(e,hide){
         if (hide == true)
-            $('#game_over').html("Game Over!").fadeIn();
+            $('#game_over').html("Game Over! Final score: " + $("#score").html()).fadeIn();
         else
             $('#game_over').html("Just once more...").fadeOut();
     })
