@@ -1,10 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html> <head>
 <title>Processed Tower Defense</title>
-<script type="text/javascript" src="processing.js"></script>
-<script type="text/javascript" src="jsfprocessing.js"></script>
-<script type="text/javascript" src="ptd.js"></script>
-
+<script type="text/javascript" charset="utf-8" src="processing.js"></script>
+<script type="text/javascript" charset="utf-8" src="jsfprocessing.js"></script>
+<script type="text/javascript" charset="utf-8" src="ptd.js"></script>
+<script type="text/javascript" charset="utf-8" src="jquery-1.2.6.min.js"></script>
 
 </head>
 
@@ -28,7 +28,7 @@
     </tr>
     <tr> <td> Fast, ok range, low damage. </td> </tr>
     <tr>
-      <td> <button onclick="build_missile_tower();" accesskey="L">Build <strong>M</strong>issile Tower</button> </td>
+      <td> <button onclick="build_missile_tower();" accesskey="M">Build <strong>M</strong>issile Tower</button> </td>
       <td> 100 Gold </td>
     </tr>
     <tr> <td> Slow, long range, high damage. </td></tr>
@@ -59,6 +59,16 @@
   <li> <a href="ptd.js">ptd.js</a> </li>
   <li> <a href="jsfprocessing.js">jsfprocessing.js</a> </li>
   <li> <a href="http://ejohn.org/blog/processingjs/">Processing.js</a> </li>
+  <script type="text/javascript" charset="utf-8">
+    $("body").bind("keydown", function(e) {
+        // L
+        if (e.keyCode == 76) build_laser_tower();
+        if (e.keyCode == 77) build_missile_tower();
+        if (e.keyCode == 83) aim_missile();
+        if (e.keyCode == 78) nuke_creeps();
+        if (e.keyCode == 32) pause_resume();
+    })
+  </script>
 </ul>
 
 <hr>
