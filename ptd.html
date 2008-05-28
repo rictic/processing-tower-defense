@@ -104,6 +104,8 @@
     })  
     
     $("body").bind("keydown", function(e) {
+        // if the user is holding down ctrl or cmd, let the browser handle it
+        if (e.metaKey) return true;
         
         switch(e.keyCode){
           case 76: build_laser_tower(); break;
