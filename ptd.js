@@ -753,6 +753,10 @@ var on_mouse_moved = function() {
 };
 
 var on_mouse_press = function() {
+  //ignore mouse clicks if it's paused or game over
+  if (SET.state == SET.game_over_state || SET.state == SET.pause_state)
+    return
+
   var pos = mouse_pos();
   if (SET.state == SET.normal_state) {
     var gpos = pixel_to_grid(pos.x,pos.y);
