@@ -768,6 +768,8 @@ var build_tower_mode = function() {
     SET.rendering_groups[SET.killzone_render_level] = [];
     BuildRadius(mid.x,mid.y,radius);
   }
+  var pos = mouse_pos();
+  SET.state_draw(pos.x,pos.y); // draws missile instantly, for hotkeys
 };
 
 var build_missile_tower = function() {
@@ -826,6 +828,8 @@ var aim_missile = function(x,y) {
       var gpos = pixel_to_grid(x,y);
       return can_build_here(gpos.gx,gpos.gy);
     };
+    var pos = mouse_pos();
+    SET.state_draw(pos.x,pos.y); // draws missile instantly, for hotkeys
   }
   else {error("Not enough gold, you need at least 50")}
 };
