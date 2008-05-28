@@ -43,8 +43,7 @@ mixing the two together can cause ample confusion.
 /*
   General utility functions.
  */
-
-// return a random number (n <= max)
+// return a random number (0 <= n <= max)
 var random = function(max) {
   return Math.floor(Math.random()*(max+1));
 };
@@ -628,10 +627,15 @@ var Missile = function(tower,target) {
   m.proximity = 20;
   m.draw = function() {
     stroke(m.color);
-    var x = this.x;
-    var y = this.y;
+    
+    var mx = this.x;
+    var my = this.y;
     var size = this.size;
-    triangle(x,y,x+size,y+size,x+size,y-size);
+    var tx = target.x;
+    var ty = target.y;
+    var tth = Math.atan((ty-my)/(tx-mx));
+    //why does this render exactly the same as it did before?
+    triangle(mx,my,mx+size * Math.cos(tth + 135),my+size * Math.sin(tth - 135),mx+size * Math.cos(tth - 135),my-size * Math.sin(tth + 135));
   }
   return m;
 };

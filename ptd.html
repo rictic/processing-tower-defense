@@ -1,21 +1,24 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html> <head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 <title>Processed Tower Defense</title>
-<script type="text/javascript" src="processing.js"></script>
-<script type="text/javascript" src="jsfprocessing.js"></script>
-<script type="text/javascript" src="ptd.js"></script>
+<script type="text/javascript" charset="utf-8" src="processing.js"></script>
+<script type="text/javascript" charset="utf-8" src="jsfprocessing.js"></script>
+<script type="text/javascript" charset="utf-8" src="jquery-1.2.6.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="ptd.js"></script>
 
+<link href="style.css" media="screen" rel="Stylesheet" type="text/css" />        
 
 </head>
 
-<body onload="start_tower_defense();">
+<body>
 <h1> Processed Tower Defense </h1>
 
 
-<div id="game_div" style="background-color: grey; padding-left: 10px; padding-top: 20px; padding-botton: 20px;">
-<div style="overflow:auto">
-  <canvas style="float:left;" id="tower_defense" width="600" height="400"></canvas>
-  <div style="float:left;">
+<div id="game">
+<div>
+  <canvas id="tower_defense" width="600" height="400"></canvas>
+  <div id='menu'>
   <table style="padding-left:5px">
     <tr><td> Lives </td> <td id="lives">20</td></tr>
     <tr><td> Score </td> <td id="score">0</td></tr>
@@ -28,21 +31,24 @@
     </tr>
     <tr> <td> Fast, ok range, low damage. </td> </tr>
     <tr>
-      <td> <button onclick="build_missile_tower();" accesskey="L">Build <strong>M</strong>issile Tower</button> </td>
+      <td> <button onclick="build_missile_tower();" accesskey="M">Build <strong>M</strong>issile Tower</button> </td>
       <td> 100 Gold </td>
     </tr>
     <tr> <td> Slow, long range, high damage. </td></tr>
 
-      
-      <td> <button onclick="aim_missile();" accesskey="M">Launch Small <Strong>M</strong>issile</button></td>
+    <tr>  
+      <td> <button onclick="aim_missile();" accesskey="S">Launch <strong>S</strong>mall Missile</button></td>
       <td> 50 Gold </td>
     </tr>
-    <tr><td> Reduce creeps by 50% of current health. </tr></td>
+    <tr><td> Reduce creeps by 50% of current health. </td></tr>
     <tr>
       <td> <button onclick="nuke_creeps();" accesskey="N"> Launch <strong>N</strong>uke </button></td>
       <td id="nukes_left"> 3 remaining </td>
     </tr>
     <tr><td> Kill everything, but no loot. </td></tr>
+    
+    <tr><td><div class='error'></div></td></tr>
+    <tr><td><div class='message'></div></td></tr>
   </table>
   <div style="float: left; border: solid 1px cyan;">
     <div id="details"></div>
@@ -53,8 +59,8 @@
   </div>
 </div>
 <div style="padding-bottom:10px; padding-top:5px;">
-<span><strong> Options </strong></span><button onclick="pause_resume();"> Pause / Resume </button>
-<button onclick="reset_game();">Reset Game</button></td>
+<span><strong> Options </strong></span><button id='pause_button' onclick="pause();">Pause</button>
+<button onclick="reset_game();">Reset Game</button>
 </div>
 </div>
 
@@ -65,6 +71,47 @@
   <li> <a href="jsfprocessing.js">jsfprocessing.js</a> </li>
   <li> <a href="http://ejohn.org/blog/processingjs/">Processing.js</a> </li>
 </ul>
+
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function() {
+        start_tower_defense();
+    })  
+    $("body").bind("keydown", function(e) {
+        
+        switch(e.keyCode){
+          case 76: build_laser_tower(); break;
+          case 77: build_missile_tower(); break;
+          case 83: aim_missile(); break;
+          case 78: nuke_creeps(); break;
+          case 32: pause(); break;
+          case 27: unselect(); break;
+          case 87: spawn_next_wave(); break;
+          default: return true;
+        }
+        // if we handled the key press, return false
+        return false;
+    });
+    var paused = false;
+    function pause() {
+        paused = !paused;
+        pause_resume();
+        $('#pause_button').html(paused ? "Resume" : "Pause");
+    }
+    
+    //Temporary messages are a bit of a pain
+    var timeToHide = null;
+    ["error","message"].forEach(function(s){
+        $('').bind(s,function(e,message){
+            timeToHide = new Date().getTime() + 2500;
+            var el = $('.'+s);
+            el.html(message).fadeIn();
+            window.setTimeout(function() {
+                if (new Date().getTime() >= timeToHide)
+                    el.fadeOut();
+            }, 3000);
+        });
+    });
+</script>
 
 <hr>
 <p><a rel="license" href="http://creativecommons.org/licenses/by/3.0/us/">Creative Commons Attribution 3.0 License</a>, by <a href="http://lethain.com">Will Larson</a> </p>
