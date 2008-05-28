@@ -231,7 +231,6 @@ var default_set = function() {
   set.pause_state = 4;
   set.game_over_state = 5;
   set.state = set.normal_state;
-  set.state_details = "";
 
   // game values
   set.creep_variety = "Normal Creeps";
@@ -254,15 +253,23 @@ var SET;
 
 var fetch_ui_widgets = function() {
   var w = {};
+  // status bar widgets
   w.score = document.getElementById("score");
   w.gold = document.getElementById("gold");
-  w.towers = document.getElementById("towers");
   w.lives = document.getElementById("lives");
   w.nukes_left = document.getElementById("nukes_left");
   w.creep_variety = document.getElementById("creep_variety");
   w.wave = document.getElementById("wave");
-  w.details = document.getElementById("details");
-  w.details_buttons = document.getElementById("details_buttons");
+  
+  // tower widgets
+  w.tower = document.getElementById("tower");
+  w.tower_type = document.getElementById("tower_type");
+  w.tower_range = document.getElementById("tower_range");
+  w.tower_damage = document.getElementById("tower_damage");
+  w.tower_rate = document.getElementById("tower_rate");
+  w.tower_upgrade_cost = document.getElementById("tower_upgrade_cost");
+  w.tower_upgrade_button = document.getElementById("tower_upgrade_button");
+
   return w;
 };
 var WIDGETS;
@@ -307,11 +314,8 @@ var UIUpdater = function() {
     WIDGETS.creep_variety.innerHTML = SET.creep_variety;
     WIDGETS.score.innerHTML = SET.score;
     WIDGETS.gold.innerHTML = SET.gold;
-    WIDGETS.towers.innerHTML = SET.rendering_groups[SET.tower_render_level].length;
     WIDGETS.lives.innerHTML = SET.lives;
-    WIDGETS.nukes_left.innerHTML = SET.nukes + " remaining";
-    if (SET.state_details != undefined)
-      WIDGETS.details.innerHTML = SET.state_details;
+    WIDGETS.nukes_left.innerHTML = SET.nukes + " left";
   };
   assign_to_depth(uiu, SET.system_render_level);
   return uiu;
@@ -518,17 +522,25 @@ var Tower = function(settings) {
   tower.upgrade_cost = 50;
   tower.upgrade = function() {
     if (SET.gold > this.upgrade_cost) {
-      alert("enough gold");
       SET.gold -= this.upgrade_cost;
       this.upgrade_cost = this.upgrade_cost * 2;
       this.damage = this.damage * 1.5;
       this.set_range(this.range * 1.1);
       this.reload_rate = this.reload_rate * 0.95;
+      this.display_stats();
     }
   }
-  tower.describe = function() {
-    return "<table><tr><td>Range</td><td>"+this.range+"</td></tr><tr><td>Damage</td><td>"+this.damage+"</td></tr><tr><td>Reload Rate</td><td>"+this.reload_rate+"</td></tr><tr><td>Upgrade Cost</td><td>"+this.upgrade_cost+"</td></tr></table>";
-  }
+  tower.display_stats = function() {
+    WIDGETS.tower_type.innerHTML = this.type;
+    WIDGETS.tower_range.innerHTML = this.range;
+    WIDGETS.tower_damage.innerHTML = this.damage;
+    WIDGETS.tower_rate.innerHTML = this.reload_rate;
+    WIDGETS.tower_upgrade_cost.innerHTML = this.upgrade_cost;
+    WIDGETS.tower_upgrade_button.onclick = function() {
+      tower.upgrade();
+    }
+    WIDGETS.tower.style.display = "block";
+  };
 
   tower.draw = function() {
     noStroke();
@@ -738,13 +750,9 @@ var set_state_normal = function() {
   SET.state = SET.normal_state;
   SET.state_action = undefined;
   SET.state_legal = undefined;
-  SET.state_details = "";
-  SET.state_details_button = undefined;
-  SET.state_details_action = undefined;
   SET.state_draw = undefined;
   SET.bg_color = SET.bg_colors.neutral;
-  WIDGETS.details_buttons.innerHTML = "";
-
+  WIDGETS.tower.style.display = "none";
 }
 
 var build_tower_mode = function() {
@@ -782,25 +790,16 @@ var build_laser_tower = function() {
       var gpos = pixel_to_grid(x,y);
       LaserTower(gpos.gx,gpos.gy);
       SET.gold -= 50;
-      set_state_normal(); 
+      set_state_normal();
     }
   }
 };
 
 var select_tower = function(tower) {
-  SET.state_details_button = "Upgrade Tower";
-  SET.state_details_action = function() { upgrade_tower(tower.gx,tower.gy); };
   SET.state = SET.selecting_tower_state;
   KillZone(tower.x_mid,tower.y_mid,tower.range*SET.pixels_per_square);
-  SET.state_details = tower.describe();
-  
-  var elem = document.createElement("button");
-  elem.innerHTML = "Upgrade!";
-  elem.onclick = function() {
-    tower.upgrade();
-    SET.state_details = tower.describe();
-  }
-  WIDGETS.details_buttons.appendChild(elem);
+  tower.display_stats();
+  WIDGETS.tower.style.display = "block";
 };
 
 var aim_missile = function(x,y) {

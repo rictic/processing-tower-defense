@@ -14,17 +14,21 @@
 <body>
 <h1> Processed Tower Defense </h1>
 
-
 <div id="game">
-<div>
-  <canvas id="tower_defense" width="600" height="400"></canvas>
-  <div id='menu'>
-  <table style="padding-left:5px">
-    <tr><td> Lives </td> <td id="lives">20</td></tr>
-    <tr><td> Score </td> <td id="score">0</td></tr>
-    <tr><td> Gold </td> <td id="gold">0</td></tr>
-    <tr><td> Wave / Creep Variety </td> <td><span id="wave">1</span> / <span id="creep_variety">Normal Creeps</span></td></tr>
-    <tr><td> Towers </td> <td id="towers">0</td></tr>
+<div id="top_controls">
+  <span> Lives: <span id="lives">20</span></span>
+  <span> Score: <span id="score">0</span></span>
+  <span> Gold: <span id="gold">0</span></span>
+  <span> Wave: <span id="wave">1</span></span>
+  <span> Creep Variety: <span id="creep_variety"></span></span>
+</div>
+
+<div id="middle">
+<canvas id="tower_defense" width="600" height="400"></canvas>
+
+<div id="side">
+<div id="controls">
+  <table>
     <tr>
       <td> <button onclick="build_laser_tower();" accesskey="L">Build <strong>L</strong>aser Tower</button> </td>
       <td> 50 Gold </td>
@@ -43,27 +47,34 @@
     <tr><td> Reduce creeps by 50% of current health. </td></tr>
     <tr>
       <td> <button onclick="nuke_creeps();" accesskey="N"> Launch <strong>N</strong>uke </button></td>
-      <td id="nukes_left"> 3 remaining </td>
+      <td id="nukes_left"> 3 left </td>
     </tr>
     <tr><td> Kill everything, but no loot. </td></tr>
-    
     <tr><td><div class='error'></div></td></tr>
     <tr><td><div class='message'></div></td></tr>
   </table>
-  <div style="float: left; border: solid 1px cyan;">
-    <div id="details"></div>
-    <div id="details_buttons"></div>
-  </div>
-
-  
-  </div>
-</div>
-<div style="padding-bottom:10px; padding-top:5px;">
-<span><strong> Options </strong></span><button id='pause_button' onclick="pause();">Pause</button>
-<button onclick="reset_game();">Reset Game</button>
-</div>
 </div>
 
+<div id="tower">
+  <table>
+    <tr><td></td><td> <em>Tower Details</em> </td></tr>
+    <tr><td> Type: </td><td id="tower_type"></td></tr>
+    <tr><td> Range: </td><td id="tower_range"></tr>
+    <tr><td> Damage: </td><td id="tower_damage"></tr>
+    <tr><td> Firing Rate: </td><td id="tower_rate"></tr>
+    <tr><td> Cost to Upgrade: </td><td id="tower_upgrade_cost"></tr>
+    <tr><td></td><td><button id="tower_upgrade_button">Upgrade!</button></td></tr>
+  </table>  
+</div>
+<div id="creep"></div>
+</div>
+</div>
+
+<div id="bottom_controls">
+  <span><strong> Options </strong></span><button onclick="pause_resume();"> Pause / Resume </button>
+  <button onclick="reset_game();">Reset Game</button></td>
+  </div>
+</div>
 
 <ul>
   <li> <strong> Source </strong> </li>
@@ -76,6 +87,7 @@
     $(document).ready(function() {
         start_tower_defense();
     })  
+    
     $("body").bind("keydown", function(e) {
         
         switch(e.keyCode){
