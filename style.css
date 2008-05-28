@@ -3,10 +3,11 @@
 }
 
 div#game {
-  background-color: #888; 
-  padding-left: 10px; 
-  padding-top: 20px; 
-  padding-bottom: 20px;
+    background-color: #888; 
+    padding-left: 10px; 
+    padding-top: 20px; 
+    padding-bottom: 20px;
+    overflow: auto;
 }
 
 #game div {
@@ -17,7 +18,32 @@ div#game {
   float: left;
 }
 
+#top_controls span {
+    padding-right: 10px;
+}
+
+#bottom_controls {
+    padding-bottom:10px;
+    padding-top:5px;
+    width: 100%;
+}
+
 .error {
   background-color: 000;
   color: #f73;
+}
+
+div#side {
+    float: left;
+}
+
+#tower {
+    display: none;
+}
+
+#side table {
+    width: 96%;
+    margin-left: 10px;
+    margin-top: 10px;
+    border: solid 1px black;
 }

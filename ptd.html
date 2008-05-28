@@ -1,27 +1,31 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html> <head>
 <title>Processed Tower Defense</title>
-<script type="text/javascript" src="processing.js"></script>
-<script type="text/javascript" src="jsfprocessing.js"></script>
-<script type="text/javascript" src="ptd.js"></script>
-
+<script type="text/javascript" charset="utf-8" src="processing.js"></script>
+<script type="text/javascript" charset="utf-8" src="jsfprocessing.js"></script>
+<script type="text/javascript" charset="utf-8" src="ptd.js"></script>
+<script type="text/javascript" charset="utf-8" src="jquery-1.2.6.min.js"></script>
+<link href="style.css" media="screen" rel="Stylesheet" type="text/css" /> 
 
 </head>
 
 <body onload="start_tower_defense();">
 <h1> Processed Tower Defense </h1>
 
+<div id="game">
+<div id="top_controls">
+  <span> Lives: <span id="lives">20</span></span>
+  <span> Score: <span id="score">0</span></span>
+  <span> Gold: <span id="gold">0</span></span>
+  <span> Wave: <span id="wave">1</span></span>
+  <span> Creep Variety: <span id="creep_variety"></span></span>
+</div>
+  
+<canvas id="tower_defense" width="600" height="400"></canvas>
 
-<div id="game_div" style="background-color: grey; padding-left: 10px; padding-top: 20px; padding-botton: 20px;">
-<div style="overflow:auto">
-  <canvas style="float:left;" id="tower_defense" width="600" height="400"></canvas>
-  <div style="float:left;">
-  <table style="padding-left:5px">
-    <tr><td> Lives </td> <td id="lives">20</td></tr>
-    <tr><td> Score </td> <td id="score">0</td></tr>
-    <tr><td> Gold </td> <td id="gold">0</td></tr>
-    <tr><td> Wave / Creep Variety </td> <td><span id="wave">1</span> / <span id="creep_variety">Normal Creeps</span></td></tr>
-    <tr><td> Towers </td> <td id="towers">0</td></tr>
+<div id="side">
+<div id="controls">
+  <table>
     <tr>
       <td> <button onclick="build_laser_tower();" accesskey="L">Build <strong>L</strong>aser Tower</button> </td>
       <td> 50 Gold </td>
@@ -29,35 +33,41 @@
     <tr> <td> Fast, ok range, low damage. </td> </tr>
     <tr>
       <td> <button onclick="build_missile_tower();" accesskey="L">Build <strong>M</strong>issile Tower</button> </td>
-      <td> 100 Gold </td>
-    </tr>
-    <tr> <td> Slow, long range, high damage. </td></tr>
-
-      
+	  <td> 100 Gold </td>
+	</tr>
+	<tr> <td> Slow, long range, high damage. </td></tr>
       <td> <button onclick="aim_missile();" accesskey="M">Launch Small <Strong>M</strong>issile</button></td>
       <td> 50 Gold </td>
     </tr>
     <tr><td> Reduce creeps by 50% of current health. </tr></td>
     <tr>
       <td> <button onclick="nuke_creeps();" accesskey="N"> Launch <strong>N</strong>uke </button></td>
-      <td id="nukes_left"> 3 remaining </td>
+      <td id="nukes_left"> 3 left </td>
     </tr>
     <tr><td> Kill everything, but no loot. </td></tr>
   </table>
-  <div style="float: left; border: solid 1px cyan;">
-    <div id="details"></div>
-    <div id="details_buttons"></div>
-  </div>
-
-  
-  </div>
-</div>
-<div style="padding-bottom:10px; padding-top:5px;">
-<span><strong> Options </strong></span><button onclick="pause_resume();"> Pause / Resume </button>
-<button onclick="reset_game();">Reset Game</button></td>
-</div>
 </div>
 
+<div id="tower">
+
+  <table>
+    <tr><td></td><td> <em>Tower Details</em> </td></tr>
+    <tr><td> Type: </td><td id="tower_type"></td></tr>
+    <tr><td> Range: </td><td id="tower_range"></tr>
+    <tr><td> Damage: </td><td id="tower_damage"></tr>
+    <tr><td> Firing Rate: </td><td id="tower_rate"></tr>
+    <tr><td> Cost to Upgrade: </td><td id="tower_upgrade_cost"></tr>
+    <tr><td></td><td><button id="tower_upgrade_button">Upgrade!</button></td></tr>
+  </table>  
+</div>
+<div id="creep"></div>
+</div>
+
+<div id="bottom_controls">
+  <span><strong> Options </strong></span><button onclick="pause_resume();"> Pause / Resume </button>
+  <button onclick="reset_game();">Reset Game</button></td>
+  </div>
+</div>
 
 <ul>
   <li> <strong> Source </strong> </li>
