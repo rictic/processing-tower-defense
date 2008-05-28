@@ -1,27 +1,26 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html> <head>
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <title>Processed Tower Defense</title>
-    <script type="text/javascript" charset="utf-8" src="processing.js"></script>
-    <script type="text/javascript" charset="utf-8" src="jsfprocessing.js"></script>
-    <script type="text/javascript" charset="utf-8" src="ptd.js"></script>
-    <script type="text/javascript" charset="utf-8" src="jquery-1.2.6.min.js"></script>
-    <link href="style.css" media="screen" rel="Stylesheet" type="text/css" />        
+<title>Processed Tower Defense</title>
+<script type="text/javascript" src="processing.js"></script>
+<script type="text/javascript" src="jsfprocessing.js"></script>
+<script type="text/javascript" src="ptd.js"></script>
+
+
 </head>
 
 <body onload="start_tower_defense();">
 <h1> Processed Tower Defense </h1>
 
 
-<div id="game">
-<div>
-  <canvas id="tower_defense" width="600" height="400"></canvas>
-  <div id='menu'>
+<div id="game_div" style="background-color: grey; padding-left: 10px; padding-top: 20px; padding-botton: 20px;">
+<div style="overflow:auto">
+  <canvas style="float:left;" id="tower_defense" width="600" height="400"></canvas>
+  <div style="float:left;">
   <table style="padding-left:5px">
     <tr><td> Lives </td> <td id="lives">20</td></tr>
     <tr><td> Score </td> <td id="score">0</td></tr>
     <tr><td> Gold </td> <td id="gold">0</td></tr>
-    <tr><td> Creeps (Alive/Spawned) </td> <td id="creeps">0</td></tr>
+    <tr><td> Wave / Creep Variety </td> <td><span id="wave">1</span> / <span id="creep_variety">Normal Creeps</span></td></tr>
     <tr><td> Towers </td> <td id="towers">0</td></tr>
     <tr>
       <td> <button onclick="build_laser_tower();" accesskey="L">Build <strong>L</strong>aser Tower</button> </td>
@@ -29,37 +28,33 @@
     </tr>
     <tr> <td> Fast, ok range, low damage. </td> </tr>
     <tr>
-      <td> <button onclick="build_missile_tower();" accesskey="M">Build <strong>M</strong>issile Tower</button> </td>
+      <td> <button onclick="build_missile_tower();" accesskey="L">Build <strong>M</strong>issile Tower</button> </td>
       <td> 100 Gold </td>
     </tr>
     <tr> <td> Slow, long range, high damage. </td></tr>
-    <tr>
-      <td> <button onclick="aim_missile();" accesskey="S">Launch <Strong>S</Strong>mall Missile</button></td>
+
+      
+      <td> <button onclick="aim_missile();" accesskey="M">Launch Small <Strong>M</strong>issile</button></td>
       <td> 50 Gold </td>
     </tr>
-    <tr><td> Reduce creeps by 50% of current health. </td></tr>
+    <tr><td> Reduce creeps by 50% of current health. </tr></td>
     <tr>
       <td> <button onclick="nuke_creeps();" accesskey="N"> Launch <strong>N</strong>uke </button></td>
       <td id="nukes_left"> 3 remaining </td>
     </tr>
     <tr><td> Kill everything, but no loot. </td></tr>
-    <tr>
-      <td> <button onclick="spawn_next_wave();" accesskey="W"> Spawn Next <strong>W</strong>ave </button></td>
-      <td> </td>
-    </tr>
-    <tr><td> Spawn the next wave of enemies immediately! </td></tr>
-
-    
-    <tr><td><div class='error'></div></td></tr>
-    <tr><td><div class='message'></div></td></tr>
   </table>
+  <div style="float: left; border: solid 1px cyan;">
+    <div id="details"></div>
+    <div id="details_buttons"></div>
+  </div>
 
   
   </div>
 </div>
 <div style="padding-bottom:10px; padding-top:5px;">
-<span><strong> Options </strong></span><button id='pause_button' onclick="pause();">Pause</button>
-<button onclick="reset_game();">Reset Game</button>
+<span><strong> Options </strong></span><button onclick="pause_resume();"> Pause / Resume </button>
+<button onclick="reset_game();">Reset Game</button></td>
 </div>
 </div>
 
@@ -69,43 +64,6 @@
   <li> <a href="ptd.js">ptd.js</a> </li>
   <li> <a href="jsfprocessing.js">jsfprocessing.js</a> </li>
   <li> <a href="http://ejohn.org/blog/processingjs/">Processing.js</a> </li>
-  <script type="text/javascript" charset="utf-8">
-    $("body").bind("keydown", function(e) {
-        
-        switch(e.keyCode){
-          case 76: build_laser_tower(); break;
-          case 77: build_missile_tower(); break;
-          case 83: aim_missile(); break;
-          case 78: nuke_creeps(); break;
-          case 32: pause(); break;
-          case 27: unselect(); break;
-          case 87: spawn_next_wave(); break;
-          default: return true;
-        }
-        // if we handled the key press, return false
-        return false;
-    });
-    var paused = false;
-    function pause() {
-        paused = !paused;
-        pause_resume();
-        $('#pause_button').html(paused ? "Resume" : "Pause");
-    }
-    
-    //Temporary messages are a bit of a pain
-    var timeToHide = null;
-    ["error","message"].forEach(function(s){
-        $('').bind(s,function(e,message){
-            timeToHide = new Date().getTime() + 2500;
-            var el = $('.'+s);
-            el.html(message).fadeIn();
-            window.setTimeout(function() {
-                if (new Date().getTime() >= timeToHide)
-                    el.fadeOut();
-            }, 3000);
-        });
-    });
-  </script>
 </ul>
 
 <hr>

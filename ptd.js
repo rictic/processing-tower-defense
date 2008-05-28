@@ -44,7 +44,7 @@ mixing the two together can cause ample confusion.
   General utility functions.
  */
 
-// return a random number (0 <= n <= max)
+// return a random number (n <= max)
 var random = function(max) {
   return Math.floor(Math.random()*(max+1));
 };
@@ -126,13 +126,13 @@ var draw_circle_in_grid = function(gx,gy) {
   
 var can_build_here = function(gx,gy) {
   var possible_conflicts = [SET.rendering_groups[SET.square_render_level],
-          SET.rendering_groups[SET.tower_render_level]];
+			    SET.rendering_groups[SET.tower_render_level]];
   for (var i=0; i<possible_conflicts.length;i++) {
     var array = possible_conflicts[i];
     if (array != undefined) {
       for (var j=0; j<array.length; j++) {
-  var obj = array[j];
-  if (obj.gx == gx && obj.gy == gy) return false;
+	var obj = array[j];
+	if (obj.gx == gx && obj.gy == gy) return false;
       }
     }
   }
@@ -147,7 +147,7 @@ var get_tower_at = function(gx,gy) {
   }
   return false;
 }
-var selected_tower = null
+  
 /*
   Object life cycle.
  */
@@ -196,7 +196,7 @@ var default_set = function() {
   // constants
   set.pixels_per_square = 25;
   set.half_pixels_per_square = (1.0 * set.pixels_per_square) / 2;
-  set.height = 400;
+  set.height = 450;
   set.width = 600;
   set.framerate = 60;
   set.gheight = Math.floor(set.height / set.pixels_per_square);
@@ -204,8 +204,8 @@ var default_set = function() {
 
   // colors
   set.bg_colors = {neutral:color(90,80,70),
-      positive:color(90,80,70),
-      negative:color(250,80,60)};
+		  positive:color(60,80,250),
+		  negative:color(250,80,60)};
   set.bg_color = set.bg_colors.neutral;
   set.grid_color = color(255,255,255);
   set.entrance_color = color(255,100,100);
@@ -232,10 +232,12 @@ var default_set = function() {
   set.pause_state = 4;
   set.game_over_state = 5;
   set.state = set.normal_state;
+  set.state_details = "";
 
   // game values
+  set.creep_variety = "Normal Creeps";
   set.creep_size = 10;
-  set.creep_hp = 10;
+  set.creep_hp = 25;
   set.creep_value = 1;
   set.creep_speed = 2;
   set.missile_blast_radius = 5;
@@ -255,10 +257,13 @@ var fetch_ui_widgets = function() {
   var w = {};
   w.score = document.getElementById("score");
   w.gold = document.getElementById("gold");
-  w.creeps = document.getElementById("creeps");
   w.towers = document.getElementById("towers");
   w.lives = document.getElementById("lives");
   w.nukes_left = document.getElementById("nukes_left");
+  w.creep_variety = document.getElementById("creep_variety");
+  w.wave = document.getElementById("wave");
+  w.details = document.getElementById("details");
+  w.details_buttons = document.getElementById("details_buttons");
   return w;
 };
 var WIDGETS;
@@ -300,12 +305,14 @@ var UIUpdater = function() {
   Object.extend(uiu, InertDrawable);
   
   uiu.update = function() {
+    WIDGETS.creep_variety.innerHTML = SET.creep_variety;
     WIDGETS.score.innerHTML = SET.score;
     WIDGETS.gold.innerHTML = SET.gold;
-    WIDGETS.creeps.innerHTML = SET.rendering_groups[SET.creep_render_level].length + " / " + SET.creeps_spawned;
     WIDGETS.towers.innerHTML = SET.rendering_groups[SET.tower_render_level].length;
     WIDGETS.lives.innerHTML = SET.lives;
     WIDGETS.nukes_left.innerHTML = SET.nukes + " remaining";
+    if (SET.state_details != undefined)
+      WIDGETS.details.innerHTML = SET.state_details;
   };
   assign_to_depth(uiu, SET.system_render_level);
   return uiu;
@@ -313,19 +320,24 @@ var UIUpdater = function() {
 
 var CreepWaveController = function() {
   var cwc = new Object();
-  SET.creep_controller = cwc;
   Object.extend(cwc, InertDrawable);
   cwc.delay = 25000;
   cwc.last = millis()-20000;
-  cwc.wave = 0;
+  cwc.wave = 1;
   cwc.spawn_wave = function() {
-    CreepWave({wave:this.wave});
+    WIDGETS.wave.innerHTML = this.wave;
+    var settings = {wave:this.wave};
+    if (this.wave == 0) CreepWave(settings);
+    else if (this.wave % 15 == 0) FizBuzzCreepWave(settings);
+    else if (this.wave % 5 == 0) BuzzCreepWave(settings);
+    else if (this.wave % 3 == 0) FizCreepWave(settings);
+    else CreepWave(settings);
     this.wave++;
-    this.last = SET.now;
   };
   cwc.update = function() {
     if (SET.now - cwc.last > cwc.delay) {
       this.spawn_wave();
+      cwc.last = SET.now;
     }
   }
   assign_to_depth(cwc, SET.system_render_level);
@@ -340,9 +352,10 @@ var CreepWave = function(settings) {
   cw.last = millis();
   cw.interval = 1000;
   Object.extend(cw, settings);
+  cw.spawn_creep = function() { Creep(this.wave); };
   cw.spawn = function() {
     this.remaining--;
-    Creep(this.wave);
+    this.spawn_creep();
     if (this.remaining < 1) this.is_dead = function() { return true; };
   }
 
@@ -353,16 +366,37 @@ var CreepWave = function(settings) {
     }
   }
   assign_to_depth(cw, SET.system_render_level);
+  SET.creep_variety = "Normal Creeps";
   return cw;
-}
+};
 
-var KillZone = function(tower) {
-  var x = tower.x_mid; var y = tower.y_mid;
-  var r = tower.prange;
+var FizCreepWave = function(settings) {
+  var fcw = CreepWave(settings);
+  fcw.spawn_creep = function() { FizCreep(this.wave);  }
+  SET.creep_variety = "Fiz Creeps";
+  return fcw;
+};
+
+var BuzzCreepWave = function(settings) {
+  var fcw = CreepWave(settings);
+  fcw.spawn_creep = function() { BuzzCreep(this.wave);  }
+  SET.creep_variety = "Buzz Creeps";
+  return fcw;
+};
+
+var FizBuzzCreepWave = function(settings) {
+  var fcw = CreepWave(settings);
+  fcw.remaining = 1;
+  fcw.spawn_creep = function() { FizBuzzCreep(this.wave);  }
+  SET.creep_variety = "FizBuzz Creeps";
+  return fcw;
+};
+
+var KillZone = function(x,y,r) {
   var kz = new Object();
   Object.extend(kz, InertDrawable);
   kz.is_dead = function() {
-    if (selected_tower != tower)
+    if (SET.state != SET.selecting_tower_state)
       return true;
     return false;
   }
@@ -377,40 +411,23 @@ var KillZone = function(tower) {
   return kz;
 };
 
-var BuildRadius = function(x,y) {
-  var br = new Object();
-  Object.extend(br, InertDrawable);
+var BuildRadius = function(x,y,r) {
+  var br = KillZone(x,y,r);
   br.is_dead = function() {
     if (SET.state != SET.placing_tower_state)
       return true;
     return false;
   }
-  var d = SET.pixels_per_square;
-  br.draw = function() {
-    fill(color(100,100,100)); // no fill;
-    stroke(30);
-    ellipse(x,y,d,d);
-  }
-  assign_to_depth(br, SET.killzone_render_level);   
   return br;
 }
 
 var MissileRadius = function(x,y,r) {
-  var mr = new Object();
-  Object.extend(mr, InertDrawable);
+  var mr = KillZone(x,y,r);
   mr.is_dead = function() {
     if (SET.state != SET.aiming_missile_state)
       return true;
     return false;
   }
-  mr.color = SET.killzone_color;
-  var d = 2 * r;
-  mr.draw = function() {
-    fill(mr.color);
-    stroke(255);
-    ellipse(x,y,d,d);
-  }
-  assign_to_depth(kz, SET.killzone_render_level); 
   return mr;
 }
 
@@ -485,17 +502,35 @@ var Tower = function(settings) {
   };
   tower.update = function() {
     var creeps = SET.rendering_groups[SET.creep_render_level];
-    if (creeps.length == 0) return;
-    var closest_creep = null;
-    var closest = 100000000;
-    creeps.forEach(function(c) {
-      var c_dist = dist(tower.x_mid, tower.y_mid, c.x, c.y);
-      if (c_dist <= closest && c_dist < tower.prange)
-        closest_creep = c; closest = c_dist;
-    });
-    if (closest_creep != null && tower.weapon_ready()) 
-      tower.attack(closest_creep);
+    var creeps_in_range = creeps.filter(function(creep) {
+	var distance = dist(tower.x_mid,tower.y_mid,creep.x,creep.y);
+	if (distance < tower.prange) return true;
+	return false;
+      });
+    if (creeps_in_range.length > 0) {
+      var creep = creeps_in_range[0];
+      var lowest_hp = creep.hp;
+      creeps_in_range.forEach(function(c) {
+	  if (c.hp < lowest_hp) creep = c;
+	});
+      if (tower.weapon_ready() == true) tower.attack(creep);
+    }
   }
+  tower.upgrade_cost = 50;
+  tower.upgrade = function() {
+    if (SET.gold > this.upgrade_cost) {
+      alert("enough gold");
+      SET.gold -= this.upgrade_cost;
+      this.upgrade_cost = this.upgrade_cost * 2;
+      this.damage = this.damage * 1.5;
+      this.set_range(this.range * 1.1);
+      this.reload_rate = this.reload_rate * 0.95;
+    }
+  }
+  tower.describe = function() {
+    return "<table><tr><td>Range</td><td>"+this.range+"</td></tr><tr><td>Damage</td><td>"+this.damage+"</td></tr><tr><td>Reload Rate</td><td>"+this.reload_rate+"</td></tr><tr><td>Upgrade Cost</td><td>"+this.upgrade_cost+"</td></tr></table>";
+  }
+
   tower.draw = function() {
     noStroke();
     fill(this.color);
@@ -507,20 +542,47 @@ var Tower = function(settings) {
 
 var MissileTower = function(gx,gy) {
   var mt = Tower({gx:gx,gy:gy,color:color(250,150,50)});
+  mt.type = "Missile Tower";
   mt.damage = 100;
+  mt.upgrade_cost = 100;
   mt.set_range(5.5);
   mt.reload_rate = 750;
   mt.attack = function(creep) {
     assign_to_depth(Missile(this,creep),SET.bullet_render_level);
-  }  
+  }
+  mt.upgrade = function() {
+    if (SET.gold >= this.upgrade_cost) {
+      SET.gold -= this.upgrade_cost;
+      this.upgrade_cost = this.upgrade_cost * 2;
+      this.damage = this.damage * 1.5;
+      this.set_range(this.range + 0.5);
+      SET.rendering_groups[SET.killzone_render_level] = [];
+      set_state_normal();
+      select_tower(this);
+    }
+  }
   return mt;
 }
 
 var LaserTower = function(gx,gy) {
   var lt = Tower({gx:gx,gy:gy,color:color(50,150,250)});
+  lt.type = "Laser Tower";
   lt.attack = function(creep) {
     assign_to_depth(Laser(this,creep),SET.bullet_render_level);
   };
+  lt.upgrade_cost = 50;
+  lt.upgrade = function() {
+    if (SET.gold >= this.upgrade_cost) {
+      SET.gold -= this.upgrade_cost;
+      this.upgrade_cost = this.upgrade_cost * 1.5;
+      this.damage = this.damage * 2.0;
+      this.set_range(this.range + 0.25);
+      this.reload_rate = this.reload_rate - 10;
+      SET.rendering_groups[SET.killzone_render_level] = [];
+      set_state_normal();
+      select_tower(this);
+    }
+  }
   lt.damage = 10;
   lt.set_range(4);
   lt.reload_rate = 250;
@@ -566,14 +628,10 @@ var Missile = function(tower,target) {
   m.proximity = 20;
   m.draw = function() {
     stroke(m.color);
-    var mx = this.x;
-    var my = this.y;
+    var x = this.x;
+    var y = this.y;
     var size = this.size;
-    var tx = target.x;
-    var ty = target.y;
-    var tth = Math.atan((ty-my)/(tx-mx));
-
-    triangle(mx,my,mx+size * Math.cos(tth + 135),my+size * Math.sin(tth - 135),mx+size * Math.cos(tth - 135),my-size * Math.sin(tth + 135));
+    triangle(x,y,x+size,y+size,x+size,y-size);
   }
   return m;
 };
@@ -637,6 +695,35 @@ var Creep = function(wave) {
   SET.creeps_spawned++;
   assign_to_depth(c, SET.creep_render_level);
   return c;
+};
+
+var FizCreep = function(wave) {
+  var fc = Creep(wave);
+  fc.color = color(0,255,255);
+  fc.size = fc.size * 1.3;
+  fc.hp = fc.hp * 2;
+  fc.value = fc.value * 1.5;
+  fc.speed = fc.speed * 0.75;
+  return fc;
+};
+
+var BuzzCreep = function(wave) {
+  var bc = Creep(wave);
+  bc.color = color(100,150,50);
+  bc.speed = bc.speed * 1.5;
+  bc.hp = bc.hp * .75;
+  bc.size = bc.size * 0.9;
+  bc.value = bc.value * 1.25;
+  return bc;
+};
+
+var FizBuzzCreep = function(wave) {
+  var fbc = Creep(wave);
+  fbc.color = color(255,100,150);
+  fbc.size = fbc.size * 1.5;
+  fbc.hp = fbc.hp * 10;
+  fbc.value = fbc.value * 10;
+  return fbc;
 }
 
 /*
@@ -647,9 +734,13 @@ var set_state_normal = function() {
   SET.state = SET.normal_state;
   SET.state_action = undefined;
   SET.state_legal = undefined;
+  SET.state_details = "";
+  SET.state_details_button = undefined;
+  SET.state_details_action = undefined;
   SET.state_draw = undefined;
   SET.bg_color = SET.bg_colors.neutral;
-  selected_tower = null;
+  WIDGETS.details_buttons.innerHTML = "";
+
 }
 
 var build_tower_mode = function() {
@@ -661,11 +752,10 @@ var build_tower_mode = function() {
   SET.state_draw = function(x,y) {
     var gpos = pixel_to_grid(x,y);
     var mid = center_of_square(gpos);
+    var radius = SET.pixels_per_square;
     SET.rendering_groups[SET.killzone_render_level] = [];
-    BuildRadius(mid.x,mid.y);
+    BuildRadius(mid.x,mid.y,radius);
   }
-  var pos = mouse_pos();
-  SET.state_draw(pos.x,pos.y);
 };
 
 var build_missile_tower = function() {
@@ -679,7 +769,6 @@ var build_missile_tower = function() {
       set_state_normal();
     }
   }
-  else {error("Not enough gold, you need at least 100")}
 };
   
 var build_laser_tower = function() {
@@ -692,13 +781,22 @@ var build_laser_tower = function() {
       set_state_normal(); 
     }
   }
-  else {error("Not enough gold, you need at least 50")}
 };
 
 var select_tower = function(tower) {
+  SET.state_details_button = "Upgrade Tower";
+  SET.state_details_action = function() { upgrade_tower(tower.gx,tower.gy); };
   SET.state = SET.selecting_tower_state;
-  selected_tower = tower;
-  KillZone(tower);
+  KillZone(tower.x_mid,tower.y_mid,tower.range*SET.pixels_per_square);
+  SET.state_details = tower.describe();
+  
+  var elem = document.createElement("button");
+  elem.innerHTML = "Upgrade!";
+  elem.onclick = function() {
+    tower.upgrade();
+    SET.state_details = tower.describe();
+  }
+  WIDGETS.details_buttons.appendChild(elem);
 };
 
 var aim_missile = function(x,y) {
@@ -709,36 +807,32 @@ var aim_missile = function(x,y) {
     SET.state_draw = function(x,y) {
       SET.rendering_groups[SET.killzone_render_level] = [];
       MissileRadius(x,y,radius);
-    };
+    }
     SET.state_action = function(x,y) {
       var creeps = SET.rendering_groups[SET.creep_render_level];
       creeps.forEach(function(creep) {
-        var distance = dist(x,y,creep.x,creep.y);
-        if (distance <= radius) creep.hp = Math.floor(creep.hp / 2);
-      });
+	  var distance = dist(x,y,creep.x,creep.y);
+	  if (distance <= radius) creep.hp = Math.floor(creep.hp / 2);
+	});
 
       SET.gold -= cost;
-    };
+    }
     SET.state_legal = function(x,y) {
       var gpos = pixel_to_grid(x,y);
       return can_build_here(gpos.gx,gpos.gy);
     };
-    var pos = mouse_pos();
-    SET.state_draw(pos.x,pos.y);
   }
-  else {error("Not enough gold, you need at least 50")}
 };
 
 var nuke_creeps = function() {
   if (SET.nukes > 0) {
     var creeps = SET.rendering_groups[SET.creep_render_level];
     creeps.forEach(function(x) { 
-  x.hp = -1; 
-  x.value = 0; // no gold for nuked creeps
+	x.hp = -1; 
+	x.value = 0; // no gold for nuked creeps
       });
     SET.nukes--;
   }
-  else {error("You have no more nukes!")}
 };
 
 var pause_resume = function() {
@@ -768,10 +862,6 @@ var reset_game = function() {
   SET.exit = Square(SET.gwidth-1, random(SET.gheight-1), SET.exit_color);
 };
 
-var spawn_next_wave = function() {
-  SET.creep_controller.spawn_wave();
-}
-
 /*
   Mouse functions.
  */
@@ -790,16 +880,11 @@ var on_mouse_moved = function() {
 };
 
 var on_mouse_press = function() {
-  //ignore mouse clicks if it's paused or game over
-  if (SET.state == SET.game_over_state || SET.state == SET.pause_state)
-    return
   var pos = mouse_pos();
-  var gpos = pixel_to_grid(pos.x, pos.y)
-  var tower = get_tower_at(gpos.gx,gpos.gy);
-
-  if (SET.state == SET.normal_state || SET.state == SET.selecting_tower_state) {
+  if (SET.state == SET.normal_state) {
+    var gpos = pixel_to_grid(pos.x,pos.y);
+    var tower = get_tower_at(gpos.gx,gpos.gy);
     if (tower != false) select_tower(tower);
-    else set_state_normal();
   }
   else {
     if (SET.state_legal && SET.state_legal(pos.x,pos.y) == true)
@@ -808,22 +893,9 @@ var on_mouse_press = function() {
   }
 };
 
-var unselect = function() {
-  if ([SET.aiming_missile_state, SET.placing_tower_state].indexOf(SET.state) != -1)
-    set_state_normal();
-}
-
 /* 
    Main game loop.
  */
-
-var message = function(msg) {
-  $('').trigger("message", msg);
-}
-
-var error = function(msg) {
-  $('').trigger("error", msg);
-}
 
 var start_tower_defense = function() {
   setup = function() {
