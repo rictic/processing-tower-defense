@@ -937,6 +937,7 @@ var error = function(msg) {
 
 var start_tower_defense = function() {
   setup = function() {
+    $('#pause_button').html("Pause");
     set_canvas("tower_defense");
     reset_game();
     size(SET.width, SET.height);
