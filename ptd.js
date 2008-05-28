@@ -330,11 +330,13 @@ var CreepWaveController = function() {
   cwc.spawn_wave = function() {
     WIDGETS.wave.innerHTML = this.wave;
     var settings = {wave:this.wave};
-    if (this.wave == 0) CreepWave(settings);
-    else if (this.wave % 15 == 0) FizBuzzCreepWave(settings);
-    else if (this.wave % 5 == 0) BuzzCreepWave(settings);
-    else if (this.wave % 3 == 0) FizCreepWave(settings);
-    else CreepWave(settings);
+    var cw;
+    if (this.wave == 0) cw = CreepWave(settings);
+    else if (this.wave % 15 == 0) cw = FizBuzzCreepWave(settings);
+    else if (this.wave % 5 == 0) cw = BuzzCreepWave(settings);
+    else if (this.wave % 3 == 0) cw = FizCreepWave(settings);
+    else cw = CreepWave(settings);
+    cw.spawn(); // spawn the first one immediately
     this.wave++;
     cwc.last = SET.now;
   };
@@ -359,13 +361,13 @@ var CreepWave = function(settings) {
   cw.spawn = function() {
     this.remaining--;
     this.spawn_creep();
+    this.last = SET.now;    
     if (this.remaining < 1) this.is_dead = function() { return true; };
   }
 
   cw.update = function() {
     if (SET.now - this.last > this.interval) {
       this.spawn();
-      this.last = SET.now;
     }
   }
   assign_to_depth(cw, SET.system_render_level);
