@@ -147,7 +147,7 @@ var get_tower_at = function(gx,gy) {
   }
   return false;
 }
-  
+var selected_tower = null
 /*
   Object life cycle.
  */
@@ -355,11 +355,13 @@ var CreepWave = function(settings) {
   return cw;
 }
 
-var KillZone = function(x,y,r) {
+var KillZone = function(tower) {
+  var x = tower.x_mid; var y = tower.y_mid;
+  var r = tower.prange;
   var kz = new Object();
   Object.extend(kz, InertDrawable);
   kz.is_dead = function() {
-    if (SET.state != SET.selecting_tower_state)
+    if (selected_tower != tower)
       return true;
     return false;
   }
@@ -374,23 +376,40 @@ var KillZone = function(x,y,r) {
   return kz;
 };
 
-var BuildRadius = function(x,y,r) {
-  var br = KillZone(x,y,r);
+var BuildRadius = function(x,y) {
+  var br = new Object();
+  Object.extend(br, InertDrawable);
   br.is_dead = function() {
     if (SET.state != SET.placing_tower_state)
       return true;
     return false;
   }
+  var d = SET.pixels_per_square;
+  br.draw = function() {
+    fill(color(100,100,100)); // no fill;
+    stroke(30);
+    ellipse(x,y,d,d);
+  }
+  assign_to_depth(br, SET.killzone_render_level);   
   return br;
 }
 
 var MissileRadius = function(x,y,r) {
-  var mr = KillZone(x,y,r);
+  var mr = new Object();
+  Object.extend(mr, InertDrawable);
   mr.is_dead = function() {
     if (SET.state != SET.aiming_missile_state)
       return true;
     return false;
   }
+  mr.color = SET.killzone_color;
+  var d = 2 * r;
+  mr.draw = function() {
+    fill(mr.color);
+    stroke(255);
+    ellipse(x,y,d,d);
+  }
+  assign_to_depth(kz, SET.killzone_render_level); 
   return mr;
 }
 
@@ -546,6 +565,7 @@ var Missile = function(tower,target) {
   m.proximity = 20;
   m.draw = function() {
     stroke(m.color);
+    
     var x = this.x;
     var y = this.y;
     var size = this.size;
@@ -625,6 +645,7 @@ var set_state_normal = function() {
   SET.state_legal = undefined;
   SET.state_draw = undefined;
   SET.bg_color = SET.bg_colors.neutral;
+  selected_tower = null;
 }
 
 var build_tower_mode = function() {
@@ -636,9 +657,8 @@ var build_tower_mode = function() {
   SET.state_draw = function(x,y) {
     var gpos = pixel_to_grid(x,y);
     var mid = center_of_square(gpos);
-    var radius = SET.pixels_per_square / 2;
     SET.rendering_groups[SET.killzone_render_level] = [];
-    BuildRadius(mid.x,mid.y,radius);
+    BuildRadius(mid.x,mid.y);
   }
   var pos = mouse_pos();
   SET.state_draw(pos.x,pos.y);
@@ -673,7 +693,8 @@ var build_laser_tower = function() {
 
 var select_tower = function(tower) {
   SET.state = SET.selecting_tower_state;
-  KillZone(tower.x_mid,tower.y_mid,tower.range*SET.pixels_per_square);
+  selected_tower = tower;
+  KillZone(tower);
 };
 
 var aim_missile = function(x,y) {
@@ -764,12 +785,13 @@ var on_mouse_press = function() {
   //ignore mouse clicks if it's paused or game over
   if (SET.state == SET.game_over_state || SET.state == SET.pause_state)
     return
-
   var pos = mouse_pos();
-  if (SET.state == SET.normal_state) {
-    var gpos = pixel_to_grid(pos.x,pos.y);
-    var tower = get_tower_at(gpos.gx,gpos.gy);
+  var gpos = pixel_to_grid(pos.x, pos.y)
+  var tower = get_tower_at(gpos.gx,gpos.gy);
+
+  if (SET.state == SET.normal_state || SET.state == SET.selecting_tower_state) {
     if (tower != false) select_tower(tower);
+    else set_state_normal();
   }
   else {
     if (SET.state_legal && SET.state_legal(pos.x,pos.y) == true)
