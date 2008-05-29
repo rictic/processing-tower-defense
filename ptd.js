@@ -906,7 +906,8 @@ var on_mouse_press = function() {
     return
 
   var pos = mouse_pos();
-  if (SET.state == SET.normal_state) {
+  if (SET.state == SET.normal_state || SET.state == SET.selecting_tower_state) {
+    set_state_normal();
     var gpos = pixel_to_grid(pos.x,pos.y);
     var tower = get_tower_at(gpos.gx,gpos.gy);
     if (tower != false) select_tower(tower);
