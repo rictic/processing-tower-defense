@@ -772,7 +772,7 @@ var pathfind = function(start_block) {
       candidates.push({gx:block.gpos.gx + pair[0], gy: block.gpos.gy + pair[1]});
     });
     return candidates.filter(function(gpos) {
-      if (get_tower_at(gpos) != false) return false;
+      if (get_tower_at(gpos.gx, gpos.gy) != false) return false;
       if (gpos.gx < 0 || gpos.gx > SET.gwidth) return false;
       if (gpos.gy < 0 || gpos.gy > SET.gheight) return false;
       return true;
