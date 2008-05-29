@@ -531,6 +531,7 @@ var Tower = function(settings) {
       this.reload_rate = this.reload_rate * 0.95;
       this.display_stats();
     }
+    else error("You don't have enough gold to upgrade, you need " + (this.upgrade_cost - SET.gold) + " more.");
   }
   tower.display_stats = function() {
     WIDGETS.tower_type.innerHTML = this.type;
@@ -573,6 +574,7 @@ var MissileTower = function(gx,gy) {
       set_state_normal();
       select_tower(this);
     }
+    else error("You don't have enough gold to upgrade, you need " + (this.upgrade_cost - SET.gold) + " more.");
   }
   return mt;
 }
@@ -595,6 +597,7 @@ var LaserTower = function(gx,gy) {
       set_state_normal();
       select_tower(this);
     }
+    else error("You don't have enough gold to upgrade, you need " + (this.upgrade_cost - SET.gold) + " more.");
   }
   lt.damage = 10;
   lt.set_range(4);
