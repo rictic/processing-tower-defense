@@ -709,15 +709,48 @@ var log = function(label, thing) {
   $('#log').append(label + ": " + pp(thing) + "<br/>");
 }
 
+Array.prototype.equals = function(testArr) {
+    if (this.length != testArr.length) return false;
+    for (var i = 0; i < testArr.length; i++) {
+        if (this[i].equals) { 
+            if (!this[i].equals(testArr[i])) return false;
+        }
+        if (this[i] != testArr[i]) return false;
+    }
+    return true;
+}
 
 var insert_sorted = function(array, value, sortKey) {
   var vkey = sortKey(value);
-  var i = 0;
-  for(; i < array.length; i++) {
-    if (vkey <= sortKey(array[i]))
+  var min=0;
+  var max=array.length;
+  var mid=-1;
+  while(true){
+    if (max<=min) {
       break;
+    }
+    mid = Math.floor((max+min)/2);
+    if (mid >= array.length || mid < 0) {
+      log("outofbounds in insert sorted");
+      break;
+    }
+    if (vkey <= sortKey(array[mid]))
+      max = mid-1;
+    else
+      min = mid+1;
   }
-  return array.slice(0,i).concat([value]).concat(array.slice(i))
+  mid = Math.floor((max+min)/2);
+  if (array[mid])
+    if (vkey > sortKey(array[mid]))
+      mid += 1;
+  mid = Math.max(0,mid);
+  
+  var result = array.slice(0,mid).concat([value]).concat(array.slice(mid))
+//   log("inserting", [mid,vkey,array.map(sortKey), result.map(sortKey)]);
+  var rm = result.map(sortKey);
+  if (!rm.equals(rm.slice().sort(function(a,b){return a-b})))
+    log("insert_sorted failed inserting",[vkey,rm]);
+  return result;
 }
 
 var known_best_paths = {}
@@ -735,7 +768,7 @@ var pathfind = function(start_block) {
   
   var successors = function(block) {
     var candidates = [];
-    [[0,1],[1,0],[-1,0],[0,-1]].forEach(function(pair) {
+    [[0,1],[1,0],[-1,0],[0,-1],[1,1],[-1,-1],[1,-1],[-1,1]].forEach(function(pair) {
       candidates.push({gx:block.gpos.gx + pair[0], gy: block.gpos.gy + pair[1]});
     });
     return candidates.filter(function(gpos) {
@@ -781,7 +814,9 @@ var pathfind = function(start_block) {
       var suc = {gpos:s, g:1 + block.g, ancestor:block};
       suc.f = suc.g + heuristic(suc.gpos);
 
-      pqueue = insert_sorted(pqueue, suc, function(bl) {return bl.f});
+      pqueue = insert_sorted(pqueue, suc, function(bl) {
+        return bl.f
+      });
     })
 
 //     log("pqueue", pqueue);
