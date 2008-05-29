@@ -65,7 +65,7 @@
     <tr><td> Damage: </td><td id="tower_damage"></tr>
     <tr><td> Firing Rate: </td><td id="tower_rate"></tr>
     <tr><td> Cost to Upgrade: </td><td id="tower_upgrade_cost"></tr>
-    <tr><td></td><td><button id="tower_upgrade_button">Upgrade!</button></td></tr>
+    <tr><td></td><td><button id="tower_upgrade_button"><u>U</u>pgrade!</button></td></tr>
   </table>  
 </div>
 <div id="creep"></div>
@@ -86,6 +86,7 @@
     <li>S – Fire Small Missile</li>
     <li>N – Launch Nuke</li>
     <li>W – Spawn Next Wave</li>
+    <li>U – Upgrade Selected Tower</li>
     <li>[space] – Pause/Resume</li>
     <li>[esc] – Cancel Tower/Missile</li>
 </ul>
@@ -115,6 +116,7 @@
           case 32: pause(); break;
           case 27: unselect(); break;
           case 87: spawn_wave(); break;
+          case 85: $('#tower_upgrade_button').click(); break;
           default: return true;
         }
         // if we handled the key press, return false
