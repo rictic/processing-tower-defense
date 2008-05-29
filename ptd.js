@@ -267,8 +267,8 @@ var fetch_ui_widgets = function() {
   w.tower_range = document.getElementById("tower_range");
   w.tower_damage = document.getElementById("tower_damage");
   w.tower_rate = document.getElementById("tower_rate");
-  w.tower_upgrade_cost = document.getElementById("tower_upgrade_cost");
   w.tower_upgrade_button = document.getElementById("tower_upgrade_button");
+  w.tower_sell_button = document.getElementById("tower_sell_button");
 
   return w;
 };
@@ -521,10 +521,12 @@ var Tower = function(settings) {
       if (tower.weapon_ready() == true) tower.attack(creep);
     }
   }
+  tower.sale_value = 50;
   tower.upgrade_cost = 50;
   tower.upgrade = function() {
     if (SET.gold > this.upgrade_cost) {
       SET.gold -= this.upgrade_cost;
+      tower.sale_value += this.upgrade_cost;
       this.upgrade_cost = this.upgrade_cost * 2;
       this.damage = this.damage * 1.5;
       this.set_range(this.range * 1.1);
@@ -533,15 +535,28 @@ var Tower = function(settings) {
     }
     else error("You don't have enough gold to upgrade, you need " + (this.upgrade_cost - SET.gold) + " more.");
   }
+  tower.sell = function() {
+    SET.gold += Math.floor(this.sale_value * 0.75);
+    this.is_dead = function() { return true; },
+    set_state_normal();
+  }
+
+
   tower.display_stats = function() {
     WIDGETS.tower_type.innerHTML = this.type;
     WIDGETS.tower_range.innerHTML = this.range;
     WIDGETS.tower_damage.innerHTML = this.damage;
     WIDGETS.tower_rate.innerHTML = this.reload_rate;
-    WIDGETS.tower_upgrade_cost.innerHTML = this.upgrade_cost;
+    WIDGETS.tower_sell_button.innerHTML = "Sell tower for " + Math.floor(this.sale_value * 0.75) + " gold!";
+    WIDGETS.tower_upgrade_button.innerHTML = "<u>U</u>pgrade for " + Math.floor(this.upgrade_cost) + " gold!";
+
     WIDGETS.tower_upgrade_button.onclick = function() {
       tower.upgrade();
     }
+    WIDGETS.tower_sell_button.onclick = function() {
+      tower.sell();
+    }
+
     WIDGETS.tower.style.display = "block";
   };
 
@@ -559,6 +574,7 @@ var MissileTower = function(gx,gy) {
   mt.type = "Missile Tower";
   mt.damage = 100;
   mt.upgrade_cost = 100;
+  mt.sale_value = 100;
   mt.set_range(5.5);
   mt.reload_rate = 750;
   mt.attack = function(creep) {
@@ -567,6 +583,7 @@ var MissileTower = function(gx,gy) {
   mt.upgrade = function() {
     if (SET.gold >= this.upgrade_cost) {
       SET.gold -= this.upgrade_cost;
+      this.sale_value += this.upgrade_cost;
       this.upgrade_cost = this.upgrade_cost * 2;
       this.damage = this.damage * 1.5;
       this.set_range(this.range + 0.5);
@@ -586,9 +603,11 @@ var LaserTower = function(gx,gy) {
     assign_to_depth(Laser(this,creep),SET.bullet_render_level);
   };
   lt.upgrade_cost = 50;
+  lt.sale_value = 50;
   lt.upgrade = function() {
     if (SET.gold >= this.upgrade_cost) {
       SET.gold -= this.upgrade_cost;
+      this.sale_value += this.upgrade_cost;
       this.upgrade_cost = this.upgrade_cost * 1.5;
       this.damage = this.damage * 2.0;
       this.set_range(this.range + 0.25);
