@@ -636,12 +636,13 @@ var Missile = function(tower,target) {
   Object.extend(m, Weapon(tower,target));
   m.size = 10;
   m.color = color(255,0,0);
+  m.fill_color = color(250,50,50);
   m.speed = 5;
   m.damage = tower.damage;
   m.proximity = 20;
   m.draw = function() {
     stroke(m.color);
-    
+    fill(m.fill_color);
     var mx = this.x;
     var my = this.y;
     var size = this.size;
@@ -938,6 +939,7 @@ var error = function(msg) {
 
 var start_tower_defense = function() {
   setup = function() {
+    $('#pause_button').html("Pause");
     set_canvas("tower_defense");
     reset_game();
     size(SET.width, SET.height);
