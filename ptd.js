@@ -710,6 +710,16 @@ var log = function(label, thing) {
 }
 
 
+var insert_sorted = function(array, value, sortKey) {
+  var vkey = sortKey(value);
+  var i = 0;
+  for(; i < array.length; i++) {
+    if (vkey <= sortKey(array[i]))
+      break;
+  }
+  return array.slice(0,i).concat([value]).concat(array.slice(i))
+}
+
 var known_best_paths = {}
 var reset_pathfinding = function() {
   log("pathfinding reset!");
@@ -770,13 +780,10 @@ var pathfind = function(start_block) {
     successors(block).forEach(function(s) {
       var suc = {gpos:s, g:1 + block.g, ancestor:block};
       suc.f = suc.g + heuristic(suc.gpos);
-      pqueue.push(suc);
+
+      pqueue = insert_sorted(pqueue, suc, function(bl) {return bl.f});
     })
 
-    //this is a slow, shitty way of doing a priority queue.
-    // step 1 to making this faster is implementing a proper
-    // heap queue
-    pqueue.sort(function(a,b) {return a.f - b.f});
 //     log("pqueue", pqueue);
   }
   log("---------pathfinding failed!----------");
