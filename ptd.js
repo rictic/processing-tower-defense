@@ -260,6 +260,7 @@ var fetch_ui_widgets = function() {
   w.nukes_left = document.getElementById("nukes_left");
   w.creep_variety = document.getElementById("creep_variety");
   w.wave = document.getElementById("wave");
+  w.till_next_wave = document.getElementById("till_next_wave");
   
   // tower widgets
   w.tower = document.getElementById("tower");
@@ -316,6 +317,7 @@ var UIUpdater = function() {
     WIDGETS.gold.innerHTML = SET.gold;
     WIDGETS.lives.innerHTML = SET.lives;
     WIDGETS.nukes_left.innerHTML = SET.nukes + " left";
+    WIDGETS.till_next_wave.innerHTML = Math.floor(((SET.creep_wave_controller.last + SET.creep_wave_controller.delay) - SET.now) / 1000)
   };
   assign_to_depth(uiu, SET.system_render_level);
   return uiu;
@@ -327,9 +329,9 @@ var CreepWaveController = function() {
   cwc.delay = 25000;
   cwc.last = millis()-20000;
   cwc.wave = 1;
-  cwc.spawn_wave = function() {
+  cwc.spawn_wave = function(bonus) {
     WIDGETS.wave.innerHTML = this.wave;
-    var settings = {wave:this.wave};
+    var settings = {wave:this.wave, bonus:bonus};
     var cw;
     if (this.wave == 0) cw = CreepWave(settings);
     else if (this.wave % 15 == 0) cw = FizBuzzCreepWave(settings);
@@ -362,7 +364,11 @@ var CreepWave = function(settings) {
     this.remaining--;
     this.spawn_creep();
     this.last = SET.now;    
-    if (this.remaining < 1) this.is_dead = function() { return true; };
+    if (this.remaining < 1) {
+      this.is_dead = function() { return true; };
+      if (this.bonus)
+        SET.score += this.bonus;
+    }
   }
 
   cw.update = function() {
@@ -862,7 +868,9 @@ var aim_missile = function(x,y) {
 };
 
 var spawn_wave = function() {
-  SET.creep_wave_controller.spawn_wave();
+  //a bonus for bravery, to be paid when the creep wave thus spawned is done
+  var bonus = Math.floor(((SET.creep_wave_controller.last + SET.creep_wave_controller.delay) - SET.now) / 100); 
+  SET.creep_wave_controller.spawn_wave(bonus);
 }
 
 var nuke_creeps = function() {
