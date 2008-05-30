@@ -723,6 +723,38 @@ var Laser = function(tower,target) {
   return l;
 };
 
+/*
+  Used in by the Creep method "display stats" to
+  support constantly updated hp for the specific
+  selected creep. Conceivably one might move into
+  another state immediately without transitioning
+  into normal state before that. Preferably some
+  kind of state cleanup function will be added to
+  the state API, but at the moment it will function
+  correctly anyway, because the creep div will either
+  be invisible, or the most recent creephpupdater
+  will be the last one called, meaning that the
+  correct hp will be displayed even if there are
+  multiple existing creephpupdaters in the
+  system rendering level.
+ */
+var CreepHpUpdater = function(creep) {
+  var chp = new Object();
+  Object.extend(chp, InertDrawable);
+  chp.update = function() {
+    WIDGETS.creep_hp.innerHTML = creep.hp;
+  }
+  chp.is_dead = function() {
+    if (SET.state != SET.selecting_creep_state || creep.hp <= 0) {
+      set_state_normal();
+      return true;
+    }
+    else return false;
+  }
+  assign_to_depth(chp, SET.system_render_level);
+}
+
+
 var Creep = function(wave) {
   var cp = SET.creeps_spawned;
   var c = new Object();
@@ -771,6 +803,7 @@ var Creep = function(wave) {
     WIDGETS.creep_hp.innerHTML = this.hp;
     WIDGETS.creep_value.innerHTML = this.value + " gold";
     WIDGETS.creep.style.display = "block";
+    CreepHpUpdater(this);
   }
   SET.creeps_spawned++;
   assign_to_depth(c, SET.creep_render_level);
