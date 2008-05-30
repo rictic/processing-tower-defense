@@ -145,6 +145,23 @@ var get_tower_at = function(gx,gy) {
     if (tower.gx == gx && tower.gy == gy) return tower;
   }
   return false;
+};
+
+var get_creep_nearest = function(x,y,sensitivity) {
+  if (!sensitivity) sensitivity = 10;
+  var creeps = SET.rendering_groups[SET.creep_render_level];
+  var len = creeps.length;
+  var nearest_creep;
+  var distance = sensitivity;
+  for (var i=0;i<len;i++) {
+    var creep = creeps[i];
+    var d = dist(x,y,creep.x,creep.y);
+    if (d < distance) {
+      distance = d;
+      nearest_creep = creep;
+    }
+  }
+  return (distance < sensitivity) ? nearest_creep : undefined;
 }
   
 /*
@@ -230,6 +247,7 @@ var default_set = function() {
   set.selecting_tower_state = 3;
   set.pause_state = 4;
   set.game_over_state = 5;
+  set.selecting_creep_state = 6;
   set.state = set.normal_state;
 
   // game values
@@ -270,6 +288,12 @@ var fetch_ui_widgets = function() {
   w.tower_rate = document.getElementById("tower_rate");
   w.tower_upgrade_button = document.getElementById("tower_upgrade_button");
   w.tower_sell_button = document.getElementById("tower_sell_button");
+
+  // creep widgets
+  w.creep = document.getElementById("creep");
+  w.creep_type = document.getElementById("creep_type");
+  w.creep_hp = document.getElementById("creep_hp");
+  w.creep_value = document.getElementById("creep_value");
 
   return w;
 };
@@ -706,7 +730,7 @@ var Creep = function(wave) {
   c.y = SET.entrance.y_mid;
   c.color = SET.creep_color;
   c.size = SET.creep_size;
-  c.hp = SET.creep_hp * Math.pow(1.4,wave);
+  c.hp = Math.floor(SET.creep_hp * Math.pow(1.4,wave));
   c.value = SET.creep_value + wave;
   c.speed = SET.creep_speed;
   c.is_dead = function() {
@@ -741,6 +765,13 @@ var Creep = function(wave) {
     fill(this.color);
     ellipse(this.x,this.y,this.size,this.size);
   }
+  c.creep_type = "Normal Creep";
+  c.display_stats = function() {
+    WIDGETS.creep_type.innerHTML = this.creep_type;
+    WIDGETS.creep_hp.innerHTML = this.hp;
+    WIDGETS.creep_value.innerHTML = this.value + " gold";
+    WIDGETS.creep.style.display = "block";
+  }
   SET.creeps_spawned++;
   assign_to_depth(c, SET.creep_render_level);
   return c;
@@ -748,6 +779,7 @@ var Creep = function(wave) {
 
 var FizCreep = function(wave) {
   var fc = Creep(wave);
+  fc.creep_type = "Fiz Creep";
   fc.color = color(0,255,255);
   fc.size = fc.size * 1.3;
   fc.hp = Math.floor(fc.hp * 2);
@@ -758,6 +790,7 @@ var FizCreep = function(wave) {
 
 var BuzzCreep = function(wave) {
   var bc = Creep(wave);
+  bc.creep_type = "Buzz Creep";
   bc.color = color(100,150,50);
   bc.speed = bc.speed * 1.5;
   bc.hp = Math.floor(bc.hp * .75);
@@ -768,6 +801,7 @@ var BuzzCreep = function(wave) {
 
 var FizBuzzCreep = function(wave) {
   var fbc = Creep(wave);
+  fbc.creep_type = "FizBuzz Creep";
   fbc.color = color(255,100,150);
   fbc.size = fbc.size * 1.5;
   fbc.hp = fbc.hp * 10;
@@ -786,6 +820,7 @@ var set_state_normal = function() {
   SET.state_draw = undefined;
   SET.bg_color = SET.bg_colors.neutral;
   WIDGETS.tower.style.display = "none";
+  WIDGETS.creep.style.display = "none";
 }
 
 var build_tower_mode = function() {
@@ -838,6 +873,12 @@ var select_tower = function(tower) {
   tower.display_stats();
   WIDGETS.tower.style.display = "block";
 };
+
+var select_creep = function(creep) {
+  SET.state = SET.selecting_creep_state;
+  creep.display_stats();
+  WIDGETS.creep.style.display = "block";
+}
 
 var aim_missile = function(x,y) {
   var cost = 50;
@@ -942,6 +983,10 @@ var on_mouse_press = function() {
     var gpos = pixel_to_grid(pos.x,pos.y);
     var tower = get_tower_at(gpos.gx,gpos.gy);
     if (tower != false) select_tower(tower);
+    else {
+      var creep = get_creep_nearest(pos.x,pos.y);
+      if (creep) select_creep(creep);
+    }
   }
   else {
     if (SET.state_legal && SET.state_legal(pos.x,pos.y) == true)

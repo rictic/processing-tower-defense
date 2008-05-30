@@ -82,6 +82,10 @@ div#side {
     display: none;
 }
 
+#creep {
+    display: none;
+}
+
 #side table {
 
     margin-left: 10px;
