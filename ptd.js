@@ -745,7 +745,7 @@ var CreepHpUpdater = function(creep) {
     WIDGETS.creep_hp.innerHTML = creep.hp;
   }
   chp.is_dead = function() {
-    if (SET.state != SET.selecting_creep_state || creep.hp <= 0) {
+    if (!creep || SET.state != SET.selecting_creep_state || creep.is_dead()) {
       set_state_normal();
       return true;
     }
