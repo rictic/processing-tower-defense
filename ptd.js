@@ -533,8 +533,8 @@ var Tower = function(settings) {
     if (SET.gold > this.upgrade_cost) {
       SET.gold -= this.upgrade_cost;
       tower.sale_value += this.upgrade_cost;
-      this.upgrade_cost = this.upgrade_cost * 2;
-      this.damage = this.damage * 1.5;
+      this.upgrade_cost = Math.floor(this.upgrade_cost * 2);
+      this.damage = Math.floor(this.damage * 1.5);
       this.set_range(this.range * 1.1);
       this.reload_rate = this.reload_rate * 0.95;
       this.display_stats();
@@ -589,9 +589,9 @@ var MissileTower = function(gx,gy) {
   mt.upgrade = function() {
     if (SET.gold >= this.upgrade_cost) {
       SET.gold -= this.upgrade_cost;
-      this.sale_value += this.upgrade_cost;
-      this.upgrade_cost = this.upgrade_cost * 2;
-      this.damage = this.damage * 1.5;
+      this.sale_value = Math.floor(this.sale_value + this.upgrade_cost);
+      this.upgrade_cost = Math.floor(this.upgrade_cost * 1.5);
+      this.damage = Math.floor(this.damage * 2.5);
       this.set_range(this.range + 0.5);
       SET.rendering_groups[SET.killzone_render_level] = [];
       set_state_normal();
@@ -613,9 +613,9 @@ var LaserTower = function(gx,gy) {
   lt.upgrade = function() {
     if (SET.gold >= this.upgrade_cost) {
       SET.gold -= this.upgrade_cost;
-      this.sale_value += this.upgrade_cost;
-      this.upgrade_cost = this.upgrade_cost * 1.5;
-      this.damage = this.damage * 2.0;
+      this.sale_value = Math.floor(this.sale_value + this.upgrade_cost);
+      this.upgrade_cost = Math.floor(this.upgrade_cost * 1.5);
+      this.damage = Math.floor(this.damage * 2.0);
       this.set_range(this.range + 0.25);
       this.reload_rate = this.reload_rate - 10;
       SET.rendering_groups[SET.killzone_render_level] = [];
@@ -750,8 +750,8 @@ var FizCreep = function(wave) {
   var fc = Creep(wave);
   fc.color = color(0,255,255);
   fc.size = fc.size * 1.3;
-  fc.hp = fc.hp * 2;
-  fc.value = fc.value * 1.5;
+  fc.hp = Math.floor(fc.hp * 2);
+  fc.value = Math.floor(fc.value * 1.5);
   fc.speed = fc.speed * 0.75;
   return fc;
 };
@@ -760,9 +760,9 @@ var BuzzCreep = function(wave) {
   var bc = Creep(wave);
   bc.color = color(100,150,50);
   bc.speed = bc.speed * 1.5;
-  bc.hp = bc.hp * .75;
+  bc.hp = Math.floor(bc.hp * .75);
   bc.size = bc.size * 0.9;
-  bc.value = bc.value * 1.25;
+  bc.value = Math.floor(bc.value * 1.25);
   return bc;
 };
 
