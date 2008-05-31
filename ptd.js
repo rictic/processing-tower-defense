@@ -1149,6 +1149,11 @@ var message = function(msg) {
   $('').trigger("message", msg);
 }
 
+var unselect = function() {
+  if (SET.state) SET.state.tear_down();
+  SET.state = undefined;
+}
+
 var error = function(msg) {
   $('').trigger("error", msg);
 }
