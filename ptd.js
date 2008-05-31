@@ -430,11 +430,6 @@ var FizBuzzCreepWave = function(settings) {
 var KillZone = function(x,y,r) {
   var kz = new Object();
   Object.extend(kz, InertDrawable);
-  kz.is_dead = function() {
-    if (SET.state != SET.selecting_tower_state)
-      return true;
-    return false;
-  }
   var d = 2*r;
   kz.color = SET.killzone_color;
   kz.draw = function() {
@@ -448,21 +443,11 @@ var KillZone = function(x,y,r) {
 
 var BuildRadius = function(x,y,r) {
   var br = KillZone(x,y,r);
-  br.is_dead = function() {
-    if (SET.state != SET.placing_tower_state)
-      return true;
-    return false;
-  }
   return br;
 }
 
 var MissileRadius = function(x,y,r) {
   var mr = KillZone(x,y,r);
-  mr.is_dead = function() {
-    if (SET.state != SET.aiming_missile_state)
-      return true;
-    return false;
-  }
   return mr;
 }
 
@@ -846,38 +831,58 @@ var FizBuzzCreep = function(wave) {
   User-interface functions.
  */
 
-var UserInterfaceMode = function() {};
-UserInterfaceMode.prototype.action = function(x,y) {
-  // called when the mouse is clicked, if is_legal
+var UserInterfaceMode = function() {
+ this.action = function(x,y) {
+    // called when the mouse is clicked, if is_legal
+ };
+ this.is_legal = function(x,y) { 
+    // returns true,false or undefined.
+    // if true, then the UI mode's action can be undertaken
+    // at @x, @y. If false, then it cannot be undertaken.
+    // Otherwise, the UI has no concept of legality.
+    // The distinction between undefined and true lies in
+    // visual cues presented to the user.
+    return undefined; 
+ };
+ this.draw = function(x,y) {
+    // draw any relevant graphics at the mouse's location
+ };
+ this.set_up = function() {
+    // do any setup before entering the UI mode
+ };
+ this.tear_down = function() {
+    // perform any clean up before exiting the UI mode. 
+ };
+ this.can_leave_mode = function(x,y) {
+    // used to check if the the UI mode can be left
+    return true;
+ };
+ this.can_enter_mode = function(x,y) {
+    // used for checking if a UI can be invoked 
+    return true;
+ };
+ this.name = function() {
+    return "UserInterfaceMode";
+ };
 };
-UserInterfaceMode.prototype.is_legal = function(x,y) { 
-  // returns true,false or undefined.
-  // if true, then the UI mode's action can be undertaken
-  // at @x, @y. If false, then it cannot be undertaken.
-  // Otherwise, the UI has no concept of legality.
-  // The distinction between undefined and true lies in
-  // visual cues presented to the user.
-  return undefined; 
-};
-UserInterfaceMode.prototype.draw = function(x,y) {
-  // draw any relevant graphics at the mouse's location
-};
-UserInterfaceMode.prototype.set_up = function() {
-  // do any setup before entering the UI mode
-};
-UserInterfaceMode.prototype.tear_down = function() {
-  // perform any clean up before exiting the UI mode. 
-};
-UserInterfaceMode.prototype.can_leave_mode = function(x,y) {
-  // used to check if the the UI mode can be left
-  return true;
-};
-UserInterfaceMode.prototype.can_enter_mode = function(x,y) {
-  // used for checking if a UI can be invoked 
-  return true;
+
+var attempt_to_enter_ui_mode = function(mode, error_msg) {
+  /*
+    This is only necessary for button based UI modes. This
+    logic is already handled for UI modes invoked by mouse
+    clicks in the game canvas.
+   */
+  if (!SET.state || SET.state.can_leave_mode()) {
+    if (SET.state) SET.state.tear_down();
+    if (mode.can_enter_mode())
+      SET.state = mode;
+    else if (!error_msg)
+      {error("Not enough gold, you need at least " + mode.cost)};
+  }
 };
 
 var set_state_normal = function() {
+  /*
   SET.state = SET.normal_state;
   SET.state_action = undefined;
   SET.state_legal = undefined;
@@ -885,91 +890,160 @@ var set_state_normal = function() {
   SET.bg_color = SET.bg_colors.neutral;
   WIDGETS.tower.style.display = "none";
   WIDGETS.creep.style.display = "none";
-}
+  */
+};
 
-var build_tower_mode = function() {
-  SET.state = SET.placing_tower_state;
-  SET.state_legal = function(x,y) {
+var BuildTowerMode = function() {
+  this.is_legal = function(x,y) {
     var gpos = pixel_to_grid(x,y);
     return can_build_here(gpos.gx,gpos.gy);
   };
-  SET.state_draw = function(x,y) {
+  this.draw = function(x,y) {
     var gpos = pixel_to_grid(x,y);
     var mid = center_of_square(gpos);
     var radius = SET.pixels_per_square;
-    SET.rendering_groups[SET.killzone_render_level] = [];
-    BuildRadius(mid.x,mid.y,radius);
-  }
-  var pos = mouse_pos();
-  SET.state_draw(pos.x,pos.y); // draws missile instantly, for hotkeys
+    if (this.br)
+      this.br.is_dead = function() { return true; }
+    this.br = BuildRadius(mid.x,mid.y,radius);
+  };
+  this.tear_down = function() {
+    if (this.br) {
+      this.br.is_dead = function() { return true; };
+    }
+  };
+  this.can_enter_mode = function(x,y) {
+    if (SET.gold >= this.cost) return true;
+    else return false;
+  };
+  this.name = function() { 
+    return "BuildTowerMode"; 
+  };
 };
+BuildTowerMode.prototype = new UserInterfaceMode();
+
+var BuildMissileTowerMode = function() {
+  this.cost = 100;
+  this.action = function(x,y) {
+    var gpos = pixel_to_grid(x,y);
+    MissileTower(gpos.gx,gpos.gy);
+    SET.gold -= this.cost;
+  };
+  this.name = function() {
+    return "BuildMissileTowerMode";
+  };
+};
+BuildMissileTowerMode.prototype = new BuildTowerMode();
+
+
+
 
 var build_missile_tower = function() {
-  var cost = 100;
-  if (SET.gold >= cost) {
-    build_tower_mode();
-    SET.state_action = function(x,y) {
-      var gpos = pixel_to_grid(x,y);
-      MissileTower(gpos.gx,gpos.gy);
-      SET.gold -= cost;
-      set_state_normal();
-    }
-  }
-  else {error("Not enough gold, you need at least 100")}
+  attempt_to_enter_ui_mode(new BuildMissileTowerMode());
 };
-  
+
+var BuildLaserTowerMode = function() {
+  this.cost = 50;
+  this.action = function(x,y) {
+    var gpos = pixel_to_grid(x,y);
+    LaserTower(gpos.gx,gpos.gy);
+    SET.gold -= this.cost;
+  };
+  this.name = function() {
+    return "BuildLaserTowerMode";
+ };
+};
+BuildLaserTowerMode.prototype = new BuildTowerMode();
+
 var build_laser_tower = function() {
-  if (SET.gold >= 50) {
-    build_tower_mode();
-    SET.state_action = function(x,y) {
-      var gpos = pixel_to_grid(x,y);
-      LaserTower(gpos.gx,gpos.gy);
-      SET.gold -= 50;
-      set_state_normal();
-    }
-  }
-  else {error("Not enough gold, you need at least 50")}
+  attempt_to_enter_ui_mode(new BuildLaserTowerMode());
 };
+
+
+/* TowerSelectMode */
+
+var TowerSelectMode = function() {
+  this.set_up = function(x,y) {
+    var gpos = pixel_to_grid(x,y);
+    this.tower = get_tower_at(gpos.gx,gpos.gy);
+    if (this.tower) {
+      this.tower.display_stats();
+      this.killzone = KillZone(this.tower.x_mid,
+			       this.tower.y_mid,
+			       this.tower.range*SET.pixels_per_square);
+      WIDGETS.tower.style.display = "block";
+    }
+  };
+  this.tear_down = function() {
+    WIDGETS.tower.style.display = "none";
+    if (this.killzone)
+      this.killzone.is_dead = function() { return true; };
+  };
+  this.can_enter_mode = function(x,y) {
+    var gpos = pixel_to_grid(x,y);
+    var tower = get_tower_at(gpos.gx,gpos.gy);
+    return (tower == false) ? false : true;
+  }
+
+};
+TowerSelectMode.prototype = new UserInterfaceMode();
 
 var select_tower = function(tower) {
-  SET.state = SET.selecting_tower_state;
-  KillZone(tower.x_mid,tower.y_mid,tower.range*SET.pixels_per_square);
-  tower.display_stats();
-  WIDGETS.tower.style.display = "block";
+  SET.state = new TowerSelectMode(tower);
 };
 
-var select_creep = function(creep) {
-  SET.state = SET.selecting_creep_state;
-  creep.display_stats();
-  WIDGETS.creep.style.display = "block";
+/* CreepSelectMode */
+
+var CreepSelectMode = function() {
+  this.set_up = function(x,y) {
+    this.creep = get_creep_nearest(x,y);
+    if (this.creep) {
+      this.creep.display_stats();
+      WIDGETS.creep.style.display = "block";
+    }
+  };
+  this.tear_down = function() {
+    WIDGETS.creep.style.display = "none";
+  };
+};
+CreepSelectMode.prototype = new UserInterfaceMode();
+
+var select_creep = function() {
+  SET.state = CreepSelectMode();
+};
+
+/* AimMissileMode */
+
+var AimMissileMode = function() {
+  this.cost = 50;
+  this.radius = SET.missile_blast_radius * SET.pixels_per_square;
+  this.draw = function(x,y) {
+    if (this.mr) this.mr.is_dead = function() { return true; };
+    this.mr = MissileRadius(x,y,this.radius);
+  }
+  this.tear_down = function() {
+    if (this.mr) this.mr.is_dead = function() { return true; };
+  }
+  this.can_enter_mode = function(x,y) {
+    if (SET.gold >= this.cost) return true;
+    else return false;
+  };
+  this.name = function() { 
+    return "AimMissileMode"; 
+  };
+  this.is_legal = function() { return true; };
+  this.action = function(x,y) {
+    var creeps = SET.rendering_groups[SET.creep_render_level];
+    creeps.forEach(function(creep) {
+	var distance = dist(x,y,creep.x,creep.y);
+	if (distance <= this.radius) creep.hp = Math.floor(creep.hp / 2);
+      });
+    SET.gold -= this.cost;
+  }; 
 }
+AimMissileMode.prototype = new UserInterfaceMode();
 
 var aim_missile = function(x,y) {
-  var cost = 50;
-  if (SET.gold > cost) {
-    var radius = SET.missile_blast_radius*SET.pixels_per_square;
-    SET.state = SET.aiming_missile_state;
-    SET.state_draw = function(x,y) {
-      SET.rendering_groups[SET.killzone_render_level] = [];
-      MissileRadius(x,y,radius);
-    }
-    SET.state_action = function(x,y) {
-      var creeps = SET.rendering_groups[SET.creep_render_level];
-      creeps.forEach(function(creep) {
-	  var distance = dist(x,y,creep.x,creep.y);
-	  if (distance <= radius) creep.hp = Math.floor(creep.hp / 2);
-	});
-
-      SET.gold -= cost;
-    }
-    SET.state_legal = function(x,y) {
-      var gpos = pixel_to_grid(x,y);
-      return can_build_here(gpos.gx,gpos.gy);
-    };
-    var pos = mouse_pos();
-    SET.state_draw(pos.x,pos.y); // draws missile instantly, for hotkeys
-  }
-  else {error("Not enough gold, you need at least 50")}
+  attempt_to_enter_ui_mode(new AimMissileMode());
 };
 
 var spawn_wave = function() {
@@ -990,17 +1064,47 @@ var nuke_creeps = function() {
   else {error("You're all out of nukes!")}
 };
 
+var PauseMode = function() {
+  this.name = function() { return "PauseMode" };
+  this.can_leave_mode = function(x,y) {
+    return false;
+  };
+  this.tear_down = function() {
+    error("tearing down pause mode");
+  }
+};
+PauseMode.prototype = new UserInterfaceMode();
+
 var pause_resume = function() {
-  if (SET.state == SET.game_over_state) return undefined;
-  if (SET.state != SET.pause_state) SET.state = SET.pause_state;
-  else SET.state = SET.normal_state;
+  if (SET.state) {
+    var state_name = SET.state.name();
+    if (state_name == "GameOverMode")
+      ;
+    else if (state_name == "PauseMode")
+      SET.state = undefined;
+    else {
+      SET.state.tear_down();
+      SET.state = new PauseMode();
+    }
+  }
+  else SET.state = new PauseMode();
 };
 
+var GameOverMode = function() {
+  this.set_up = function(x,y) {
+    SET.score += SET.gold;
+    SET.gold = 0;
+    SET.state = SET.game_over_state;
+    $('').trigger("game_over",true);
+  }
+  this.name = function() { return "GameOverMode"; };
+  this.can_leave_mode = function(x,y) { return false; };
+};
+GameOverMode.prototype = new UserInterfaceMode();
+
 var game_lost = function() {
-  SET.score += SET.gold;
-  SET.gold = 0;
-  SET.state = SET.game_over_state;
-  $('').trigger("game_over",true);
+  if (SET.state) SET.state.tear_down();
+  SET.state = new GameOverMode();
 }
 
 /*
@@ -1023,8 +1127,6 @@ var reset_game = function() {
   Mouse functions.
  */
 
-
-
 var on_mouse_moved = function() {
   if (SET.state && SET.state.draw) {
     var pos = mouse_pos();
@@ -1041,10 +1143,10 @@ var on_mouse_press = function() {
   var pos = mouse_pos();
   if (SET.state) {
     if (SET.state.is_legal(pos.x,pos.y)) {
-      SET.state.action(x,y);
+      SET.state.action(pos.x,pos.y);
     }
     if (SET.state.can_leave_mode(pos.x,pos.y)) {
-      SET.tear_down(pos.x,pos.y);
+      SET.state.tear_down(pos.x,pos.y);
       SET.state = undefined;
     }
   }
@@ -1053,9 +1155,9 @@ var on_mouse_press = function() {
     for (var i=0;i<len;i++) {
       var modeFunc = UI_MODES_FROM_CLICK[i];
       var mode = new modeFunc();
-      if (mode.can_enter_mode(x,y)) {
+      if (mode.can_enter_mode(pos.x,pos.y)) {
 	SET.state = mode;
-	SET.state.set_up();
+	SET.state.set_up(pos.x,pos.y);
 	break;
       }
     }
@@ -1091,10 +1193,12 @@ var start_tower_defense = function() {
     initProcessing();
   }
   draw = function() {
-    if (SET.state != SET.game_over_state && SET.state != SET.pause_state) {
-      background(SET.bg_color);
-      update_groups(SET.rendering_groups);
+    if (SET.state) {
+      var state_name = SET.state.name();
+      if (state_name == "GameOverMode" || state_name == "PauseMode") return
     }
+    background(SET.bg_color);
+    update_groups(SET.rendering_groups);
   }
   setup();
 }
