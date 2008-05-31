@@ -1023,41 +1023,44 @@ var reset_game = function() {
   Mouse functions.
  */
 
+
+
 var on_mouse_moved = function() {
-  var pos = mouse_pos();
-  if (SET.state != SET.normal_state && SET.state_legal) {
-    if (SET.state_legal(pos.x,pos.y) == true)
-      SET.bg_color = SET.bg_colors.positive;
-    else SET.bg_color = SET.bg_colors.negative;
-    }
-  else {
-    SET.bg_color = SET.bg_colors.neutral;
+  if (SET.state && SET.state.draw) {
+    var pos = mouse_pos();
+    SET.state.draw(pos.x,pos.y);
   }
-  if (SET.state_draw) SET.state_draw(pos.x,pos.y);
 };
+
+// user-interface modes that can be entered by clicking within
+// the game canvas (i.e. this does not include states reached
+// by clicking an html button)
+var UI_MODES_FROM_CLICK = [TowerSelectMode, CreepSelectMode];
 
 var on_mouse_press = function() {
-  //ignore mouse clicks if it's paused or game over
-  if (SET.state == SET.game_over_state || SET.state == SET.pause_state)
-    return
-
   var pos = mouse_pos();
-  if (SET.state == SET.normal_state || SET.state == SET.selecting_tower_state) {
-    set_state_normal();
-    var gpos = pixel_to_grid(pos.x,pos.y);
-    var tower = get_tower_at(gpos.gx,gpos.gy);
-    if (tower != false) select_tower(tower);
-    else {
-      var creep = get_creep_nearest(pos.x,pos.y);
-      if (creep) select_creep(creep);
+  if (SET.state) {
+    if (SET.state.is_legal(pos.x,pos.y)) {
+      SET.state.action(x,y);
+    }
+    if (SET.state.can_leave_mode(pos.x,pos.y)) {
+      SET.tear_down(pos.x,pos.y);
+      SET.state = undefined;
     }
   }
-  else {
-    if (SET.state_legal && SET.state_legal(pos.x,pos.y) == true)
-      SET.state_action(pos.x,pos.y);
-    set_state_normal();
+  if (!SET.state) {
+    var len = UI_MODES_FROM_CLICK.length;
+    for (var i=0;i<len;i++) {
+      var modeFunc = UI_MODES_FROM_CLICK[i];
+      var mode = new modeFunc();
+      if (mode.can_enter_mode(x,y)) {
+	SET.state = mode;
+	SET.state.set_up();
+	break;
+      }
+    }
   }
-};
+}
 
 var unselect = function() {
   if ([SET.aiming_missile_state, SET.placing_tower_state].indexOf(SET.state) != -1)
