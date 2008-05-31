@@ -1070,9 +1070,19 @@ var PauseMode = function() {
   this.can_leave_mode = function(x,y) {
     return false;
   };
-  this.tear_down = function() {
-    error("tearing down pause mode");
+  this.set_up = function() {
+    this.began_at = millis();
   }
+  this.tear_down = function() {
+    var elapsed = millis() - this.began_at;
+    SET.rendering_groups.forEach(function(group) {
+	group.forEach(function(member) {
+	    if (member.last)
+	      member.last += elapsed;
+	  });
+      });
+  }
+  this.name = function() { return "PauseMode"; };
 };
 PauseMode.prototype = new UserInterfaceMode();
 
@@ -1081,14 +1091,20 @@ var pause_resume = function() {
     var state_name = SET.state.name();
     if (state_name == "GameOverMode")
       ;
-    else if (state_name == "PauseMode")
+    else if (state_name == "PauseMode") {
+      SET.state.tear_down();
       SET.state = undefined;
+    }
     else {
       SET.state.tear_down();
       SET.state = new PauseMode();
+      SET.state.set_up();
     }
   }
-  else SET.state = new PauseMode();
+  else {
+    SET.state = new PauseMode();
+    SET.state.set_up();
+  }
 };
 
 var GameOverMode = function() {
