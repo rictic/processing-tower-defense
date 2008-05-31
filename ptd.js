@@ -248,7 +248,7 @@ var default_set = function() {
   set.creep_size = 10;
   set.creep_hp = 10;
   set.creep_value = 1;
-  set.creep_speed = 2;
+  set.creep_speed = 50;
   set.missile_blast_radius = 5;
   set.missile_damage = 100;
   set.gold = 200;
@@ -740,6 +740,7 @@ var Creep = function(wave) {
   c.hp = Math.floor(SET.creep_hp * Math.pow(1.4,wave));
   c.value = SET.creep_value + wave;
   c.speed = SET.creep_speed;
+  c.last = millis();
   c.is_dead = function() {
     if (this.hp <= 0) {
       SET.gold += this.value;
@@ -762,7 +763,11 @@ var Creep = function(wave) {
       if (SET.lives < 1) game_lost();
     }
     else {
-      var path = calc_path(this.x,this.y,SET.exit.x_mid,SET.exit.y_mid,this.speed);
+      var elapsed = SET.now - this.last;
+      var speed = (elapsed/1000) * this.speed;
+      this.last = SET.now;
+
+      var path = calc_path(this.x,this.y,SET.exit.x_mid,SET.exit.y_mid,speed);
       this.x += path.x;
       this.y += path.y;
     }
