@@ -886,7 +886,7 @@ var BuildTowerMode = function() {
   this.draw = function(x,y) {
     var gpos = pixel_to_grid(x,y);
     var mid = center_of_square(gpos);
-    var radius = SET.pixels_per_square;
+    var radius = SET.half_pixels_per_square;
     if (this.br)
       this.br.is_dead = function() { return true; }
     this.br = BuildRadius(mid.x,mid.y,radius);
