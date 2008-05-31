@@ -863,8 +863,11 @@ var attempt_to_enter_ui_mode = function(mode, error_msg) {
    */
   if (!SET.state || SET.state.can_leave_mode()) {
     if (SET.state) SET.state.tear_down();
-    if (mode.can_enter_mode())
+    if (mode.can_enter_mode()) {
       SET.state = mode;
+      var pos = mouse_pos();
+      SET.state.set_up(pos.x,pos.y);
+    }
     else if (!error_msg)
       {error("Not enough gold, you need at least " + mode.cost)};
   }
@@ -887,6 +890,9 @@ var BuildTowerMode = function() {
     else
       this.br.color = SET.bg_colors.negative;
 
+  };
+  this.set_up = function(x,y) {
+    this.draw(x,y);
   };
   this.tear_down = function() {
     if (this.br) {
@@ -1006,6 +1012,9 @@ var AimMissileMode = function() {
   this.draw = function(x,y) {
     if (this.mr) this.mr.is_dead = function() { return true; };
     this.mr = MissileRadius(x,y,this.radius);
+  }
+  this.set_up = function(x,y) {
+    this.draw(x,y);
   }
   this.tear_down = function() {
     if (this.mr) this.mr.is_dead = function() { return true; };
