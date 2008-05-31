@@ -576,7 +576,6 @@ var MissileTower = function(gx,gy) {
       this.upgrade_cost = Math.floor(this.upgrade_cost * 1.5);
       this.damage = Math.floor(this.damage * 2.5);
       this.set_range(this.range + 0.5);
-      SET.rendering_groups[SET.killzone_render_level] = [];
 
       if (SET.state) SET.state.tear_down();
       SET.state = new TowerSelectMode();
@@ -603,8 +602,7 @@ var LaserTower = function(gx,gy) {
       this.damage = Math.floor(this.damage * 2.0);
       this.set_range(this.range + 0.25);
       this.reload_rate = this.reload_rate - 10;
-      SET.rendering_groups[SET.killzone_render_level] = [];
-      
+
       if (SET.state) SET.state.tear_down();
       SET.state = new TowerSelectMode();
       SET.state.set_up(this.x_mid,this.y_mid);
@@ -707,17 +705,26 @@ var CreepHpUpdater = function(creep) {
   chp.update = function() {
     WIDGETS.creep_hp.innerHTML = creep.hp;
   }
+  chp.should_die = false;
   chp.is_dead = function() {
-    if (!creep || !SET.state || SET.state.name() != "CreepSelectMode" || creep.is_dead()) {
+    if (chp.should_die || !creep || !SET.state || SET.state.name() != "CreepSelectMode" || creep.is_dead()) {
       if (SET.state) {
 	SET.state.tear_down();
 	SET.state = undefined;
       }
+      if (chp.kz)
+	chp.kz.is_dead = function() { return true; };
       return true;
     }
     else return false;
   }
+  chp.draw = function() {
+    if (chp.kz) chp.kz.is_dead = function() { return true; };
+    chp.kz = KillZone(creep.x,creep.y,15);
+  }
+
   assign_to_depth(chp, SET.system_render_level);
+  return chp;
 }
 
 
@@ -769,7 +776,6 @@ var Creep = function(wave) {
     WIDGETS.creep_hp.innerHTML = this.hp;
     WIDGETS.creep_value.innerHTML = this.value + " gold";
     WIDGETS.creep.style.display = "block";
-    CreepHpUpdater(this);
   }
   SET.creeps_spawned++;
   assign_to_depth(c, SET.creep_render_level);
@@ -966,13 +972,17 @@ var CreepSelectMode = function() {
     if (this.creep) {
       this.creep.display_stats();
       WIDGETS.creep.style.display = "block";
+      this.hp_updater = CreepHpUpdater(this.creep);
     }
   };
   this.tear_down = function() {
     WIDGETS.creep.style.display = "none";
+    if (this.hp_updater) {
+      this.hp_updater.should_die = true;
+    }
   };
   this.name = function() {
-    return "CreepSelectMode"
+    return "CreepSelectMode";
   };
 };
 CreepSelectMode.prototype = new UserInterfaceMode();
