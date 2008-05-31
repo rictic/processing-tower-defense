@@ -840,11 +840,42 @@ var FizBuzzCreep = function(wave) {
   fbc.hp = fbc.hp * 10;
   fbc.value = fbc.value * 10;
   return fbc;
-}
+};
 
 /*
   User-interface functions.
  */
+
+var UserInterfaceMode = function() {};
+UserInterfaceMode.prototype.action = function(x,y) {
+  // called when the mouse is clicked, if is_legal
+};
+UserInterfaceMode.prototype.is_legal = function(x,y) { 
+  // returns true,false or undefined.
+  // if true, then the UI mode's action can be undertaken
+  // at @x, @y. If false, then it cannot be undertaken.
+  // Otherwise, the UI has no concept of legality.
+  // The distinction between undefined and true lies in
+  // visual cues presented to the user.
+  return undefined; 
+};
+UserInterfaceMode.prototype.draw = function(x,y) {
+  // draw any relevant graphics at the mouse's location
+};
+UserInterfaceMode.prototype.set_up = function() {
+  // do any setup before entering the UI mode
+};
+UserInterfaceMode.prototype.tear_down = function() {
+  // perform any clean up before exiting the UI mode. 
+};
+UserInterfaceMode.prototype.can_leave_mode = function(x,y) {
+  // used to check if the the UI mode can be left
+  return true;
+};
+UserInterfaceMode.prototype.can_enter_mode = function(x,y) {
+  // used for checking if a UI can be invoked 
+  return true;
+};
 
 var set_state_normal = function() {
   SET.state = SET.normal_state;
