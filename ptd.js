@@ -241,14 +241,7 @@ var default_set = function() {
   set.bullet_render_level = 0;
 
   // game state
-  set.normal_state = 0;
-  set.placing_tower_state = 1;
-  set.aiming_missile_state = 2;
-  set.selecting_tower_state = 3;
-  set.pause_state = 4;
-  set.game_over_state = 5;
-  set.selecting_creep_state = 6;
-  set.state = set.normal_state;
+  set.state = undefined;
 
   // game values
   set.creep_variety = "Normal Creeps";
@@ -482,7 +475,6 @@ var GridSquare = function(gx,gy,color) {
   square.x_mid = mid.x;
   square.y_mid = mid.y;
   return square;
-
 }
 
 var Square = function(gx,gy,color) {
@@ -537,26 +529,10 @@ var Tower = function(settings) {
     }
   }
   tower.sale_value = 50;
-  tower.upgrade_cost = 50;
-  tower.upgrade = function() {
-    if (SET.gold > this.upgrade_cost) {
-      SET.gold -= this.upgrade_cost;
-      tower.sale_value += this.upgrade_cost;
-      this.upgrade_cost = Math.floor(this.upgrade_cost * 2);
-      this.damage = Math.floor(this.damage * 1.5);
-      this.set_range(this.range * 1.1);
-      this.reload_rate = this.reload_rate * 0.95;
-      this.display_stats();
-    }
-    else error("You don't have enough gold to upgrade, you need " + (this.upgrade_cost - SET.gold) + " more.");
-  }
   tower.sell = function() {
     SET.gold += Math.floor(this.sale_value * 0.75);
-    this.is_dead = function() { return true; },
-    set_state_normal();
+    this.is_dead = function() { return true; };
   }
-
-
   tower.display_stats = function() {
     WIDGETS.tower_type.innerHTML = this.type;
     WIDGETS.tower_range.innerHTML = this.range;
@@ -571,10 +547,8 @@ var Tower = function(settings) {
     WIDGETS.tower_sell_button.onclick = function() {
       tower.sell();
     }
-
     WIDGETS.tower.style.display = "block";
   };
-
   tower.draw = function() {
     noStroke();
     fill(this.color);
@@ -603,8 +577,10 @@ var MissileTower = function(gx,gy) {
       this.damage = Math.floor(this.damage * 2.5);
       this.set_range(this.range + 0.5);
       SET.rendering_groups[SET.killzone_render_level] = [];
-      set_state_normal();
-      select_tower(this);
+
+      if (SET.state) SET.state.tear_down();
+      SET.state = new TowerSelectMode();
+      SET.state.set_up(this.x_mid,this.y_mid);
     }
     else error("You don't have enough gold to upgrade, you need " + (this.upgrade_cost - SET.gold) + " more.");
   }
@@ -628,8 +604,10 @@ var LaserTower = function(gx,gy) {
       this.set_range(this.range + 0.25);
       this.reload_rate = this.reload_rate - 10;
       SET.rendering_groups[SET.killzone_render_level] = [];
-      set_state_normal();
-      select_tower(this);
+      
+      if (SET.state) SET.state.tear_down();
+      SET.state = new TowerSelectMode();
+      SET.state.set_up(this.x_mid,this.y_mid);
     }
     else error("You don't have enough gold to upgrade, you need " + (this.upgrade_cost - SET.gold) + " more.");
   }
@@ -730,8 +708,11 @@ var CreepHpUpdater = function(creep) {
     WIDGETS.creep_hp.innerHTML = creep.hp;
   }
   chp.is_dead = function() {
-    if (!creep || SET.state != SET.selecting_creep_state || creep.is_dead()) {
-      set_state_normal();
+    if (!creep || !SET.state || SET.state.name() != "CreepSelectMode" || creep.is_dead()) {
+      if (SET.state) {
+	SET.state.tear_down();
+	SET.state = undefined;
+      }
       return true;
     }
     else return false;
@@ -881,18 +862,6 @@ var attempt_to_enter_ui_mode = function(mode, error_msg) {
   }
 };
 
-var set_state_normal = function() {
-  /*
-  SET.state = SET.normal_state;
-  SET.state_action = undefined;
-  SET.state_legal = undefined;
-  SET.state_draw = undefined;
-  SET.bg_color = SET.bg_colors.neutral;
-  WIDGETS.tower.style.display = "none";
-  WIDGETS.creep.style.display = "none";
-  */
-};
-
 var BuildTowerMode = function() {
   this.is_legal = function(x,y) {
     var gpos = pixel_to_grid(x,y);
@@ -933,8 +902,6 @@ var BuildMissileTowerMode = function() {
   };
 };
 BuildMissileTowerMode.prototype = new BuildTowerMode();
-
-
 
 
 var build_missile_tower = function() {
@@ -987,8 +954,8 @@ var TowerSelectMode = function() {
 };
 TowerSelectMode.prototype = new UserInterfaceMode();
 
-var select_tower = function(tower) {
-  SET.state = new TowerSelectMode(tower);
+var select_tower = function() {
+  SET.state = new TowerSelectMode();
 };
 
 /* CreepSelectMode */
@@ -1003,6 +970,9 @@ var CreepSelectMode = function() {
   };
   this.tear_down = function() {
     WIDGETS.creep.style.display = "none";
+  };
+  this.name = function() {
+    return "CreepSelectMode"
   };
 };
 CreepSelectMode.prototype = new UserInterfaceMode();
@@ -1164,10 +1134,6 @@ var on_mouse_press = function() {
   }
 }
 
-var unselect = function() {
-  if ([SET.aiming_missile_state, SET.placing_tower_state].indexOf(SET.state) != -1)
-    set_state_normal();
-}
 
 var message = function(msg) {
   $('').trigger("message", msg);
