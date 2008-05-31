@@ -617,6 +617,60 @@ var LaserTower = function(gx,gy) {
   return lt;
 };
 
+var GattlingTower = function(gx,gy) {
+  var gt = Tower({gx:gx,gy:gy,color:color(250,150,50)});
+  gt.type = "Gattling Tower";
+  gt.damage = 10;
+  gt.upgrade_cost = 50;
+  gt.sale_value = 50;
+  gt.set_range(3.5);
+
+  gt.reload_rate = 100;
+  gt.shots_per_volley = 6;
+  gt.shots_left_in_volley = gt.shots_per_volley;
+  gt.pause_after_volley = 1000;
+  gt.finish_reload_at = 0;
+  gt.reloading = false;
+  gt.fire_next_at = 0;
+
+  gt.weapon_ready = function() {
+    if (gt.reloading && gt.finish_reload_at < SET.now) {
+      gt.shots_left_in_volley = gt.shots_per_volley;
+      gt.reloading = false;
+    }
+    if (!gt.reloading && gt.fire_next_at < SET.now) {
+      return true;
+    }
+    return false;
+  };
+  
+  gt.attack = function(creep) {
+    assign_to_depth(Bullet(this,creep),SET.bullet_render_level);
+    gt.shots_left_in_volley--;
+    gt.fire_next_at = SET.now + gt.reload_rate;
+    if (gt.shots_left_in_volley < 1) {
+      gt.reloading = true;
+      gt.finish_reload_at = SET.now + gt.pause_after_volley;
+    }
+  }
+
+  gt.upgrade = function() {
+    if (SET.gold >= this.upgrade_cost) {
+      SET.gold -= this.upgrade_cost;
+      this.sale_value = Math.floor(this.sale_value + this.upgrade_cost);
+      this.upgrade_cost = Math.floor(this.upgrade_cost * 1.5);
+      this.damage = Math.floor(this.damage * 2.5);
+      this.set_range(this.range + 0.5);
+      this.reload_rate = Math.floor(this.reload_rate * 0.95);
+      if (SET.state) SET.state.tear_down();
+      SET.state = new TowerSelectMode();
+      SET.state.set_up(this.x_mid,this.y_mid);
+    }
+    else error("You don't have enough gold to upgrade, you need " + (this.upgrade_cost - SET.gold) + " more.");
+  }
+  return gt;
+}
+
 var Weapon = function(tower,target) {
   var w = new Object();
   w.x = tower.x_mid;
@@ -644,6 +698,23 @@ var Weapon = function(tower,target) {
     return false;
   };
   return w;
+};
+
+var Bullet = function(tower, target) {
+  var b = new Object();
+  Object.extend(b, Weapon(tower,target));
+  b.size = 5;
+  b.color = color(255,255,255);
+  b.fill_color = color(100,255,0);
+  b.speed = 8;
+  b.damage = tower.damage;
+  b.proximity = 10;
+  b.draw = function() {
+    stroke(b.color);
+    fill(b.fill_color);
+    ellipse(this.x,this.y,this.size,this.size);
+  }
+  return b;
 }
 
 var Missile = function(tower,target) {
@@ -948,6 +1019,23 @@ BuildLaserTowerMode.prototype = new BuildTowerMode();
 var build_laser_tower = function() {
   attempt_to_enter_ui_mode(new BuildLaserTowerMode());
 };
+
+var BuildGattlingTowerMode = function() {
+  this.cost = 50;
+  this.action = function(x,y) {
+    var gpos = pixel_to_grid(x,y);
+    GattlingTower(gpos.gx,gpos.gy);
+    SET.gold -= this.cost;
+  };
+  this.name = function() {
+    return "BuildGattlingTowerMode";
+  }
+};
+BuildGattlingTowerMode.prototype = new BuildTowerMode();
+
+var build_gattling_tower = function() {
+  attempt_to_enter_ui_mode(new BuildGattlingTowerMode());
+}
 
 
 /* TowerSelectMode */
