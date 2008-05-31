@@ -532,6 +532,8 @@ var Tower = function(settings) {
   tower.sell = function() {
     SET.gold += Math.floor(this.sale_value * 0.75);
     this.is_dead = function() { return true; };
+    if (SET.state) SET.state.tear_down();
+    SET.state = undefined;
   }
   tower.display_stats = function() {
     WIDGETS.tower_type.innerHTML = this.type;
@@ -880,6 +882,11 @@ var BuildTowerMode = function() {
     if (this.br)
       this.br.is_dead = function() { return true; }
     this.br = BuildRadius(mid.x,mid.y,radius);
+    if (this.is_legal(x,y))
+      this.br.color = SET.bg_colors.positive;
+    else
+      this.br.color = SET.bg_colors.negative;
+
   };
   this.tear_down = function() {
     if (this.br) {
