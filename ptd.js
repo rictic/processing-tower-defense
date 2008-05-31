@@ -747,9 +747,9 @@ var insert_sorted = function(array, value, sortKey) {
   
   var result = array.slice(0,mid).concat([value]).concat(array.slice(mid))
 //   log("inserting", [mid,vkey,array.map(sortKey), result.map(sortKey)]);
-  var rm = result.map(sortKey);
-  if (!rm.equals(rm.slice().sort(function(a,b){return a-b})))
-    log("insert_sorted failed inserting",[vkey,rm]);
+//   var rm = result.map(sortKey);
+//   if (!rm.equals(rm.slice().sort(function(a,b){return a-b})))
+//     log("insert_sorted failed inserting",[vkey,rm]);
   return result;
 }
 
@@ -768,8 +768,11 @@ var pathfind = function(start_block) {
   
   var successors = function(block) {
     var candidates = [];
-    [[0,1],[1,0],[-1,0],[0,-1],[1,1],[-1,-1],[1,-1],[-1,1]].forEach(function(pair) {
-      candidates.push({gx:block.gpos.gx + pair[0], gy: block.gpos.gy + pair[1]});
+    var normal_dist = SET.pixels_per_square;
+    var diag_dist = normal_dist * 1.4142135623731; //sqrt(2)
+    [[0,1,normal_dist],[1,0,normal_dist],[-1,0,normal_dist],[0,-1,normal_dist],
+     [1,1,diag_dist],[-1,-1,diag_dist],[1,-1,diag_dist],[-1,1,diag_dist]].forEach(function(info) {
+      candidates.push({gx:block.gpos.gx + info[0], gy: block.gpos.gy + info[1], dist:info[2]});
     });
     return candidates.filter(function(gpos) {
       if (get_tower_at(gpos.gx, gpos.gy) != false) return false;
@@ -811,7 +814,7 @@ var pathfind = function(start_block) {
     closed[[block.gpos.gx, block.gpos.gy]] = true;
 //     log("closed", closed);
     successors(block).forEach(function(s) {
-      var suc = {gpos:s, g:1 + block.g, ancestor:block};
+      var suc = {gpos:s, g:s.dist + block.g, ancestor:block};
       suc.f = suc.g + heuristic(suc.gpos);
 
       pqueue = insert_sorted(pqueue, suc, function(bl) {
