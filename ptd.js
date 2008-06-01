@@ -791,7 +791,11 @@ var pathfind = function(start_block) {
   
   //straight-line distance as our heuristic
   var heuristic = function(gpos) {
-    return Math.floor(dist(gpos.gx, gpos.gy, SET.exit.gx, SET.exit.gy) * 10);
+    var dx = Math.abs(gpos.gx - SET.exit.gx);
+    var dy = Math.abs(gpos.gy - SET.exit.gy);
+    var dist = Math.min(dx,dy) * 14;
+    dist += (Math.max(dx,dy) - Math.min(dx,dy)) * 10
+    return dist
   }
   
   
