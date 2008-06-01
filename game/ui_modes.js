@@ -269,7 +269,6 @@ var GameOverMode = function() {
   this.set_up = function(x,y) {
     SET.score += SET.gold;
     SET.gold = 0;
-    SET.state = SET.game_over_state;
     $('').trigger("game_over",true);
   }
   this.name = function() { return "GameOverMode"; };

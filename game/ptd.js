@@ -275,7 +275,7 @@ var pause_resume = function() {
 
 var game_lost = function() {
   if (SET.state) SET.state.tear_down();
-  SET.state = new GameOverMode();
+  attempt_to_enter_ui_mode(new GameOverMode());
 }
 
 /*
