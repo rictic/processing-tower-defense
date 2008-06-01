@@ -5,6 +5,7 @@
 <script type="text/javascript" charset="utf-8" src="processing.js"></script>
 <script type="text/javascript" charset="utf-8" src="jsfprocessing.js"></script>
 <script type="text/javascript" charset="utf-8" src="jquery-1.2.6.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="jquery.hotkeys.js"></script>
 <script type="text/javascript" charset="utf-8" src="ptd.js"></script>
 
 <link href="style.css" media="screen" rel="Stylesheet" type="text/css" />        
@@ -116,24 +117,15 @@
         start_tower_defense();
     })  
     
-    $("body").bind("keydown", function(e) {
-        // if the user is holding down ctrl or cmd, let the browser handle it
-        if (e.metaKey) return true;
-        
-        switch(e.keyCode){
-          case 76: build_laser_tower(); break;
-          case 77: build_missile_tower(); break;
-          case 83: aim_missile(); break;
-          case 78: nuke_creeps(); break;
-          case 32: pause(); break;
-          case 27: unselect(); break;
-          case 87: spawn_wave(); break;
-          case 85: $('#tower_upgrade_button').click(); break;
-          default: return true;
-        }
-        // if we handled the key press, return false
-        return false;
-    });
+    $.hotkeys.add("L", build_laser_tower);
+    $.hotkeys.add("M", build_missile_tower);
+    $.hotkeys.add("S", aim_missile);
+    $.hotkeys.add("N", nuke_creeps);
+    $.hotkeys.add("Space", pause);
+    $.hotkeys.add("Esc", unselect);
+    $.hotkeys.add("W", spawn_wave);
+    $.hotkeys.add("U", function(){ $('#tower_upgrade_button').click() });
+    
     var paused = false;
     function pause() {
         paused = !paused;
