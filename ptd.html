@@ -38,7 +38,7 @@
       <td> 50 Gold </td>
     </tr>
     <tr>
-      <td> <button onclick="build_gattling_tower();"> Build Gattling Tower</button></td>
+      <td> <button onclick="build_gattling_tower();"> Build <u>G</u>attling Tower</button></td>
       <td> 50 Gold </td>
     </tr>
     
@@ -94,6 +94,7 @@
 <ul>
     <li>L – Build laser tower</li>
     <li>M – Build missile tower</li>
+    <li>G – Build gattling tower</li>
     <li>S – Fire Small Missile</li>
     <li>N – Launch Nuke</li>
     <li>W – Spawn Next Wave</li>
@@ -119,6 +120,7 @@
     
     $.hotkeys.add("L", build_laser_tower);
     $.hotkeys.add("M", build_missile_tower);
+    $.hotkeys.add("G", build_gattling_tower);
     $.hotkeys.add("S", aim_missile);
     $.hotkeys.add("N", nuke_creeps);
     $.hotkeys.add("Space", pause);
