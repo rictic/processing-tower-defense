@@ -768,24 +768,30 @@ var pathfind = function(start_block) {
   
   var successors = function(block) {
     var candidates = [];
-    var normal_dist = SET.pixels_per_square;
-    var diag_dist = normal_dist * 1.4142135623731; //sqrt(2)
-    [[0,1,normal_dist],[1,0,normal_dist],[-1,0,normal_dist],[0,-1,normal_dist],
-     [1,1,diag_dist],[-1,-1,diag_dist],[1,-1,diag_dist],[-1,1,diag_dist]].forEach(function(info) {
-      candidates.push({gx:block.gpos.gx + info[0], gy: block.gpos.gy + info[1], dist:info[2]});
+    var normal_dist = 10;
+    [[0,1],[1,0],[-1,0],[0,-1]].forEach(function(pair) {
+      var gpos = {gx:block.gpos.gx + pair[0], gy: block.gpos.gy + pair[1], dist:normal_dist};
+      if (get_tower_at(gpos.gx, gpos.gy) != false) return;
+      if (gpos.gx < 0 || gpos.gx >= SET.gwidth) return;
+      if (gpos.gy < 0 || gpos.gy >= SET.gheight) return;
+      candidates.push(gpos);
     });
-    return candidates.filter(function(gpos) {
-      if (get_tower_at(gpos.gx, gpos.gy) != false) return false;
-      if (gpos.gx < 0 || gpos.gx >= SET.gwidth) return false;
-      if (gpos.gy < 0 || gpos.gy >= SET.gheight) return false;
-      return true;
-    });
+
+    var diag_dist = 14; //sqrt(2) * 10
+    [[1,1],[-1,-1],[1,-1],[-1,1]].forEach(function(pair){
+      var gpos = {gx:block.gpos.gx + pair[0], gy: block.gpos.gy + pair[1], dist:diag_dist};
+      if (get_tower_at(gpos.gx, gpos.gy) || get_tower_at(block.gpos.gx, gpos.gy) || get_tower_at(gpos.gx, block.gpos.gy) != false) return;
+      if (gpos.gx < 0 || gpos.gx >= SET.gwidth) return;
+      if (gpos.gy < 0 || gpos.gy >= SET.gheight) return;
+      candidates.push(gpos);
+    })
+    return candidates;
   }
   
   
   //straight-line distance as our heuristic
   var heuristic = function(gpos) {
-    return dist(gpos.gx, gpos.gy, SET.exit.gx, SET.exit.gy);
+    return Math.floor(dist(gpos.gx, gpos.gy, SET.exit.gx, SET.exit.gy) * 10);
   }
   
   
