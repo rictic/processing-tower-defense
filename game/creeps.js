@@ -5,12 +5,12 @@ var reset_pathfinding = function() {
 }
 
 var pathfind = function(start_block) {
-//   log("pathfinding started", start_block);
   if ([start_block.gx, start_block.gy] in known_best_paths) {
 //     log("path found from cache", known_best_paths[start_block]);
     return known_best_paths[[start_block.gx, start_block.gy]].next_block.gpos;
   }
-  
+//   log("pathfinding started", start_block);
+
   var successors = function(block) {
     var candidates = [];
     var normal_dist = 10;
@@ -107,11 +107,11 @@ var CreepHpUpdater = function(creep) {
   chp.is_dead = function() {
     if (chp.should_die || !creep || !SET.state || SET.state.name() != "CreepSelectMode" || creep.is_dead()) {
       if (SET.state) {
-	SET.state.tear_down();
-	SET.state = undefined;
+      	SET.state.tear_down();
+      	SET.state = undefined;
       }
       if (chp.kz)
-	chp.kz.is_dead = function() { return true; };
+      	chp.kz.is_dead = function() { return true; };
       return true;
     }
     else return false;

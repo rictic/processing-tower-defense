@@ -13,7 +13,6 @@ var CreepWaveController = function() {
     else if (this.wave % 5 == 0) cw = BuzzCreepWave(settings);
     else if (this.wave % 3 == 0) cw = FizCreepWave(settings);
     else cw = CreepWave(settings);
-    cw.spawn(); // spawn the first one immediately
     this.wave++;
     cwc.last = SET.now;
   };
@@ -31,7 +30,7 @@ var CreepWave = function(settings) {
   Object.extend(cw, InertDrawable);
   cw.remaining = 20;
   cw.wave = 1;
-  cw.last = millis();
+  cw.last = 0;
   cw.interval = 1000;
   Object.extend(cw, settings);
   cw.spawn_creep = function() { Creep(this.wave); };
