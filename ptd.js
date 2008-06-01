@@ -48,6 +48,8 @@ var random = function(max) {
   return Math.floor(Math.random()*(max+1));
 };
 
+//given a start point, and end point, and a speed at which to travel,
+//return the point that the entity should go to in the next draw
 var calc_path = function(x1,y1,x2,y2,speed) {
   var ac = y2 - y1;
   var bc = x2 - x1;
@@ -135,6 +137,7 @@ var can_build_here = function(gx,gy) {
       }
     }
   }
+  
   return true;
 };
 
@@ -757,6 +760,170 @@ var Laser = function(tower,target) {
   return l;
 };
 
+
+
+var pp = function(obj, depth) {
+  if (depth == undefined) depth = 4;
+  depth -= 1;
+  if (depth <= 0)
+    return '' + obj;
+  if (obj instanceof Array) {
+    var str = "[";
+    obj.forEach(function(i){
+      str += pp(i,depth) + ", ";
+    });
+    return str + "]";
+  }
+  if (obj instanceof String)
+    return '"'+str+'"';
+  if (obj instanceof Object){
+    var str="{"; //variable which will hold property values
+    for(prop in obj){
+      if (prop == "ancestor")
+        depth = 0;
+      str+= pp(prop,depth) + ":" + pp(obj[prop],depth) +", ";
+    }
+    return str + "}";
+  }
+
+
+  return '' + obj;
+    
+  
+}
+
+var log = function(label, thing) {
+  $('#log').append(label + ": " + pp(thing) + "<br/>");
+}
+
+Array.prototype.equals = function(testArr) {
+    if (this.length != testArr.length) return false;
+    for (var i = 0; i < testArr.length; i++) {
+        if (this[i].equals) { 
+            if (!this[i].equals(testArr[i])) return false;
+        }
+        if (this[i] != testArr[i]) return false;
+    }
+    return true;
+}
+
+var insert_sorted = function(array, value, sortKey) {
+  var vkey = sortKey(value);
+  var min=0;
+  var max=array.length;
+  var mid=-1;
+  while(true){
+    if (max<=min) {
+      break;
+    }
+    mid = Math.floor((max+min)/2);
+    if (mid >= array.length || mid < 0) {
+      log("outofbounds in insert sorted");
+      break;
+    }
+    if (vkey <= sortKey(array[mid]))
+      max = mid-1;
+    else
+      min = mid+1;
+  }
+  mid = Math.floor((max+min)/2);
+  if (array[mid])
+    if (vkey > sortKey(array[mid]))
+      mid += 1;
+  mid = Math.max(0,mid);
+  
+  var result = array.slice(0,mid).concat([value]).concat(array.slice(mid))
+//   log("inserting", [mid,vkey,array.map(sortKey), result.map(sortKey)]);
+//   var rm = result.map(sortKey);
+//   if (!rm.equals(rm.slice().sort(function(a,b){return a-b})))
+//     log("insert_sorted failed inserting",[vkey,rm]);
+  return result;
+}
+
+var known_best_paths = {}
+var reset_pathfinding = function() {
+  log("pathfinding reset!");
+  known_best_paths = {};
+}
+
+var pathfind = function(start_block) {
+//   log("pathfinding started", start_block);
+  if ([start_block.gx, start_block.gy] in known_best_paths) {
+//     log("path found from cache", known_best_paths[start_block]);
+    return known_best_paths[[start_block.gx, start_block.gy]].next_block.gpos;
+  }
+  
+  var successors = function(block) {
+    var candidates = [];
+    var normal_dist = 10;
+    [[0,1],[1,0],[-1,0],[0,-1]].forEach(function(pair) {
+      var gpos = {gx:block.gpos.gx + pair[0], gy: block.gpos.gy + pair[1], dist:normal_dist};
+      if (get_tower_at(gpos.gx, gpos.gy) != false) return;
+      if (gpos.gx < 0 || gpos.gx >= SET.gwidth) return;
+      if (gpos.gy < 0 || gpos.gy >= SET.gheight) return;
+      candidates.push(gpos);
+    });
+
+    var diag_dist = 14; //sqrt(2) * 10
+    [[1,1],[-1,-1],[1,-1],[-1,1]].forEach(function(pair){
+      var gpos = {gx:block.gpos.gx + pair[0], gy: block.gpos.gy + pair[1], dist:diag_dist};
+      if (get_tower_at(gpos.gx, gpos.gy) || get_tower_at(block.gpos.gx, gpos.gy) || get_tower_at(gpos.gx, block.gpos.gy) != false) return;
+      if (gpos.gx < 0 || gpos.gx >= SET.gwidth) return;
+      if (gpos.gy < 0 || gpos.gy >= SET.gheight) return;
+      candidates.push(gpos);
+    })
+    return candidates;
+  }
+  
+  
+  //straight-line distance as our heuristic
+  var heuristic = function(gpos) {
+    var dx = Math.abs(gpos.gx - SET.exit.gx);
+    var dy = Math.abs(gpos.gy - SET.exit.gy);
+    var dist = Math.min(dx,dy) * 14;
+    dist += (Math.max(dx,dy) - Math.min(dx,dy)) * 10
+    return dist
+  }
+  
+  
+  var closed = {};
+  var pqueue = [{gpos:start_block, f:heuristic(start_block), g:0}];
+  while (pqueue.length > 0) {
+    var block = pqueue[0];
+    pqueue = pqueue.slice(1);
+//     log("looking at", block)
+    if (closed[[block.gpos.gx, block.gpos.gy]] == true){
+//       log("in closed, skipping", closed)
+      continue;
+    }
+    if (block.gpos.gx == SET.exit.gx && block.gpos.gy == SET.exit.gy){
+      known_best_paths[[block.gpos.gx, block.gpos.gy]] = block;
+      while ("ancestor" in block) {
+        block.ancestor.next_block = block;
+        known_best_paths[[block.ancestor.gpos.gx, block.ancestor.gpos.gy]] = block.ancestor
+        block = block.ancestor;
+      }
+//       log("known_best_paths", known_best_paths);
+      var result = known_best_paths[[start_block.gx, start_block.gy]].next_block.gpos;
+//       log("path found!", result);
+      return result;
+    }
+    closed[[block.gpos.gx, block.gpos.gy]] = true;
+//     log("closed", closed);
+    successors(block).forEach(function(s) {
+      var suc = {gpos:s, g:s.dist + block.g, ancestor:block};
+      suc.f = suc.g + heuristic(suc.gpos);
+
+      pqueue = insert_sorted(pqueue, suc, function(bl) {
+        return bl.f
+      });
+    })
+
+//     log("pqueue", pqueue);
+  }
+  log("---------pathfinding failed!----------");
+}
+
 /*
   Used in by the Creep method "display stats" to
   support constantly updated hp for the specific
@@ -838,7 +1005,9 @@ var Creep = function(wave) {
       var speed = (elapsed/1000) * this.speed;
       this.last = SET.now;
 
-      var path = calc_path(this.x,this.y,SET.exit.x_mid,SET.exit.y_mid,speed);
+      var next_block = pathfind(gpos);
+      var coords = center_of_square(next_block.gx, next_block.gy)
+      var path = calc_path(this.x,this.y,coords.x,coords.y,speed);
       this.x += path.x;
       this.y += path.y;
     }
@@ -991,6 +1160,7 @@ var BuildMissileTowerMode = function() {
     var gpos = pixel_to_grid(x,y);
     MissileTower(gpos.gx,gpos.gy);
     SET.gold -= this.cost;
+    reset_pathfinding();
   };
   this.name = function() {
     return "BuildMissileTowerMode";
@@ -1009,6 +1179,7 @@ var BuildLaserTowerMode = function() {
     var gpos = pixel_to_grid(x,y);
     LaserTower(gpos.gx,gpos.gy);
     SET.gold -= this.cost;
+    reset_pathfinding();
   };
   this.name = function() {
     return "BuildLaserTowerMode";
@@ -1026,6 +1197,7 @@ var BuildGattlingTowerMode = function() {
     var gpos = pixel_to_grid(x,y);
     GattlingTower(gpos.gx,gpos.gy);
     SET.gold -= this.cost;
+    reset_pathfinding();
   };
   this.name = function() {
     return "BuildGattlingTowerMode";
@@ -1225,6 +1397,7 @@ var reset_game = function() {
   SET.creep_wave_controller = CreepWaveController();
   SET.entrance = Square(0, random(SET.gheight-1), SET.entrance_color);
   SET.exit = Square(SET.gwidth-1, random(SET.gheight-1), SET.exit_color);
+  reset_pathfinding();
   $('').trigger("game_over",false);
 };
 
