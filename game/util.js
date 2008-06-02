@@ -129,6 +129,15 @@ var get_tower_at = function(gx,gy) {
   return false;
 };
 
+var get_terrain_at = function(gx,gy) {
+  var squares = SET.rendering_groups[SET.square_render_level];
+  for (var i=0;i<towers.length;i++) {
+    var square = square[i];
+    if (square.gx == gx && square.gy == gy) return square;
+  }
+  return;
+}
+
 var get_creep_nearest = function(x,y,sensitivity) {
   if (!sensitivity) sensitivity = 10;
   var creeps = SET.rendering_groups[SET.creep_render_level];
