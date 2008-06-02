@@ -222,9 +222,10 @@ var GridSquare = function(gx,gy,color) {
 
 var Square = function(gx,gy,color) {
   var square = GridSquare(gx,gy,color);
+  square.color = color;
   square.draw = function() {
     noStroke();
-    fill(color);
+    fill(this.color);
     draw_square_in_grid(this.gx,this.gy);
   }
   assign_to_depth(square, SET.square_render_level);
