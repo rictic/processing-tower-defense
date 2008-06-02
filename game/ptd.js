@@ -81,7 +81,7 @@ var default_set = function() {
   set.grid_color = color(255,255,255);
   set.entrance_color = color(255,100,100);
   set.exit_color = color(100,100,250);
-  set.killzone_color = color(200,50,50);
+  set.killzone_color = color(200,50,50,0.5);
   set.creep_color = color(255,255,0);
 
   // rendering groups

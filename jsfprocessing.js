@@ -49,8 +49,11 @@ function fill(color) {
   return GLOBAL_PROCESSING.fill(color);
 }
 
-var color = function(r,g,b) {
-  return "rgb(" + r + "," + g + "," + b + ")";
+var color = function(r,g,b,a) {
+  if (!a)
+    return "rgb(" + r + "," + g + "," + b + ")";
+  else
+    return "rgba(" + r + "," + g + "," + b + "," + a +")";
 };
 
 function translate(width, height) {
