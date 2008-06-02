@@ -149,8 +149,11 @@ var FizBuzzCreep = function(wave) {
 /* pathfinding */
 
 var known_best_paths = {}
-var reset_pathfinding = function() {
-  known_best_paths = {};
+var reset_pathfinding = function(new_value) {
+  if (new_value == undefined) new_value = {};
+  var previous = known_best_paths;
+  known_best_paths = new_value;
+  return previous;
 }
 
 //Could a creep occupy this square?
