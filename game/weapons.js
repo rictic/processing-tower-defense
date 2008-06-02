@@ -31,6 +31,12 @@ var Tower = function(settings) {
     tower.range = range;
     tower.prange = range * SET.pixels_per_square;
   }
+  tower.account_for_terrain = function() {
+    var terrain = get_terrain_at(this.gx,this.gy);
+    this.damage = this.damage * terrain.tower_damage_modifier;
+    this.set_range(this.range * terrain.tower_range_modifier);
+    this.reload_rate = this.reload_rate * terrain.tower_frequency_modifier;
+  }
   tower.set_range(3.5);
   tower.damage = 5.0;
   tower.attack = function(creep) {};
@@ -119,6 +125,7 @@ var MissileTower = function(gx,gy) {
     }
     else error("You don't have enough gold to upgrade, you need " + (this.upgrade_cost - SET.gold) + " more.");
   }
+  mt.account_for_terrain();
   return mt;
 }
 
@@ -148,6 +155,7 @@ var LaserTower = function(gx,gy) {
   lt.damage = 10;
   lt.set_range(4);
   lt.reload_rate = 250;
+  lt.account_for_terrain();
   return lt;
 };
 
@@ -202,6 +210,7 @@ var GattlingTower = function(gx,gy) {
     }
     else error("You don't have enough gold to upgrade, you need " + (this.upgrade_cost - SET.gold) + " more.");
   }
+  gt.account_for_terrain();
   return gt;
 }
 

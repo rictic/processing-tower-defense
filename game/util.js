@@ -131,8 +131,8 @@ var get_tower_at = function(gx,gy) {
 
 var get_terrain_at = function(gx,gy) {
   var squares = SET.rendering_groups[SET.square_render_level];
-  for (var i=0;i<towers.length;i++) {
-    var square = square[i];
+  for (var i=0;i<squares.length;i++) {
+    var square = squares[i];
     if (square.gx == gx && square.gy == gy) return square;
   }
   return;
