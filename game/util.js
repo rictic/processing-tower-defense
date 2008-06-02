@@ -188,7 +188,10 @@ var pp = function(obj, depth) {
 }
 
 var log = function(label, thing) {
-  $('#log').append(label + ": " + pp(thing) + "<br/>");
+  if (thing == undefined)
+    $('#log').append(label + "<br/>");
+  else
+    $('#log').append(label + ": " + pp(thing) + "<br/>");
 }
 
 

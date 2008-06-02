@@ -1,7 +1,15 @@
 var known_best_paths = {}
 var reset_pathfinding = function() {
-  log("pathfinding reset!");
   known_best_paths = {};
+}
+
+//Could a creep occupy this square?
+var valid_path_location = function(gx, gy) {
+  if (get_tower_at(gx,gy) != false)
+    return false;
+  if (SET.considering_location && SET.considering_location.gx == gx && SET.considering_location.gy == gy)
+      return false;
+  return true;
 }
 
 var pathfind = function(start_block) {
@@ -16,7 +24,7 @@ var pathfind = function(start_block) {
     var normal_dist = 10;
     [[0,1],[1,0],[-1,0],[0,-1]].forEach(function(pair) {
       var gpos = {gx:block.gpos.gx + pair[0], gy: block.gpos.gy + pair[1], dist:normal_dist};
-      if (get_tower_at(gpos.gx, gpos.gy) != false) return;
+      if (!valid_path_location(gpos.gx, gpos.gy)) return;
       if (gpos.gx < 0 || gpos.gx >= SET.gwidth) return;
       if (gpos.gy < 0 || gpos.gy >= SET.gheight) return;
       candidates.push(gpos);
@@ -25,7 +33,7 @@ var pathfind = function(start_block) {
     var diag_dist = 14; //sqrt(2) * 10
     [[1,1],[-1,-1],[1,-1],[-1,1]].forEach(function(pair){
       var gpos = {gx:block.gpos.gx + pair[0], gy: block.gpos.gy + pair[1], dist:diag_dist};
-      if (get_tower_at(gpos.gx, gpos.gy) || get_tower_at(block.gpos.gx, gpos.gy) || get_tower_at(gpos.gx, block.gpos.gy) != false) return;
+      if (!(valid_path_location(gpos.gx, gpos.gy) && valid_path_location(block.gpos.gx, gpos.gy) && valid_path_location(gpos.gx, block.gpos.gy))) return;
       if (gpos.gx < 0 || gpos.gx >= SET.gwidth) return;
       if (gpos.gy < 0 || gpos.gy >= SET.gheight) return;
       candidates.push(gpos);
@@ -79,7 +87,7 @@ var pathfind = function(start_block) {
 
 //     log("pqueue", pqueue);
   }
-  log("---------pathfinding failed!----------");
+//   log("---------pathfinding failed!----------");
 }
 
 /*
@@ -164,6 +172,13 @@ var Creep = function(wave) {
       this.last = SET.now;
 
       var next_block = pathfind(gpos);
+      if (next_block == undefined){
+        game_lost();
+        error("Pathfinding failed.  Erroring hard so that we catch these bugs.");
+        log("creep",this);
+        return;
+      }
+        
       var coords = center_of_square(next_block.gx, next_block.gy)
       var path = calc_path(this.x,this.y,coords.x,coords.y,speed);
       this.x += path.x;

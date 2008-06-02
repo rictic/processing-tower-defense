@@ -58,7 +58,23 @@ var attempt_to_enter_ui_mode = function(mode, error_msg) {
 var BuildTowerMode = function() {
   this.is_legal = function(x,y) {
     var gpos = pixel_to_grid(x,y);
-    return can_build_here(gpos.gx,gpos.gy);
+    if (can_build_here(gpos.gx,gpos.gy) == false) return false;
+    
+    //check that we can pathfind from the entrance
+    //to the exit, and from each creep to the exit
+    SET.considering_location = gpos;
+    reset_pathfinding();
+    var valid = pathfind({gx:SET.entrance.gx, gy:SET.entrance.gy});
+    var creeps = SET.rendering_groups[SET.creep_render_level];
+    creeps.forEach(function(creep){
+      valid = valid && pathfind(pixel_to_grid(creep));
+    });
+    SET.considering_location = undefined;
+    if (!valid){
+      reset_pathfinding();
+      return false;
+    }
+    return true;
   };
   this.draw = function(x,y) {
     var gpos = pixel_to_grid(x,y);
