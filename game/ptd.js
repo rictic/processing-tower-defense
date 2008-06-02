@@ -294,7 +294,7 @@ var reset_game = function() {
   WIDGETS = fetch_ui_widgets();
   SettingUpdater();
   UIUpdater();
-  Grid();
+  //Grid();
   generate_map();
   SET.creep_wave_controller = CreepWaveController();
   reset_pathfinding();
