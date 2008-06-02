@@ -160,7 +160,7 @@ var LaserTower = function(gx,gy) {
 };
 
 var GattlingTower = function(gx,gy) {
-  var gt = Tower({gx:gx,gy:gy,color:color(250,150,50)});
+  var gt = Tower({gx:gx,gy:gy,color:color(250,250,50)});
   gt.type = "Gattling Tower";
   gt.damage = 10;
   gt.upgrade_cost = 50;

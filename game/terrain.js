@@ -13,14 +13,14 @@ var NeutralTerrain = function(gx,gy) {
 
 var WaterTerrain = function(gx,gy) {
   var t = NeutralTerrain(gx,gy);
-  t.color = color(0,0,255);
+  t.color = color(78,150,236);
   t.type = "water";
   return t;
 }
   
 var MountainTerrain = function(gx,gy) {
   var t = NeutralTerrain(gx,gy);
-  t.color = color(255,0,0);
+  t.color = color(228,51,51);
   t.type = "mountain";
   t.tower_range_modifier = 1.25;
   return t;
@@ -28,7 +28,7 @@ var MountainTerrain = function(gx,gy) {
 
 var PowerPlantTerrain = function(gx,gy) {
   var t = NeutralTerrain(gx,gy);
-  t.color = color(0,255,0);
+  t.color = color(189,194,78);
   t.type = "power plant";
   t.tower_damage_modifier = 2.0;
   return t;
