@@ -70,8 +70,8 @@ var BuildTowerMode = function() {
       valid = valid && pathfind(pixel_to_grid(creep));
     });
     SET.considering_location = undefined;
+    reset_pathfinding();
     if (!valid){
-      reset_pathfinding();
       return false;
     }
     return true;
