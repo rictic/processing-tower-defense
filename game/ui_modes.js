@@ -97,6 +97,12 @@ var BuildTowerMode = function() {
       this.br.is_dead = function() { return true; };
     }
   };
+  this.action = function(x,y) {
+    var gpos = pixel_to_grid(x,y);
+    this.tower(gpos.gx,gpos.gy);
+    SET.gold -= this.cost;
+    reset_pathfinding();
+  };
   this.can_enter_mode = function(x,y) {
     if (SET.gold >= this.cost) return true;
     else return false;
@@ -109,12 +115,7 @@ BuildTowerMode.prototype = new UserInterfaceMode();
 
 var BuildMissileTowerMode = function() {
   this.cost = 100;
-  this.action = function(x,y) {
-    var gpos = pixel_to_grid(x,y);
-    MissileTower(gpos.gx,gpos.gy);
-    SET.gold -= this.cost;
-    reset_pathfinding();
-  };
+  this.tower = MissileTower;
   this.name = function() {
     return "BuildMissileTowerMode";
   };
@@ -128,12 +129,7 @@ var build_missile_tower = function() {
 
 var BuildLaserTowerMode = function() {
   this.cost = 50;
-  this.action = function(x,y) {
-    var gpos = pixel_to_grid(x,y);
-    LaserTower(gpos.gx,gpos.gy);
-    SET.gold -= this.cost;
-    reset_pathfinding();
-  };
+  this.tower = LaserTower;
   this.name = function() {
     return "BuildLaserTowerMode";
  };
@@ -146,12 +142,7 @@ var build_laser_tower = function() {
 
 var BuildGattlingTowerMode = function() {
   this.cost = 50;
-  this.action = function(x,y) {
-    var gpos = pixel_to_grid(x,y);
-    GattlingTower(gpos.gx,gpos.gy);
-    SET.gold -= this.cost;
-    reset_pathfinding();
-  };
+  this.tower = GattlingTower;
   this.name = function() {
     return "BuildGattlingTowerMode";
   }
