@@ -107,17 +107,15 @@ var draw_circle_in_grid = function(gx,gy) {
  */
   
 var can_build_here = function(gx,gy) {
-  var possible_conflicts = [SET.rendering_groups[SET.square_render_level],
-			    SET.rendering_groups[SET.tower_render_level]];
-  for (var i=0; i<possible_conflicts.length;i++) {
-    var array = possible_conflicts[i];
-    if (array != undefined) {
-      for (var j=0; j<array.length; j++) {
-	var obj = array[j];
-	if (obj.gx == gx && obj.gy == gy) return false;
-      }
+  var array = SET.rendering_groups[SET.tower_render_level];
+  if (array != undefined) {
+    for (var j=0; j<array.length; j++) {
+      var obj = array[j];
+      if (obj.gx == gx && obj.gy == gy) return false;
     }
   }
+  if ((gx == SET.entrance.gx) && (gy == SET.entrance.gy)) return false;
+  if ((gx == SET.exit.gx) && (gy == SET.exit.gy)) return false;
   
   return true;
 };
