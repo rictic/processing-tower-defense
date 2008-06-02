@@ -283,15 +283,19 @@ var game_lost = function() {
   Game level functions. Starting, resetting, etc.
  */
 
+var generate_map = function() {
+  SET.entrance = Square(0, random(SET.gheight-1), SET.entrance_color);
+  SET.exit = Square(SET.gwidth-1, random(SET.gheight-1), SET.exit_color);
+}
+  
 var reset_game = function() {
   SET = default_set();
   WIDGETS = fetch_ui_widgets();
   SettingUpdater();
   UIUpdater();
   Grid();
+  generate_map();
   SET.creep_wave_controller = CreepWaveController();
-  SET.entrance = Square(0, random(SET.gheight-1), SET.entrance_color);
-  SET.exit = Square(SET.gwidth-1, random(SET.gheight-1), SET.exit_color);
   reset_pathfinding();
   $('').trigger("game_over",false);
 };
