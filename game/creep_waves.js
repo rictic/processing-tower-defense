@@ -7,12 +7,31 @@ var CreepWaveController = function() {
   cwc.spawn_wave = function(bonus) {
     WIDGETS.wave.innerHTML = this.wave;
     var settings = {wave:this.wave, bonus:bonus};
-    var cw;
-    if (this.wave == 0) cw = CreepWave(settings);
-    else if (this.wave % 15 == 0) cw = FizBuzzCreepWave(settings);
-    else if (this.wave % 5 == 0) cw = BuzzCreepWave(settings);
-    else if (this.wave % 3 == 0) cw = FizCreepWave(settings);
-    else cw = CreepWave(settings);
+    var mixins = [];
+
+    var n = Math.random();
+    if (n < 0.1)
+      mixins.push(WaterAdverseMixin);
+    else if (n < 0.2) 
+      mixins.push(WaterLovingMixin);
+    else if (n < 0.3) 
+      mixins.push(MountainAdverseMixin);    
+    else if (n < 0.4) 
+      mixins.push(MountainLovingMixin);
+    else if (n < 0.5) 
+      mixins.push(ImmuneMixin);
+    else if (n < 0.6) 
+      mixins.push(FlyingMixin);
+
+    if (this.wave % 15 == 0) {
+      mixins.push(BossMixin);
+      settings.remaining = 1;
+    }
+    else if (this.wave % 5 == 0) mixins.push(StrongMixin);
+    else if (this.wave % 3 == 0) mixins.push(QuickMixin);
+
+    create_creep_wave_with_mixins(settings, mixins);
+
     this.wave++;
     cwc.last = SET.now;
   };
@@ -55,13 +74,12 @@ var CreepWave = function(settings) {
   return cw;
 };
 
-var create_creep_wave_with_mixins(settings, mixins) {
+var create_creep_wave_with_mixins = function(settings, mixins) {
   if (!mixins) mixins = [];
-  if (!mixins.length) mixins = [mixins];
   var cw = CreepWave(settings);
   var knows_creep_variety = false;
   cw.spawn_creep = function() {
-    var c = Creep;
+    var c = Creep(cw.wave);
     mixins.forEach(function(mixin) { mixin(c); });
     if (!cw.knows_creep_variety)
       cw.creep_variety = c.creep_type + "s";
