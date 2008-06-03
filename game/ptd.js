@@ -121,6 +121,14 @@ var default_set = function() {
     return gy_cache;
   }
 
+  set.grid_cache_reset_all_values_for_key = function(key) {
+    set.grid_cache.forEach(function (group) {
+	group.forEach(function (member) {
+	    member[key] = undefined;
+	  });
+      });
+  }
+
   // colors
   set.bg_colors = {neutral:color(90,80,70),
 		  positive:color(60,80,250),
