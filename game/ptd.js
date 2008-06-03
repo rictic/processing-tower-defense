@@ -73,6 +73,52 @@ var default_set = function() {
   set.gheight = Math.floor(set.height / set.pixels_per_square);
   set.gwidth = Math.floor(set.width / set.pixels_per_square);
 
+  /*
+    ### Grid Cache
+
+    This is a place to store any data that should be associated
+    with a specific grid square. For example, each grid square
+    will have the Terrain occupying it stored there, and a grid
+    square's tower could be retrieved this way as well.
+
+    ### Using the Grid Cache
+    
+    The Grid Cache is, as it is named, intended to be
+    used as a cache. This means it shouldn't be relied upon as the
+    definitive answer to a question, but should be used to store
+    answers to frequently answered questions.
+
+    For example, the find_tower_at(gx,gy) method is used to find
+    any towers existing at (gx,gy). That method should first check
+    the cache for a key of 'tower', and use it if it exists, but
+    should be able to find the tower without the cache as well
+    (by scanning through all towers looking for the correct
+    one).
+
+    ### Invalidating Entries in Grid Cache
+
+    Entries in the Grid Cache will be cleared out each time the
+    game is reset, and beyond that invalidating of key/value pairs
+    must be done manually.
+
+    For example, upon selling a tower the value of the tower stored
+    in the cache should be extinguished.
+   */
+  var cache = [];
+  for (var i=0; i<set.gwidth; i++) {
+    var array = [];
+    for (var j=0; j<set.gheight; j++) {
+      array.push({});
+    }
+    cache.push(array);
+  }
+  set.grid_cache = cache;
+
+
+  set.grid_cache_at = function(gx,gy) {
+    return this.grid_cache[gx][gy];
+  }
+
   // colors
   set.bg_colors = {neutral:color(90,80,70),
 		  positive:color(60,80,250),
