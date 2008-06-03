@@ -44,6 +44,78 @@ var CreepHpUpdater = function(creep) {
 }
 
 
+/*
+  ### Types of creeps
+  
+  Creeps interact with terrain in a variety of ways.
+  Some types of creeps will be much faster on certain
+  squares, and much slower on others. Some types will
+  be ignore towers and fly over them.
+
+  #### Terrain baseline (how a non-modified creep reacts
+  to certain types of terrain):
+
+  1. Mountains: 3/4 speed.
+  2. Water: 1/2 speed.
+  3. Neutral: 1/1 speed.
+  4. Power Plant: 2/1 speed.
+
+  #### Creep mixins
+  
+  1. FlyingMixin: ignore standard pathfinding, and go in a straight line to exit.
+  2. WaterAdverseMixin: very slow walking through water.
+  3. WaterLovingMixin: very quick walking in water.
+  4. MoutainAdverseMixin: very slow crossing mountains.
+  5. MountainLovingMixin: very quick crossing mountains.
+  6. ImmuneMixin: ignores terrain effects completely.
+
+
+  ### Implementation
+
+  Each creep has an object named terrain, the keys of which
+  are the varying types of terrain. The value stored for each
+  key is a decimal which is used as a multiplier against the
+  creep's base speed in that type of terrain.
+
+ */
+
+/* Creep Mixins */
+
+var FlyingMixin = function(creep) {
+  return creep;
+}
+
+var WaterAdverseMixin = function(creep) {
+  creep.terrain['water'] = 0.25;
+  return creep;
+}
+
+var WaterLovingMixin = function(creep) {
+  creep.terrain['water'] = 2.0;
+  return creep;
+}
+
+var MountainAdverseMixin = function(creep) {
+  creep.terrain['mountain'] = 0.25;
+  return creep;
+}
+
+var MountainLovingMixin = function(creep) {
+  creep.terrain['mountain'] = 1.25;
+  return creep;
+}
+
+var ImmuneMixin = function(creep) {
+  creep.terrain['mountain'] = 1.0;
+  creep.terrain['neutral'] = 1.0;
+  creep.terrain['water'] = 1.0;
+  creep.terrain['mountain'] = 1.0;
+  creep.terrain['power plant'] = 1.0;
+  return creep;
+}
+
+
+
 var Creep = function(wave) {
   var cp = SET.creeps_spawned;
   var c = new Object();
