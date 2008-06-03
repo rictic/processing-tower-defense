@@ -153,7 +153,7 @@ var BossMixin = function(creep) {
 var Creep = function(wave) {
   var cp = SET.creeps_spawned;
   var c = new Object();
-  c.terrain = {"mountain":0.75,"water":0.5,"neutral":1.0,"power plant":2.0};
+  c.terrain = {"entrance":1.0,"exit":1.0,"mountain":0.75,"water":0.5,"neutral":1.0,"power plant":2.0};
  
   c.x = SET.entrance.x_mid;
   c.y = SET.entrance.y_mid;

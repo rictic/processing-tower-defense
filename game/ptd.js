@@ -285,7 +285,9 @@ var game_lost = function() {
 
 var generate_map = function() {
   SET.entrance = Square(0, random(SET.gheight-1), SET.entrance_color);
+  SET.entrance.type = "entrance";
   SET.exit = Square(SET.gwidth-1, random(SET.gheight-1), SET.exit_color);
+  SET.exit.type = "exit";
   populate_terrains();
 }
   
