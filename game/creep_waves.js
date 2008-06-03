@@ -77,12 +77,14 @@ var CreepWave = function(settings) {
 var create_creep_wave_with_mixins = function(settings, mixins) {
   if (!mixins) mixins = [];
   var cw = CreepWave(settings);
-  var knows_creep_variety = false;
+  cw.knows_creep_variety = false;
   cw.spawn_creep = function() {
     var c = Creep(cw.wave);
     mixins.forEach(function(mixin) { mixin(c); });
-    if (!cw.knows_creep_variety)
-      cw.creep_variety = c.creep_type + "s";
+    if (cw.knows_creep_variety == false) {
+      SET.creep_variety = c.creep_type + "s";
+      cw.knows_creep_variety = true;
+    }
   }
   return cw;
 }
