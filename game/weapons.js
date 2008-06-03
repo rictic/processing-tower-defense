@@ -282,7 +282,7 @@ var Missile = function(tower,target) {
   m.is_dead = function() {
     if (!this.target || this.target.hp <= 0) {
       this.target = get_creep_nearest(this.x,this.y,100);
-      log("new target: " + pp(this.target));
+      //log("new target: " + pp(this.target));
     }
     if (!this.target) return true;
     return false;
