@@ -1,3 +1,12 @@
+jQuery, jQuery.hotkeys, and processing.js have been released under the MIT License
+by their copyright holders.
+
+The code and markup of PTD itself are likewise released under the MIT License by
+their copyright holders.
+
+Files in the assets directory however are subject to other licenses.  See
+assets/LICENSE
+
 The MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

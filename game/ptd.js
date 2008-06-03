@@ -303,6 +303,7 @@ var nuke_creeps = function() {
 	x.hp = -1; 
 	x.value = 0; // no gold for nuked creeps
       });
+    play_sound("nuke");
     SET.nukes--;
   }
   else {error("You're all out of nukes!")}

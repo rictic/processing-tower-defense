@@ -81,6 +81,7 @@
   <button id='pause_button' onclick="pause();">Pause</button>
   <button onclick="reset_game();">Reset Game</button>
   <button onclick="spawn_wave();">Spawn Next <u>W</u>ave</button>
+  <button id='mute_button' onclick="mute();">Mute</button>
   </div>
 </div>
 
@@ -117,6 +118,8 @@
 <script src="game/creeps.js" type="text/javascript" charset="utf-8"></script>
 <script src="game/ui_modes.js" type="text/javascript" charset="utf-8"></script>
 <script src="game/weapons.js" type="text/javascript" charset="utf-8"></script>
+<script src="soundmanager2/soundmanager2.js" type="text/javascript" charset="utf-8"></script>
+<script src="game/sound_effects.js" type="text/javascript" charset="utf-8"></script>
 <script src="game/ptd.js" type="text/javascript" charset="utf-8" ></script>
 
 <script type="text/javascript" charset="utf-8">
@@ -140,6 +143,10 @@
         pause_resume();
         $('#pause_button').html(paused ? "Resume" : "Pause");
     }
+    function mute() {
+        mute_unmute();
+        $('#mute_button').html(muted ? "Unmute" : "Mute");
+    }
     
     //Temporary messages are a bit of a pain
     var timeToHide = null;
@@ -161,11 +168,13 @@
             $('#game_over').html("Game Over! Final score: " + $("#score").html()).fadeIn();
         else
             $('#game_over').html("Just once more...").fadeOut();
-    })
+    });
+    
+    
 </script>
-
 <hr>
 <p><a rel="license" href="http://www.opensource.org/licenses/mit-license.php">MIT License</a>, by <a href="http://lethain.com">Will Larson</a> and <a href="http://blog.rictic.com/">Peter Burns</a></p>
-
+<p>Sound effects are released under a <a href='http://creativecommons.org/licenses/sampling+/1.0/'>Creative Commons Sampling Plus 1.0 License</a> - For authorship information, see <a href='assets/LICENSE'>here</a></p>
 <div id="log"></div>
+<div id="sfx_dump"/></div>
 </body> </html>
