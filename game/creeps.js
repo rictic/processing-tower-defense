@@ -220,41 +220,6 @@ var Creep = function(wave) {
 
 
 
-var FizCreep = function(wave) {
-  var fc = Creep(wave);
-  fc.creep_type = "Fiz Creep";
-  fc.color = color(0,255,255);
-  fc.size = fc.size * 1.3;
-  fc.hp = Math.floor(fc.hp * 2);
-  fc.value = Math.floor(fc.value * 1.5);
-  fc.speed = fc.speed * 0.75;
-  return fc;
-};
-
-
-
-var BuzzCreep = function(wave) {
-  var bc = Creep(wave);
-  bc.creep_type = "Buzz Creep";
-  bc.color = color(100,150,50);
-  bc.speed = bc.speed * 1.5;
-  bc.hp = Math.floor(bc.hp * .75);
-  bc.size = bc.size * 0.9;
-  bc.value = Math.floor(bc.value * 1.25);
-  return bc;
-};
-
-var FizBuzzCreep = function(wave) {
-  var fbc = Creep(wave);
-  fbc.creep_type = "FizBuzz Creep";
-  fbc.color = color(255,100,150);
-  fbc.size = fbc.size * 1.5;
-  fbc.hp = fbc.hp * 10;
-  fbc.value = fbc.value * 10;
-  return fbc;
-};
-
-
 
 /* pathfinding */
 
