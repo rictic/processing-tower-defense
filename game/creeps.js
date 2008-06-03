@@ -82,26 +82,31 @@ var CreepHpUpdater = function(creep) {
 /* Creep Mixins */
 
 var FlyingMixin = function(creep) {
+  creep.creep_type = "Flying " + creep.creep_type;
   return creep;
 }
 
 var WaterAdverseMixin = function(creep) {
   creep.terrain['water'] = 0.25;
+creep.creep_type = "Water-Hating " + creep.creep_type;
   return creep;
 }
 
 var WaterLovingMixin = function(creep) {
   creep.terrain['water'] = 2.0;
+creep.creep_type = "Water-Loving " + creep.creep_type;
   return creep;
 }
 
 var MountainAdverseMixin = function(creep) {
   creep.terrain['mountain'] = 0.25;
+creep.creep_type = "Mountain-Hating " + creep.creep_type;
   return creep;
 }
 
 var MountainLovingMixin = function(creep) {
   creep.terrain['mountain'] = 1.25;
+creep.creep_type = "Mountain-Loving " + creep.creep_type;
   return creep;
 }
 
@@ -111,6 +116,35 @@ var ImmuneMixin = function(creep) {
   creep.terrain['water'] = 1.0;
   creep.terrain['mountain'] = 1.0;
   creep.terrain['power plant'] = 1.0;
+  creep.creep_type = "Immune " + creep.creep_type;
+  return creep;
+}
+
+var StrongMixin = function(creep) {
+  creep.color = color(0,255,255);
+  creep.size = creep.size * 1.3;
+  creep.hp = Math.floor(creep.hp * 2);
+  creep.value = Math.floor(creep.value * 1.5);
+  creep.creep_type = "Strong " + creep.creep_type;
+  return creep;
+}
+
+var QuickMixin = function(creep) {
+  creep.creep_type = "Quick " + creep.creep_type;
+  creep.color = color(200,150,50);
+  creep.speed = creep.speed * 1.5;
+  creep.hp = Math.floor(creep.hp * .75);
+  creep.size = creep.size * 0.9;
+  creep.value = Math.floor(creep.value * 1.25);
+  return creep;
+}
+
+var BossMixin = function(creep) {
+  creep.creep_type = "Boss " + creep.creep_type;
+  creep.color = color(255,100,150);
+  creep.size = creep.size * 1.5;
+  creep.hp = Math.floor(creep.hp * 10);
+  creep.value = Math.floor(creep.value * 20);
   return creep;
 }
 
@@ -184,6 +218,8 @@ var Creep = function(wave) {
   return c;
 };
 
+
+
 var FizCreep = function(wave) {
   var fc = Creep(wave);
   fc.creep_type = "Fiz Creep";
@@ -194,6 +230,8 @@ var FizCreep = function(wave) {
   fc.speed = fc.speed * 0.75;
   return fc;
 };
+
+
 
 var BuzzCreep = function(wave) {
   var bc = Creep(wave);
