@@ -55,6 +55,19 @@ var CreepWave = function(settings) {
   return cw;
 };
 
+var create_creep_wave_with_mixins(settings, mixins) {
+  if (!mixins) mixins = [];
+  if (!mixins.length) mixins = [mixins];
+  var cw = CreepWave(settings);
+  var knows_creep_variety = false;
+  cw.spawn_creep = function() {
+    var c = Creep;
+    mixins.forEach(function(mixin) { mixin(c); });
+    if (!cw.knows_creep_variety)
+      cw.creep_variety = c.creep_type + "s";
+  }
+}
+
 var FizCreepWave = function(settings) {
   var fcw = CreepWave(settings);
   fcw.spawn_creep = function() { FizCreep(this.wave);  }
