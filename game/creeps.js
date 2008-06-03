@@ -171,6 +171,11 @@ var Creep = function(wave) {
     }
     return false;
   }
+  c.terrain_modified_speed = function() {
+    var terrain_modifier = get_terrain_at(this.gx,this.gy).type;
+    return c.speed * c.terrain[terrain_modifier];
+  }
+
   c.update = function() {
     var gpos = pixel_to_grid(this);
     this.gx = gpos.gx;
@@ -186,7 +191,8 @@ var Creep = function(wave) {
     }
     else {
       var elapsed = SET.now - this.last;
-      var speed = (elapsed/1000) * this.speed;
+      var terrain_modified_speed = this.terrain_modified_speed();
+      var speed = (elapsed/1000) * terrain_modified_speed;
       this.last = SET.now;
 
       var next_block = pathfind(gpos);
