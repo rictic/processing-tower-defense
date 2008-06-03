@@ -54,19 +54,26 @@ var Tower = function(settings) {
   };
   tower.update = function() {
     var creeps = SET.rendering_groups[SET.creep_render_level];
-    var creeps_in_range = creeps.filter(function(creep) {
+    if (creeps.length == 0) return;
+    var closest_creep;
+    var closest_distance
+    creeps.forEach(function(creep) {
 	var distance = dist(tower.x_mid,tower.y_mid,creep.x,creep.y);
-	if (distance < tower.prange) return true;
-	return false;
+	if (distance < tower.prange) {
+	  if (!closest_creep) {
+	    closest_creep = creep;
+	    closest_distance = distance;
+	  }
+	  else {
+	    if (distance < closest_distance) {
+	      closest_creep = creep;
+	      closest_distance = distance;
+	    }
+	  }
+	}
       });
-    if (creeps_in_range.length > 0) {
-      var creep = creeps_in_range[0];
-      var lowest_hp = creep.hp;
-      creeps_in_range.forEach(function(c) {
-	  if (c.hp < lowest_hp) creep = c;
-	});
-      if (tower.weapon_ready() == true) tower.attack(creep);
-    }
+    if (closest_creep && tower.weapon_ready() == true)
+      tower.attack(closest_creep);
   }
   tower.sale_value = 50;
   tower.sell = function() {
