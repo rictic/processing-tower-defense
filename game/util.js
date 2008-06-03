@@ -107,13 +107,7 @@ var draw_circle_in_grid = function(gx,gy) {
  */
   
 var can_build_here = function(gx,gy) {
-  var array = SET.rendering_groups[SET.tower_render_level];
-  if (array != undefined) {
-    for (var j=0; j<array.length; j++) {
-      var obj = array[j];
-      if (obj.gx == gx && obj.gy == gy) return false;
-    }
-  }
+  if ( get_tower_at(gx,gy) != false) return false;
   if ((gx == SET.entrance.gx) && (gy == SET.entrance.gy)) return false;
   if ((gx == SET.exit.gx) && (gy == SET.exit.gy)) return false;
   
