@@ -83,6 +83,9 @@ var CreepHpUpdater = function(creep) {
 
 var FlyingMixin = function(creep) {
   creep.creep_type = "Flying " + creep.creep_type;
+  creep.terrain['water'] = 1.0;
+  creep.terrain['mountain'] = 1.0;
+  creep.ignores_towers = true;
   return creep;
 }
 
@@ -176,6 +179,8 @@ var Creep = function(wave) {
     return c.speed * c.terrain[terrain_modifier];
   }
 
+  c.ignores_towers = false;
+
   c.update = function() {
     var gpos = pixel_to_grid(this);
     this.gx = gpos.gx;
@@ -189,7 +194,7 @@ var Creep = function(wave) {
       SET.lives--;
       if (SET.lives < 1) game_lost();
     }
-    else {
+    else if(!this.ignores_towers) {
       var elapsed = SET.now - this.last;
       var terrain_modified_speed = this.terrain_modified_speed();
       var speed = (elapsed/1000) * terrain_modified_speed;
@@ -207,6 +212,15 @@ var Creep = function(wave) {
       var path = calc_path(this.x,this.y,coords.x,coords.y,speed);
       this.x += path.x;
       this.y += path.y;
+    }
+    else if (this.ignores_towers) {
+      var elapsed = SET.now - this.last;
+      var terrain_modified_speed = this.terrain_modified_speed();
+      var speed = (elapsed/1000) * terrain_modified_speed;
+      var path = calc_path(this.x,this.y,SET.exit.x_mid,SET.exit.y_mid,speed);
+      this.x += path.x;
+      this.y += path.y;
+      this.last = SET.now;
     }
   }
   c.draw = function() {
