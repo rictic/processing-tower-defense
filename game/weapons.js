@@ -72,6 +72,8 @@ var Tower = function(settings) {
   tower.sell = function() {
     SET.gold += Math.floor(this.sale_value * 0.75);
     this.is_dead = function() { return true; };
+    SET.grid_cache_at(this.gx,this.gy).tower = undefined;
+
     if (SET.state) SET.state.tear_down();
     SET.state = undefined;
   }

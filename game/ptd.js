@@ -104,19 +104,21 @@ var default_set = function() {
     For example, upon selling a tower the value of the tower stored
     in the cache should be extinguished.
    */
-  var cache = [];
-  for (var i=0; i<set.gwidth; i++) {
-    var array = [];
-    for (var j=0; j<set.gheight; j++) {
-      array.push({});
-    }
-    cache.push(array);
-  }
-  set.grid_cache = cache;
-
+  set.grid_cache = {};
+  
 
   set.grid_cache_at = function(gx,gy) {
-    return this.grid_cache[gx][gy];
+    var gx_cache = set.grid_cache[gx];
+    if (!gx_cache) {
+      gx_cache = {};
+      set.grid_cache[gx] = gx_cache;
+    }
+    var gy_cache = gx_cache[gy];
+    if (!gy_cache) {
+      gy_cache = {};
+      gx_cache[gy] = gy_cache;
+    }
+    return gy_cache;
   }
 
   // colors

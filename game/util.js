@@ -121,19 +121,31 @@ var can_build_here = function(gx,gy) {
 };
 
 var get_tower_at = function(gx,gy) {
+  var cached = SET.grid_cache_at(gx,gy);
+  if (cached.tower) return cached.tower;
+
   var towers = SET.rendering_groups[SET.tower_render_level];
   for (var i=0;i<towers.length;i++) {
     var tower = towers[i];
-    if (tower.gx == gx && tower.gy == gy) return tower;
+    if (tower.gx == gx && tower.gy == gy) {
+      cached.tower = tower;
+      return tower;      
+    }
   }
   return false;
 };
 
 var get_terrain_at = function(gx,gy) {
+  var cached = SET.grid_cache_at(gx,gy);
+  if (cached.terrain) return cached.terrain;
+
   var squares = SET.rendering_groups[SET.square_render_level];
   for (var i=0;i<squares.length;i++) {
     var square = squares[i];
-    if (square.gx == gx && square.gy == gy) return square;
+    if (square.gx == gx && square.gy == gy) {
+      cached.terrain = square;
+      return square;
+    }
   }
   return;
 }
