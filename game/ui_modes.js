@@ -250,6 +250,7 @@ var AimMissileMode = function() {
 	var distance = dist(x,y,creep.x,creep.y);
 	if (distance <= this.radius) creep.hp = Math.floor(creep.hp / 2);
       });
+    play_sound("bomb");
     SET.gold -= this.cost;
   }; 
 }
