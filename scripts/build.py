@@ -38,7 +38,7 @@ def main():
     js_files = soup.findAll("script")
     for tag in js_files:
         if tag.has_key('src'):
-            merged_js.write(jsmin(open(tag['src'],'r').read()))
+            merged_js.write(open(tag['src'],'r').read())
     merged_js.close()
     print "Created JS %s" % MERGED_JS_NAME
 
