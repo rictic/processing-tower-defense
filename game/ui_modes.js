@@ -6,14 +6,14 @@ var UserInterfaceMode = function() {
  this.action = function(x,y) {
     // called when the mouse is clicked, if is_legal
  };
- this.is_legal = function(x,y) { 
+ this.is_legal = function(x,y) {
     // returns true,false or undefined.
     // if true, then the UI mode's action can be undertaken
     // at @x, @y. If false, then it cannot be undertaken.
     // Otherwise, the UI has no concept of legality.
     // The distinction between undefined and true lies in
     // visual cues presented to the user.
-    return undefined; 
+    return undefined;
  };
  this.draw = function(x,y) {
     // draw any relevant graphics at the mouse's location
@@ -22,14 +22,14 @@ var UserInterfaceMode = function() {
     // do any setup before entering the UI mode
  };
  this.tear_down = function() {
-    // perform any clean up before exiting the UI mode. 
+    // perform any clean up before exiting the UI mode.
  };
  this.can_leave_mode = function(x,y) {
     // used to check if the the UI mode can be left
     return true;
  };
  this.can_enter_mode = function(x,y) {
-    // used for checking if a UI can be invoked 
+    // used for checking if a UI can be invoked
     return true;
  };
  this.name = function() {
@@ -59,15 +59,15 @@ var BuildTowerMode = function() {
   this.is_legal = function(x,y) {
     var gpos = pixel_to_grid(x,y);
     if (can_build_here(gpos.gx,gpos.gy) == false) return false;
-    
+
     //usually very fast, as the answer should be cached
     pathfind({gx:SET.entrance.gx, gy:SET.entrance.gy});
-    
+
     //if the proposed tower isn't along any known path, it's not in
     //the way
     if (!([gpos.gx,gpos.gy] in known_best_paths))
       return true
-    
+
     //check that we can pathfind from the entrance
     //to the exit, and from each creep to the exit
     SET.considering_location = gpos;
@@ -115,8 +115,8 @@ var BuildTowerMode = function() {
     if (SET.gold >= this.cost) return true;
     else return false;
   };
-  this.name = function() { 
-    return "BuildTowerMode"; 
+  this.name = function() {
+    return "BuildTowerMode";
   };
 };
 BuildTowerMode.prototype = new UserInterfaceMode();
@@ -225,7 +225,7 @@ var select_creep = function() {
 
 var AimMissileMode = function() {
   this.cost = 50;
-  this.radius = SET.missile_blast_radius * SET.pixels_per_square;
+  this.radius = SET.missile_blast_radius * SET.pixels_per_square * 1.0;
   this.draw = function(x,y) {
     if (this.mr) this.mr.is_dead = function() { return true; };
     this.mr = MissileRadius(x,y,this.radius);
@@ -240,29 +240,25 @@ var AimMissileMode = function() {
     if (SET.gold >= this.cost) return true;
     else return false;
   };
-  this.name = function() { 
-    return "AimMissileMode"; 
+  this.name = function() {
+    return "AimMissileMode";
   };
   this.is_legal = function() { return true; };
   this.action = function(x,y) {
+    log("action!");
     var creeps = SET.rendering_groups[SET.creep_render_level];
-  	log("radius", this.radius);
-  	log("radius type", typeof this.radius);
-    creeps.forEach(function(creep) {
-    	var distance = dist(x,y,creep.x,creep.y);
-    	log("distance", distance);
-    	log("distance type", typeof distance);
-    	log("distance <= radius", distance <= this.radius);
-    	if (distance <= this.radius) {
-      	log("creep before missile", creep);
-    	  creep.hp = Math.floor(creep.hp / 2);
-      	log("creep after missile", creep);
-    	}
-
-    });
+    var l = creeps.length;
+    var range = Math.floor(this.radius);
+    for (var i=0;i<l;i++) {
+      var creep = creeps[i];
+      var d = Math.floor(dist(x,y,creep.x,creep.y));
+      if (d <= range) {
+	creep.hp = Math.floor(creep.hp / 2);
+      }
+    }
     play_sound("bomb");
     SET.gold -= this.cost;
-  }; 
+  }
 }
 AimMissileMode.prototype = new UserInterfaceMode();
 
