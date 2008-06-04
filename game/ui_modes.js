@@ -246,10 +246,20 @@ var AimMissileMode = function() {
   this.is_legal = function() { return true; };
   this.action = function(x,y) {
     var creeps = SET.rendering_groups[SET.creep_render_level];
+  	log("radius", this.radius);
+  	log("radius type", typeof this.radius);
     creeps.forEach(function(creep) {
-	var distance = dist(x,y,creep.x,creep.y);
-	if (distance <= this.radius) creep.hp = Math.floor(creep.hp / 2);
-      });
+    	var distance = dist(x,y,creep.x,creep.y);
+    	log("distance", distance);
+    	log("distance type", typeof distance);
+    	log("distance <= radius", distance <= this.radius);
+    	if (distance <= this.radius) {
+      	log("creep before missile", creep);
+    	  creep.hp = Math.floor(creep.hp / 2);
+      	log("creep after missile", creep);
+    	}
+
+    });
     play_sound("bomb");
     SET.gold -= this.cost;
   }; 
