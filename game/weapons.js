@@ -8,14 +8,14 @@ var KillZone = function(x,y,r) {
     stroke(255);
     ellipse(x,y,d,d);
   };
-  assign_to_depth(kz, SET.killzone_render_level); 
+  assign_to_depth(kz, SET.killzone_render_level);
   return kz;
 };
 
 var BuildRadius = function(x,y,r) {
   var br = KillZone(x,y,r);
   return br;
-}
+};
 
 var MissileRadius = function(x,y,r) {
   var mr = KillZone(x,y,r);
@@ -30,13 +30,13 @@ var Tower = function(settings) {
   tower.set_range = function(range) {
     tower.range = range;
     tower.prange = range * SET.pixels_per_square;
-  }
+  };
   tower.account_for_terrain = function() {
     var terrain = get_terrain_at(this.gx,this.gy);
     this.damage = this.damage * terrain.tower_damage_modifier;
     this.set_range(this.range * terrain.tower_range_modifier);
     this.reload_rate = this.reload_rate * terrain.tower_frequency_modifier;
-  }
+  };
   tower.set_range(3.5);
   tower.damage = 5.0;
   tower.attack = function(creep) {};
@@ -56,7 +56,7 @@ var Tower = function(settings) {
     var creeps = SET.rendering_groups[SET.creep_render_level];
     if (creeps.length == 0) return;
     var closest_creep;
-    var closest_distance
+    var closest_distance;
     creeps.forEach(function(creep) {
 	var distance = dist(tower.x_mid,tower.y_mid,creep.x,creep.y);
 	if (distance < tower.prange) {
@@ -194,7 +194,7 @@ var GattlingTower = function(gx,gy) {
     }
     return false;
   };
-  
+
   gt.attack = function(creep) {
     assign_to_depth(Bullet(this,creep),SET.bullet_render_level);
     gt.shots_left_in_volley--;
@@ -246,7 +246,7 @@ var Weapon = function(tower,target) {
       this.y += path.y;
     }
   }
-  w.is_dead = function() { 
+  w.is_dead = function() {
     if (!target || target.hp <= 0) return true;
     return false;
   };
