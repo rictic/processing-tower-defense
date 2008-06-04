@@ -168,6 +168,36 @@ var LaserTower = function(gx,gy) {
   return lt;
 };
 
+var CannonTower = function(gx,gy) {
+  var lt = Tower({gx:gx,gy:gy,color:color(100,120,140)});
+  lt.type = "Cannon Tower";
+  lt.attack = function(creep) {
+    assign_to_depth(CannonBall(this,creep),SET.bullet_render_level);
+  };
+  lt.upgrade_cost = 100;
+  lt.sale_value = 100;
+  lt.upgrade = function() {
+    if (SET.gold >= this.upgrade_cost) {
+      SET.gold -= this.upgrade_cost;
+      this.sale_value = Math.floor(this.sale_value + this.upgrade_cost);
+      this.upgrade_cost = Math.floor(this.upgrade_cost * 1.5);
+      this.damage = Math.floor(this.damage * 2.0);
+      this.set_range(this.range + 0.25);
+      this.reload_rate = this.reload_rate - 10;
+
+      if (SET.state) SET.state.tear_down();
+      SET.state = new TowerSelectMode();
+      SET.state.set_up(this.x_mid,this.y_mid);
+    }
+    else error("You don't have enough gold to upgrade, you need " + (this.upgrade_cost - SET.gold) + " more.");
+  }
+  lt.damage = 100;
+  lt.set_range(4);
+  lt.reload_rate = 1000;
+  lt.account_for_terrain();
+  return lt;
+};
+
 var GattlingTower = function(gx,gy) {
   var gt = Tower({gx:gx,gy:gy,color:color(250,250,50)});
   gt.type = "Gattling Tower";
@@ -269,6 +299,39 @@ var Bullet = function(tower, target) {
   }
   return b;
 }
+
+var CannonBall = function(tower, target) {
+  var c = new Object();
+  Object.extend(c, Weapon(tower,target));
+  c.size = 10;
+  c.color = color(0,0,0);
+  c.fill_color = color(50,50,50);
+  c.speed = 9;
+  c.damage = tower.damage;
+  c.proximity = 25;
+  c.splash_range = 50.0;
+  c.draw = function() {
+    log("drawing cannon ball!");
+    stroke(this.color);
+    fill(this.fill_color);
+    ellipse(this.x,this.y,this.size,this.size);
+  };
+  c.impact = function(target) {
+    this.is_dead = function() { return true; };
+    var creeps = SET.rendering_groups[SET.creep_render_level];
+    var l = creeps.length;
+    var range = Math.floor(this.splash_range);
+    for (var i=0;i<l;i++) {
+      var creep = creeps[i];
+      var d = Math.floor(dist(this.x,this.y,creep.x,creep.y));
+      if (d <= range) {
+	creep.hp -= this.damage;
+      }
+    }
+  };
+
+  return c;
+};
 
 var Missile = function(tower,target) {
   var m = new Object();

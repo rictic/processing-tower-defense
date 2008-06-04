@@ -40,6 +40,10 @@
       <td> <button onclick="build_missile_tower();" accesskey="M">Build <u>M</u>issile Tower</button> </td>
       <td> 100 Gold </td>
     </tr>
+    <tr>
+      <td> <button onclick="build_cannon_tower();" accesskey="M">Build <u>C</u>annon Tower</button> </td>
+      <td> 100 Gold </td>
+    </tr>
     <tr>  
       <td> <button onclick="aim_missile();" accesskey="S">Launch <u>S</u>mall Missile</button></td>
       <td> 50 Gold </td>
@@ -132,6 +136,7 @@
     $.hotkeys.add("L", build_laser_tower);
     $.hotkeys.add("M", build_missile_tower);
     $.hotkeys.add("G", build_gattling_tower);
+    $.hotkeys.add("C", build_cannon_tower);
     $.hotkeys.add("S", aim_missile);
     $.hotkeys.add("N", nuke_creeps);
     $.hotkeys.add("Space", pause);

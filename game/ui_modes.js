@@ -135,6 +135,20 @@ var build_missile_tower = function() {
   attempt_to_enter_ui_mode(new BuildMissileTowerMode());
 };
 
+var BuildCannonTowerMode = function() {
+  this.cost = 100;
+  this.tower = CannonTower;
+  this.name = function() {
+    return "BuildCannonTowerMode";
+  };
+};
+BuildCannonTowerMode.prototype = new BuildTowerMode();
+
+
+var build_cannon_tower = function() {
+  attempt_to_enter_ui_mode(new BuildCannonTowerMode());
+};
+
 var BuildLaserTowerMode = function() {
   this.cost = 50;
   this.tower = LaserTower;
