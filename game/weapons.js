@@ -112,11 +112,11 @@ var Tower = function(settings) {
 var MissileTower = function(gx,gy) {
   var mt = Tower({gx:gx,gy:gy,color:color(250,150,50)});
   mt.type = "Missile Tower";
-  mt.damage = 100;
+  mt.damage = 5000;
   mt.upgrade_cost = 100;
   mt.sale_value = 100;
   mt.set_range(5.5);
-  mt.reload_rate = 750;
+  mt.reload_rate = 2000;
   mt.attack = function(creep) {
     assign_to_depth(Missile(this,creep),SET.bullet_render_level);
   }
@@ -228,6 +228,7 @@ var Weapon = function(tower,target) {
   w.x = tower.x_mid;
   w.y = tower.y_mid;
   w.target = target;
+  w.tower = tower;
   w.proximity = 3;
   w.damage = tower.damage;
   w.impact = function(target) {
@@ -275,17 +276,26 @@ var Missile = function(tower,target) {
   m.size = 10;
   m.color = color(255,0,0);
   m.fill_color = color(250,50,50);
-  m.speed = 5;
+  m.speed = 8;
   m.damage = tower.damage;
   m.proximity = 20;
+  m.is_dead = function() {
+    if (!this.target || this.target.hp <= 0) {
+      this.target = get_creep_nearest(this.x,this.y,100);
+      //log("new target: " + pp(this.target));
+    }
+    if (!this.target) return true;
+    return false;
+  }
+
   m.draw = function() {
     stroke(m.color);
     fill(m.fill_color);
     var mx = this.x;
     var my = this.y;
     var size = this.size;
-    var tx = target.x;
-    var ty = target.y;
+    var tx = this.target.x;
+    var ty = this.target.y;
     var tth = Math.atan((ty-my)/(tx-mx));
     var angle = 2.35619449; // 135 degrees in radians
     triangle(mx,my,
