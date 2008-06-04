@@ -245,7 +245,6 @@ var AimMissileMode = function() {
   };
   this.is_legal = function() { return true; };
   this.action = function(x,y) {
-    log("action!");
     var creeps = SET.rendering_groups[SET.creep_render_level];
     var l = creeps.length;
     var range = Math.floor(this.radius);
