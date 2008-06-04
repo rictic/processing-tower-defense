@@ -46,7 +46,7 @@ var CreepHpUpdater = function(creep) {
 
 /*
   ### Types of creeps
-  
+
   Creeps interact with terrain in a variety of ways.
   Some types of creeps will be much faster on certain
   squares, and much slower on others. Some types will
@@ -61,7 +61,7 @@ var CreepHpUpdater = function(creep) {
   4. Power Plant: 2/1 speed.
 
   #### Creep mixins
-  
+
   1. FlyingMixin: ignore standard pathfinding, and go in a straight line to exit.
   2. WaterAdverseMixin: very slow walking through water.
   3. WaterLovingMixin: very quick walking in water.
@@ -157,7 +157,7 @@ var Creep = function(wave) {
   var cp = SET.creeps_spawned;
   var c = new Object();
   c.terrain = {"entrance":1.0,"exit":1.0,"mountain":0.75,"water":0.5,"neutral":1.0,"power plant":2.0};
- 
+
   c.x = SET.entrance.x_mid;
   c.y = SET.entrance.y_mid;
   c.color = SET.creep_color;
@@ -175,8 +175,15 @@ var Creep = function(wave) {
     return false;
   }
   c.terrain_modified_speed = function() {
-    var terrain_modifier = get_terrain_at(this.gx,this.gy).type;
-    return c.speed * c.terrain[terrain_modifier];
+    var terrain = get_terrain_at(this.gx,this.gy);
+    if (terrain) {
+      var terrain_type = terrain.type;
+      var terrain_modifier = c.terrain[terrain_type];
+    }
+    else {
+      var terrain_modifier = 1.0;
+    }
+    return c.speed * terrain_modifier;
   }
 
   c.ignores_towers = false;
@@ -207,7 +214,7 @@ var Creep = function(wave) {
         log("creep",this);
         return;
       }
-        
+
       var coords = center_of_square(next_block.gx, next_block.gy)
       var path = calc_path(this.x,this.y,coords.x,coords.y,speed);
       this.x += path.x;
@@ -290,8 +297,8 @@ var pathfind = function(start_block) {
     })
     return candidates;
   }
-  
-  
+
+
   //straight-line distance as our heuristic
   var heuristic = function(gpos) {
     var dx = Math.abs(gpos.gx - SET.exit.gx);
@@ -300,8 +307,8 @@ var pathfind = function(start_block) {
     dist += (Math.max(dx,dy) - Math.min(dx,dy)) * 10
     return dist
   }
-  
-  
+
+
   var closed = {};
   var pqueue = [{gpos:start_block, f:heuristic(start_block), g:0}];
   while (pqueue.length > 0) {
