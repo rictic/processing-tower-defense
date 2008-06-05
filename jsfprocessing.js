@@ -1,7 +1,6 @@
 var GLOBAL_PROCESSING;
-function set_canvas(id) {
-  var canvas = document.getElementById(id);
-  GLOBAL_PROCESSING = Processing(canvas);
+function set_canvas(element) {
+  GLOBAL_PROCESSING = Processing(element);
 }
 
 function size(height, width) {
