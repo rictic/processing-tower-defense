@@ -49,7 +49,7 @@ div#game {
   float: left;
 }
 
-#top_controls span {
+#top_controls .item {
     padding-right: 10px;
 }
 

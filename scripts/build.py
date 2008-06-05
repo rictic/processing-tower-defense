@@ -49,7 +49,7 @@ def main():
     merged_src["type"] = "text/javascript"
     js_imports_div.replaceWith(merged_src)
     merged_html = open(MERGED_HTML_NAME, 'w')
-    merged_html.write(soup.prettify())
+    merged_html.write(str(soup))
     merged_html.close()
 
     print "Created HTML file: %s" % MERGED_HTML_NAME
