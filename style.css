@@ -1,5 +1,5 @@
 #tower_defense {
-  float:left;
+    float:left;
 }
 
 /*
@@ -42,11 +42,11 @@ div#game {
 }
 
 #game div {
-  overflow:auto
+    overflow:auto
 }
 
 #menu {
-  float: left;
+    float: left;
 }
 
 #top_controls .item {
@@ -64,14 +64,14 @@ div#game {
 }
 
 #game_over {
-  font-size: 150%;
-  background-color: 000;
-  color: #f73;
+    font-size: 150%;
+    background-color: 000;
+    color: #f73;
 }
 
 .error {
-  background-color: 000;
-  color: #f73;
+    background-color: 000;
+    color: #f73;
 }
 
 div#side {
@@ -87,8 +87,11 @@ div#side {
 }
 
 #side table {
-
     margin-left: 10px;
     margin-top: 10px;
     border: solid 1px black;
+}
+
+.hotkey {
+    text-decoration: underline;
 }
