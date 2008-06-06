@@ -173,7 +173,7 @@ var CannonTower = function(gx,gy) {
   var lt = Tower({gx:gx,gy:gy,color:color(100,120,140)});
   lt.type = "Cannon Tower";
   lt.attack = function(creep) {
-    assign_to_depth(CannonBall(this,creep),SET.bullet_render_level);
+    assign_to_depth(CannonBall(this,{x:creep.x, y:creep.y}),SET.bullet_render_level);
   };
   lt.upgrade_cost = 100;
   lt.sale_value = 100;
