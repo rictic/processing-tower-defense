@@ -173,7 +173,7 @@ var CannonTower = function(gx,gy) {
   var lt = Tower({gx:gx,gy:gy,color:color(100,120,140)});
   lt.type = "Cannon Tower";
   lt.attack = function(creep) {
-    assign_to_depth(CannonBall(this,{x:creep.x, y:creep.y}),SET.bullet_render_level);
+    assign_to_depth(CannonBall(this,{x:creep.x, y:creep.y, hp:1}),SET.bullet_render_level);
   };
   lt.upgrade_cost = 100;
   lt.sale_value = 100;
@@ -304,18 +304,23 @@ var Bullet = function(tower, target) {
 var CannonBall = function(tower, target) {
   var c = new Object();
   Object.extend(c, Weapon(tower,target));
-  c.size = 10;
+  c.midpoint = {x:Math.floor((c.x + target.x)/2.0), y:Math.floor((c.y + target.y) / 2.0)};
+  c.middist = dist(c.x, c.y, c.midpoint.x, c.midpoint.y);
+  c.min_size = 8
+  c.size_variance = 4;
   c.color = color(0,0,0);
   c.fill_color = color(50,50,50);
-  c.speed = 9;
+  c.speed = 8;
   c.damage = tower.damage;
   c.proximity = 25;
   c.splash_range = 50.0;
   c.draw = function() {
-    log("drawing cannon ball!");
+    var percent_to_apex = ((this.middist - dist(this.x, this.y, this.midpoint.x, this.midpoint.y)) / this.middist);
+    size = ((1 - Math.pow(1 - percent_to_apex, 2)) * this.size_variance) + this.min_size;
+    log("drawing cannonball", size);
     stroke(this.color);
     fill(this.fill_color);
-    ellipse(this.x,this.y,this.size,this.size);
+    ellipse(this.x,this.y,size,size);
   };
   c.impact = function(target) {
     this.is_dead = function() { return true; };
