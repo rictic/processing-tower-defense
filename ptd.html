@@ -30,20 +30,20 @@
 <div id="controls">
   <table>
     <tr>
-      <td> <button onclick="build_laser_tower();" accesskey="L">Build <span class='hotkey'>L</span>aser Tower - 50 Gold</button> </td>
+      <td> <button id='laser_button' onclick="build_laser_tower();" accesskey="L">Build <span class='hotkey'>L</span>aser Tower - 50 Gold</button> </td>
     </tr>
     <tr>
-      <td> <button onclick="build_gattling_tower();"> Build <span class='hotkey'>G</span>attling Tower - 50 Gold</button></td>
+      <td> <button id='gattling_button' onclick="build_gattling_tower();"> Build <span class='hotkey'>G</span>attling Tower - 50 Gold</button></td>
     </tr>
     
     <tr>
-      <td> <button onclick="build_missile_tower();" accesskey="M">Build <span class='hotkey'>M</span>issile Tower - 100 Gold</button> </td>
+      <td> <button id='missile_button' onclick="build_missile_tower();" accesskey="M">Build <span class='hotkey'>M</span>issile Tower - 100 Gold</button> </td>
     </tr>
     <tr>
-      <td> <button onclick="build_cannon_tower();" accesskey="M">Build <span class='hotkey'>C</span>annon Tower - 100 Gold</button> </td>
+      <td> <button id='cannon_button' onclick="build_cannon_tower();" accesskey="M">Build <span class='hotkey'>C</span>annon Tower - 100 Gold</button> </td>
     </tr>
     <tr>  
-      <td> <button onclick="aim_bomb();" accesskey="S">Drop <span class='hotkey'>B</span>omb - 50 Gold</button></td>
+      <td> <button id='bomb_button' onclick="aim_bomb();" accesskey="S">Drop <span class='hotkey'>B</span>omb - 50 Gold</button></td>
     </tr>
     <tr>
       <td> <button onclick="nuke_creeps();" accesskey="N"> Launch <span class='hotkey'>N</span>uke - <span id="nukes_left"> 3 left </span></button></td>
@@ -123,6 +123,7 @@
 </div>
 
 <script type="text/javascript" charset="utf-8">
+    /* initialization */
     $(document).ready(function() {
         start_tower_defense();
     })  
@@ -159,7 +160,6 @@
         return true
     });
     
-    
     var paused = false;
     function pause() {
         paused = !paused;
@@ -171,6 +171,8 @@
         $('#mute_button').html(muted ? "Unmute" : "Mute");
     }
     
+    /* Messages for the player */
+
     //Temporary messages are a bit of a pain
     var timeToHide = null;
     ["error","message"].forEach(function(s){
@@ -192,9 +194,22 @@
         else
             $('#game_over').html("Just once more...").fadeOut();
     });
-    
-    
+
+
+    /* illustrating to the user what mode they're in*/
+    mode_signifiers = {'BuildLaserTowerMode':'laser_button', 'BuildGattlingTowerMode':'gattling_button',
+                       'BuildCannonTowerMode':'cannon_button', 'BuildMissileTowerMode':'missile_button',
+                       'AimBombMode':'bomb_button', 'PauseMode':'pause_button'};
+    for (event in mode_signifiers) {
+        $('').bind(event, function(e) {
+            $('#'+mode_signifiers[e.type]).addClass('active_mode');
+        });
+    }
+    $('').bind('no_mode', function() {
+        $('button').removeClass('active_mode');
+    })
 </script>
+
 <hr/>
 <p><a rel="license" href="http://www.opensource.org/licenses/mit-license.php">MIT License</a>, by <a href="http://lethain.com">Will Larson</a> and <a href="http://blog.rictic.com/">Peter Burns</a></p>
 <p>Sound effects are released under a <a href='http://creativecommons.org/licenses/sampling+/1.0/'>Creative Commons Sampling Plus 1.0 License</a> - For authorship information, see <a href='assets/LICENSE'>here</a></p>

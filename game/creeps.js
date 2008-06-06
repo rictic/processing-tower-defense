@@ -24,10 +24,7 @@ var CreepHpUpdater = function(creep) {
   chp.should_die = false;
   chp.is_dead = function() {
     if (chp.should_die || !creep || !SET.state || SET.state.name() != "CreepSelectMode" || creep.is_dead()) {
-      if (SET.state) {
-      	SET.state.tear_down();
-      	SET.state = undefined;
-      }
+      unselect();
       if (chp.kz)
       	chp.kz.is_dead = function() { return true; };
       return true;

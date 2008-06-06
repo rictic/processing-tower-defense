@@ -32,6 +32,11 @@ button:active{
     color:#fff;
 }
 
+button.active_mode {
+    background-color:#6299c5;
+    border:1px solid #6299c5;
+    color:#fff;
+}
 
 div#game {
     background-color: #888; 
@@ -95,3 +100,4 @@ div#side {
 .hotkey {
     text-decoration: underline;
 }
+

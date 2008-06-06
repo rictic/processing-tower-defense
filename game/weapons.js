@@ -82,8 +82,7 @@ var Tower = function(settings) {
     this.is_dead = function() { return true; };
     SET.grid_cache_at(this.gx,this.gy).tower = undefined;
 
-    if (SET.state) SET.state.tear_down();
-    SET.state = undefined;
+    unselect();
   }
   tower.display_stats = function() {
     WIDGETS.tower_type.innerHTML = this.type;
@@ -129,7 +128,7 @@ var MissileTower = function(gx,gy) {
       this.damage = Math.floor(this.damage * 2.5);
       this.set_range(this.range + 0.5);
 
-      if (SET.state) SET.state.tear_down();
+      unselect();
       SET.state = new TowerSelectMode();
       SET.state.set_up(this.x_mid,this.y_mid);
     }
@@ -156,7 +155,7 @@ var LaserTower = function(gx,gy) {
       this.set_range(this.range + 0.25);
       this.reload_rate = this.reload_rate - 10;
 
-      if (SET.state) SET.state.tear_down();
+      unselect();
       SET.state = new TowerSelectMode();
       SET.state.set_up(this.x_mid,this.y_mid);
     }
@@ -186,7 +185,7 @@ var CannonTower = function(gx,gy) {
       this.set_range(this.range + 0.25);
       this.reload_rate = this.reload_rate - 10;
 
-      if (SET.state) SET.state.tear_down();
+      unselect();
       SET.state = new TowerSelectMode();
       SET.state.set_up(this.x_mid,this.y_mid);
     }
@@ -244,7 +243,7 @@ var GattlingTower = function(gx,gy) {
       this.damage = Math.floor(this.damage * 2.5);
       this.set_range(this.range + 0.5);
       this.reload_rate = Math.floor(this.reload_rate * 0.95);
-      if (SET.state) SET.state.tear_down();
+      unselect();
       SET.state = new TowerSelectMode();
       SET.state.set_up(this.x_mid,this.y_mid);
     }

@@ -316,11 +316,10 @@ var pause_resume = function() {
     if (state_name == "GameOverMode")
       ;
     else if (state_name == "PauseMode") {
-      SET.state.tear_down();
-      SET.state = undefined;
+      unselect();
     }
     else {
-      SET.state.tear_down();
+      unselect();
       SET.state = new PauseMode();
       SET.state.set_up();
     }
@@ -332,7 +331,7 @@ var pause_resume = function() {
 };
 
 var game_lost = function() {
-  if (SET.state) SET.state.tear_down();
+  unselect();
   attempt_to_enter_ui_mode(new GameOverMode());
 }
 
@@ -383,8 +382,7 @@ var on_mouse_press = function() {
       SET.state.action(pos.x,pos.y);
     }
     if (SET.state.can_leave_mode(pos.x,pos.y)) {
-      SET.state.tear_down(pos.x,pos.y);
-      SET.state = undefined;
+      unselect();
     }
   }
   if (!SET.state) {
@@ -409,6 +407,7 @@ var message = function(msg) {
 var unselect = function() {
   if (SET.state) SET.state.tear_down();
   SET.state = undefined;
+  $('').trigger("no_mode");
 }
 
 var error = function(msg) {

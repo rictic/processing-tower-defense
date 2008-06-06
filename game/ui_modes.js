@@ -44,7 +44,7 @@ var attempt_to_enter_ui_mode = function(mode, error_msg) {
     clicks in the game canvas.
    */
   if (!SET.state || SET.state.can_leave_mode()) {
-    if (SET.state) SET.state.tear_down();
+    unselect();
     if (mode.can_enter_mode()) {
       SET.state = mode;
       var pos = mouse_pos();
@@ -99,6 +99,7 @@ var BuildTowerMode = function() {
   };
   this.set_up = function(x,y) {
     this.draw(x,y);
+    $('').trigger(this.name());
   };
   this.tear_down = function() {
     if (this.br) {
@@ -246,6 +247,7 @@ var AimBombMode = function() {
   }
   this.set_up = function(x,y) {
     this.draw(x,y);
+    $('').trigger("AimBombMode");
   }
   this.tear_down = function() {
     if (this.mr) this.mr.is_dead = function() { return true; };
@@ -286,6 +288,7 @@ var PauseMode = function() {
   };
   this.set_up = function() {
     this.began_at = millis();
+    $('').trigger("PauseMode");
   }
   this.tear_down = function() {
     var elapsed = millis() - this.began_at;
