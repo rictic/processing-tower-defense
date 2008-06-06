@@ -117,8 +117,6 @@
 <script src="game/creeps.js" type="text/javascript" charset="utf-8"></script>
 <script src="game/ui_modes.js" type="text/javascript" charset="utf-8"></script>
 <script src="game/weapons.js" type="text/javascript" charset="utf-8"></script>
-<script src="soundmanager2/soundmanager2.js" type="text/javascript" charset="utf-8"></script>
-<script src="game/sound_effects.js" type="text/javascript" charset="utf-8"></script>
 <script src="game/ptd.js" type="text/javascript" charset="utf-8" ></script>
 </div>
 
@@ -126,7 +124,7 @@
     /* initialization */
     $(document).ready(function() {
         start_tower_defense();
-    })  
+    })
     
     
     /* Hotkeys! */
@@ -208,11 +206,14 @@
     $('').bind('no_mode', function() {
         $('button').removeClass('active_mode');
     })
+    
+    /* stub until we pull in sound for reals */
+    var play_sound = function(){};
 </script>
 
 <hr/>
 <p><a rel="license" href="http://www.opensource.org/licenses/mit-license.php">MIT License</a>, by <a href="http://lethain.com">Will Larson</a> and <a href="http://blog.rictic.com/">Peter Burns</a></p>
-<p>Sound effects are released under a <a href='http://creativecommons.org/licenses/sampling+/1.0/'>Creative Commons Sampling Plus 1.0 License</a> - For authorship information, see <a href='assets/LICENSE'>here</a></p>
+<!-- <p>Sound effects are released under a <a href='http://creativecommons.org/licenses/sampling+/1.0/'>Creative Commons Sampling Plus 1.0 License</a> - For authorship information, see <a href='assets/LICENSE'>here</a></p> -->
 <div id="log"></div>
 <div id="sfx_dump"></div>
 </body> </html>
