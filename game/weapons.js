@@ -65,20 +65,20 @@ var Tower = function(settings) {
     var closest_creep;
     var closest_distance;
     creeps.forEach(function(creep) {
-	var distance = dist(tower.x_mid,tower.y_mid,creep.x,creep.y);
-	if (distance < tower.prange) {
-	  if (!closest_creep) {
-	    closest_creep = creep;
-	    closest_distance = distance;
-	  }
-	  else {
-	    if (distance < closest_distance) {
-	      closest_creep = creep;
-	      closest_distance = distance;
-	    }
-	  }
-	}
-      });
+      var distance = dist(tower.x_mid,tower.y_mid,creep.x,creep.y);
+      if (distance < tower.prange) {
+        if (!closest_creep) {
+          closest_creep = creep;
+          closest_distance = distance;
+        }
+        else {
+          if (distance < closest_distance) {
+            closest_creep = creep;
+            closest_distance = distance;
+          }
+        }
+      }
+    });
     if (closest_creep && tower.weapon_ready() == true)
       tower.attack(closest_creep);
   }
@@ -336,7 +336,7 @@ var CannonBall = function(tower, target) {
       var creep = creeps[i];
       var d = Math.floor(dist(this.x,this.y,creep.x,creep.y));
       if (d <= range) {
-	creep.hp -= this.damage;
+        creep.hp -= this.damage;
       }
     }
   };

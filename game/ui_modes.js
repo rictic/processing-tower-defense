@@ -186,8 +186,8 @@ var TowerSelectMode = function() {
     if (this.tower) {
       this.tower.display_stats();
       this.killzone = KillZone(this.tower.x_mid,
-			       this.tower.y_mid,
-			       this.tower.range*SET.pixels_per_square);
+      this.tower.y_mid,
+      this.tower.range*SET.pixels_per_square);
       WIDGETS.tower.style.display = "block";
     }
   };
@@ -267,9 +267,8 @@ var AimBombMode = function() {
     for (var i=0;i<l;i++) {
       var creep = creeps[i];
       var d = Math.floor(dist(x,y,creep.x,creep.y));
-      if (d <= range) {
-	creep.hp = Math.floor(creep.hp / 2);
-      }
+      if (d <= range)
+        creep.hp = Math.floor(creep.hp / 2);
     }
     play_sound("bomb");
     SET.gold -= this.cost;
@@ -293,11 +292,11 @@ var PauseMode = function() {
   this.tear_down = function() {
     var elapsed = millis() - this.began_at;
     SET.rendering_groups.forEach(function(group) {
-	group.forEach(function(member) {
-	    if (member.last)
-	      member.last += elapsed;
-	  });
+      group.forEach(function(member) {
+      if (member.last)
+        member.last += elapsed;
       });
+    });
   }
   this.name = function() { return "PauseMode"; };
 };

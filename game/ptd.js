@@ -123,16 +123,16 @@ var default_set = function() {
 
   set.grid_cache_reset_all_values_for_key = function(key) {
     set.grid_cache.forEach(function (group) {
-	group.forEach(function (member) {
-	    member[key] = undefined;
-	  });
+      group.forEach(function (member) {
+        member[key] = undefined;
       });
+    });
   }
 
   // colors
   set.bg_colors = {neutral:color(90,80,70),
-		  positive:color(60,80,250),
-		  negative:color(250,80,60)};
+                   positive:color(60,80,250),
+                   negative:color(250,80,60)};
   set.bg_color = set.bg_colors.neutral;
   set.grid_color = color(255,255,255);
   set.entrance_color = color(255,100,100);
@@ -301,9 +301,9 @@ var nuke_creeps = function() {
   if (SET.nukes > 0) {
     var creeps = SET.rendering_groups[SET.creep_render_level];
     creeps.forEach(function(x) { 
-	x.hp = -1; 
-	x.value = 0; // no gold for nuked creeps
-      });
+      x.hp = -1; 
+      x.value = 0; // no gold for nuked creeps
+    });
     play_sound("nuke");
     SET.nukes--;
   }
@@ -392,9 +392,9 @@ var on_mouse_press = function() {
       var modeFunc = UI_MODES_FROM_CLICK[i];
       var mode = new modeFunc();
       if (mode.can_enter_mode(pos.x,pos.y)) {
-	SET.state = mode;
-	SET.state.set_up(pos.x,pos.y);
-	break;
+        SET.state = mode;
+        SET.state.set_up(pos.x,pos.y);
+        break;
       }
     }
   }

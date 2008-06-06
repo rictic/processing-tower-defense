@@ -65,13 +65,13 @@ var populate_terrains = function() {
     for (var gy=0; gy<gheight; gy++) {
       var n = Math.random();
       if (n <= range_mountain)
-	MountainTerrain(gx,gy);
+        MountainTerrain(gx,gy);
       else if (n <= range_water)
-	WaterTerrain(gx,gy);
+        WaterTerrain(gx,gy);
       else if (n <= range_power_plant)
-	PowerPlantTerrain(gx,gy);
+        PowerPlantTerrain(gx,gy);
       else
-	NeutralTerrain(gx,gy);
+        NeutralTerrain(gx,gy);
     }
   }
 

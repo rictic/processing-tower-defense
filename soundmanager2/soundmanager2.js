@@ -68,9 +68,9 @@ function SoundManager(smURL,smID) {
     'type': null,
     'types': {
       'remote': 'remote (domain-based) rules',
-	  'localWithFile': 'local with file access (no internet access)',
-	  'localWithNetwork': 'local with network (internet access only, no local access)',
-	  'localTrusted': 'local, trusted (local + internet access)'
+    'localWithFile': 'local with file access (no internet access)',
+    'localWithNetwork': 'local with network (internet access only, no local access)',
+    'localTrusted': 'local, trusted (local + internet access)'
     },
     'description': null,
     'noRemote': null,
@@ -133,7 +133,7 @@ function SoundManager(smURL,smID) {
     if (!self._idCheck(sID)) return false;
     for (var i=0; i<self.soundIDs.length; i++) {
       if (self.soundIDs[i] == sID) {
-	self.soundIDs.splice(i,1);
+        self.soundIDs.splice(i,1);
         continue;
       };
     };
@@ -640,14 +640,14 @@ function SoundManager(smURL,smID) {
     for (stuff in this.options) {
       if (this.options[stuff] != null) {
         if (this.options[stuff] instanceof Function) {
-	  // handle functions specially
-	  sF = this.options[stuff].toString();
-	  sF = sF.replace(/\s\s+/g,' '); // normalize spaces
-	  sfBracket = sF.indexOf('{');
-	  msg[msg.length] = ' '+stuff+': {'+sF.substr(sfBracket+1,(Math.min(Math.max(sF.indexOf('\n')-1,maxLength),maxLength))).replace(/\n/g,'')+'... }';
-	} else {
-	  msg[msg.length] = ' '+stuff+': '+this.options[stuff];
-	};
+          // handle functions specially
+          sF = this.options[stuff].toString();
+          sF = sF.replace(/\s\s+/g,' '); // normalize spaces
+          sfBracket = sF.indexOf('{');
+          msg[msg.length] = ' '+stuff+': {'+sF.substr(sfBracket+1,(Math.min(Math.max(sF.indexOf('\n')-1,maxLength),maxLength))).replace(/\n/g,'')+'... }';
+        } else {
+          msg[msg.length] = ' '+stuff+': '+this.options[stuff];
+        };
       };
     };
     sm._writeDebug('SMSound() merged options: {\n'+msg.join(', \n')+'\n}');
