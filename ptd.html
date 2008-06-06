@@ -43,7 +43,7 @@
       <td> <button onclick="build_cannon_tower();" accesskey="M">Build <span class='hotkey'>C</span>annon Tower - 100 Gold</button> </td>
     </tr>
     <tr>  
-      <td> <button onclick="aim_missile();" accesskey="S">Launch <span class='hotkey'>S</span>mall Missile - 50 Gold</button></td>
+      <td> <button onclick="aim_bomb();" accesskey="S">Drop <span class='hotkey'>B</span>omb - 50 Gold</button></td>
     </tr>
     <tr>
       <td> <button onclick="nuke_creeps();" accesskey="N"> Launch <span class='hotkey'>N</span>uke - <span id="nukes_left"> 3 left </span></button></td>
@@ -88,7 +88,8 @@
     <li>L – Build laser tower</li>
     <li>M – Build missile tower</li>
     <li>G – Build gattling tower</li>
-    <li>S – Fire Small Missile</li>
+    <li>C – Build cannon tower</li>
+    <li>B – Drop Bomb</li>
     <li>N – Launch Nuke</li>
     <li>W – Spawn Next Wave</li>
     <li>U – Upgrade Selected Tower</li>
@@ -110,7 +111,6 @@
 <script src="processing.js" type="text/javascript" charset="utf-8" ></script>
 <script src="jsfprocessing.js" type="text/javascript" charset="utf-8" ></script>
 <script src="jquery-1.2.6.min.js" type="text/javascript" charset="utf-8" ></script>
-<script src="jquery.hotkeys.js" type="text/javascript" charset="utf-8" ></script>
 <script src="game/creep_waves.js" type="text/javascript" charset="utf-8"></script>
 <script src="game/terrain.js" type="text/javascript" charset="utf-8"></script>
 <script src="game/util.js" type="text/javascript" charset="utf-8"></script>
@@ -127,16 +127,38 @@
         start_tower_defense();
     })  
     
-    $.hotkeys.add("L", build_laser_tower);
-    $.hotkeys.add("M", build_missile_tower);
-    $.hotkeys.add("G", build_gattling_tower);
-    $.hotkeys.add("C", build_cannon_tower);
-    $.hotkeys.add("S", aim_missile);
-    $.hotkeys.add("N", nuke_creeps);
-    $.hotkeys.add("Space", pause);
-    $.hotkeys.add("Esc", unselect);
-    $.hotkeys.add("W", spawn_wave);
-    $.hotkeys.add("U", function(){ $('#tower_upgrade_button').click() });
+    
+    /* Hotkeys! */
+    special_keys = {
+        27: 'esc', 9: 'tab', 32:'space', 13: 'return', 8:'backspace', 145: 'scroll', 20: 'capslock', 
+        144: 'numlock', 19:'pause', 45:'insert', 36:'home', 46:'del',35:'end', 33: 'pageup', 
+        34:'pagedown', 37:'left', 38:'up', 39:'right',40:'down', 112:'f1',113:'f2', 114:'f3', 
+        115:'f4', 116:'f5', 117:'f6', 118:'f7', 119:'f8', 120:'f9', 121:'f10', 122:'f11', 123:'f12'};
+    
+    //extract hotkeys from the DOM
+    var hotkeys = {};
+    $('button .hotkey').each(function(){
+        //this is bass ackwards, but I got type errors passing around the native click method
+        var button = this.parentNode;
+        hotkeys[this.innerHTML] = function() {button.click()};
+    });
+    
+    //hotkeys that aren't in the dom
+    hotkeys["space"] = pause;
+    hotkeys["esc"] = unselect;
+
+    $(document).bind("keydown", function(e) {
+        // if the user is holding down ctrl or cmd, let the browser handle it
+        if (e.metaKey) return true;
+        
+        var key = special_keys[e.keyCode] || String.fromCharCode(e.keyCode);
+        if (key in hotkeys){
+            hotkeys[key]();
+            return false
+        }
+        return true
+    });
+    
     
     var paused = false;
     function pause() {

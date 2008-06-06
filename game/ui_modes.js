@@ -235,9 +235,9 @@ var select_creep = function() {
   SET.state = CreepSelectMode();
 };
 
-/* AimMissileMode */
+/* AimBombMode */
 
-var AimMissileMode = function() {
+var AimBombMode = function() {
   this.cost = 50;
   this.radius = SET.missile_blast_radius * SET.pixels_per_square * 1.0;
   this.draw = function(x,y) {
@@ -255,7 +255,7 @@ var AimMissileMode = function() {
     else return false;
   };
   this.name = function() {
-    return "AimMissileMode";
+    return "AimBombMode";
   };
   this.is_legal = function() { return true; };
   this.action = function(x,y) {
@@ -273,10 +273,10 @@ var AimMissileMode = function() {
     SET.gold -= this.cost;
   }
 }
-AimMissileMode.prototype = new UserInterfaceMode();
+AimBombMode.prototype = new UserInterfaceMode();
 
-var aim_missile = function(x,y) {
-  attempt_to_enter_ui_mode(new AimMissileMode());
+var aim_bomb = function(x,y) {
+  attempt_to_enter_ui_mode(new AimBombMode());
 };
 
 var PauseMode = function() {
