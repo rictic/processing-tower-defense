@@ -1,19 +1,25 @@
-var KillZone = function(x,y,r) {
-  var kz = new Object();
-  Object.extend(kz, InertDrawable);
+var CircleZone = function(x,y,r) {
+  var cz = new Object();
+  Object.extend(cz, InertDrawable);
   var d = 2*r;
-  kz.color = SET.killzone_color;
-  kz.draw = function() {
+  cz.color = SET.killzone_color;
+  cz.draw = function() {
     fill(this.color);
     stroke(255);
     ellipse(x,y,d,d);
   };
+  return cz
+}
+
+var KillZone = function(x,y,r) {
+  var kz = new CircleZone(x,y,r);
   assign_to_depth(kz, SET.killzone_render_level);
   return kz;
 };
 
 var BuildRadius = function(x,y,r) {
   var br = KillZone(x,y,r);
+  assign_to_depth(br, SET.build_zone_render_level);
   return br;
 };
 

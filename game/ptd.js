@@ -142,12 +142,13 @@ var default_set = function() {
 
   // rendering groups
   set.rendering_groups = [];
-  for (var i=0; i<7;i++) set.rendering_groups.push([]);
-  set.system_render_level = 6;
-  set.killzone_render_level = 4;
-  set.square_render_level = 5;
-  set.grid_render_level = 3;
-  set.tower_render_level = 2;
+  for (var i=0;        i <= 7; i++) set.rendering_groups.push([]);
+  set.system_render_level = 7;
+  set.square_render_level = 6;
+  set.killzone_render_level = 5;
+  set.grid_render_level = 4;
+  set.tower_render_level = 3;
+  set.build_zone_render_level = 2;
   set.creep_render_level = 1;
   set.bullet_render_level = 0;
 
