@@ -14,72 +14,72 @@
 <div id="game_over"></div>
 
 <div id="game">
-<div id="top_controls">
-  <span class='item'> Lives: <span id="lives">20</span></span>
-  <span class='item'> Score: <span id="score">0</span></span>
-  <span class='item'> Gold: <span id="gold">0</span></span>
-  <span class='item'> Wave: <span id="wave">1</span></span>
-  <span class='item'> Creep Variety: <span id="creep_variety"></span></span>
-  <span class='item'> Next Wave in <span id="till_next_wave"></span> seconds</span>
-</div>
+  <div id="top_controls">
+    <span class='item'> Lives: <span id="lives">20</span></span>
+    <span class='item'> Score: <span id="score">0</span></span>
+    <span class='item'> Gold: <span id="gold">0</span></span>
+    <span class='item'> Wave: <span id="wave">1</span></span>
+    <span class='item'> Creep Variety: <span id="creep_variety"></span></span>
+    <span class='item'> Next Wave in <span id="till_next_wave"></span> seconds</span>
+  </div>
 
-<div id="middle">
-<canvas id='tower_defense' width="600" height="400"></canvas>
+  <div id="middle">
+    <canvas id='tower_defense' width="600" height="400"></canvas>
 
-<div id="side">
-<div id="controls">
-  <table>
-    <tr>
-      <td> <button id='laser_button' onclick="build_laser_tower();" accesskey="L">Build <span class='hotkey'>L</span>aser Tower - 50 Gold</button> </td>
-    </tr>
-    <tr>
-      <td> <button id='gattling_button' onclick="build_gattling_tower();"> Build <span class='hotkey'>G</span>attling Tower - 50 Gold</button></td>
-    </tr>
+    <div id="side">
+      <div id="controls">
+        <table>
+          <tr>
+            <td> <button id='laser_button' onclick="build_laser_tower();" accesskey="L">Build <span class='hotkey'>L</span>aser Tower - 50 Gold</button> </td>
+          </tr>
+          <tr>
+            <td> <button id='gattling_button' onclick="build_gattling_tower();"> Build <span class='hotkey'>G</span>attling Tower - 50 Gold</button></td>
+          </tr>
     
-    <tr>
-      <td> <button id='missile_button' onclick="build_missile_tower();" accesskey="M">Build <span class='hotkey'>M</span>issile Tower - 100 Gold</button> </td>
-    </tr>
-    <tr>
-      <td> <button id='cannon_button' onclick="build_cannon_tower();" accesskey="M">Build <span class='hotkey'>C</span>annon Tower - 100 Gold</button> </td>
-    </tr>
-    <tr>  
-      <td> <button id='bomb_button' onclick="aim_bomb();" accesskey="S">Drop <span class='hotkey'>B</span>omb - 50 Gold</button></td>
-    </tr>
-    <tr>
-      <td> <button onclick="nuke_creeps();" accesskey="N"> Launch <span class='hotkey'>N</span>uke - <span id="nukes_left"> 3 left </span></button></td>
-    </tr>
-    <tr><td><div class='error'></div></td></tr>
-    <tr><td><div class='message'></div></td></tr>
-  </table>
-</div>
+          <tr>
+            <td> <button id='missile_button' onclick="build_missile_tower();" accesskey="M">Build <span class='hotkey'>M</span>issile Tower - 100 Gold</button> </td>
+          </tr>
+          <tr>
+            <td> <button id='cannon_button' onclick="build_cannon_tower();" accesskey="M">Build <span class='hotkey'>C</span>annon Tower - 100 Gold</button> </td>
+          </tr>
+          <tr>  
+            <td> <button id='bomb_button' onclick="aim_bomb();" accesskey="S">Drop <span class='hotkey'>B</span>omb - 50 Gold</button></td>
+          </tr>
+          <tr>
+            <td> <button onclick="nuke_creeps();" accesskey="N"> Launch <span class='hotkey'>N</span>uke - <span id="nukes_left"> 3 left </span></button></td>
+          </tr>
+          <tr><td><div class='error'></div></td></tr>
+          <tr><td><div class='message'></div></td></tr>
+        </table>
+      </div>
 
-<div id="tower">
-  <table>
-    <tr><td></td><td> <em>Tower Details</em> </td></tr>
-    <tr><td> Type: </td><td id="tower_type"></td></tr>
-    <tr><td> Range: </td><td id="tower_range"></td></tr>
-    <tr><td> Damage: </td><td id="tower_damage"></td></tr>
-    <tr><td> Firing Rate: </td><td id="tower_rate"></td></tr>
-    <tr><td><button id="tower_sell_button"></button></td></tr>
-    <tr><td><button id="tower_upgrade_button"><span class='hotkey'>U</span>pgrade!</button></td></tr>
-  </table>  
-</div>
-<div id="creep">
-  <table>
-    <tr><td></td><td> <em> Creep Details </em></td></tr>
-    <tr><td> Type: </td><td id="creep_type"></td></tr>
-    <tr><td> Hp: </td><td id="creep_hp"></td></tr>
-    <tr><td> Value: </td><td id="creep_value"></td></tr>
-  </table>
-</div>
-</div>
-</div>
+      <div id="tower">
+        <table>
+          <tr><td></td><td> <em>Tower Details</em> </td></tr>
+          <tr><td> Type: </td><td id="tower_type"></td></tr>
+          <tr><td> Range: </td><td id="tower_range"></td></tr>
+          <tr><td> Damage: </td><td id="tower_damage"></td></tr>
+          <tr><td> Firing Rate: </td><td id="tower_rate"></td></tr>
+          <tr><td><button id="tower_sell_button"></button></td></tr>
+          <tr><td><button id="tower_upgrade_button"><span class='hotkey'>U</span>pgrade!</button></td></tr>
+        </table>  
+      </div>
+      <div id="creep">
+        <table>
+          <tr><td></td><td> <em> Creep Details </em></td></tr>
+          <tr><td> Type: </td><td id="creep_type"></td></tr>
+          <tr><td> Hp: </td><td id="creep_hp"></td></tr>
+          <tr><td> Value: </td><td id="creep_value"></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
 
-<div id="bottom_controls">
-  <button id='pause_button' onclick="pause();">Pause</button>
-  <button onclick="reset_game();">Reset Game</button>
-  <button onclick="spawn_wave();">Spawn Next <span class='hotkey'>W</span>ave</button>
-  <button id='mute_button' onclick="mute();">Mute</button>
+  <div id="bottom_controls">
+    <button id='pause_button' onclick="pause();">Pause</button>
+    <button onclick="reset_game();">Reset Game</button>
+    <button onclick="spawn_wave();">Spawn Next <span class='hotkey'>W</span>ave</button>
+    <button id='mute_button' onclick="mute();">Mute</button>
   </div>
 </div>
 
@@ -108,15 +108,17 @@
 
 
 <div id="js_imports">
+<!-- Putting script elements as late in the document as possible gives
+    a better, faster initial render. -->
 <script src="processing.js" type="text/javascript" charset="utf-8" ></script>
 <script src="jsfprocessing.js" type="text/javascript" charset="utf-8" ></script>
 <script src="jquery-1.2.6.min.js" type="text/javascript" charset="utf-8" ></script>
-<script src="game/creep_waves.js" type="text/javascript" charset="utf-8"></script>
-<script src="game/terrain.js" type="text/javascript" charset="utf-8"></script>
-<script src="game/util.js" type="text/javascript" charset="utf-8"></script>
-<script src="game/creeps.js" type="text/javascript" charset="utf-8"></script>
-<script src="game/ui_modes.js" type="text/javascript" charset="utf-8"></script>
-<script src="game/weapons.js" type="text/javascript" charset="utf-8"></script>
+<script src="game/creep_waves.js" type="text/javascript" charset="utf-8" ></script>
+<script src="game/terrain.js" type="text/javascript" charset="utf-8" ></script>
+<script src="game/util.js" type="text/javascript" charset="utf-8" ></script>
+<script src="game/creeps.js" type="text/javascript" charset="utf-8" ></script>
+<script src="game/ui_modes.js" type="text/javascript" charset="utf-8" ></script>
+<script src="game/weapons.js" type="text/javascript" charset="utf-8" ></script>
 <script src="game/ptd.js" type="text/javascript" charset="utf-8" ></script>
 </div>
 
