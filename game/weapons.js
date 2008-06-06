@@ -19,6 +19,7 @@ var BuildRadius = function(x,y,r) {
 
 var MissileRadius = function(x,y,r) {
   var mr = KillZone(x,y,r);
+  mr.color = color(0, 40,40,0.5);
   return mr;
 }
 
@@ -139,7 +140,7 @@ var MissileTower = function(gx,gy) {
 }
 
 var LaserTower = function(gx,gy) {
-  var lt = Tower({gx:gx,gy:gy,color:color(50,150,250)});
+  var lt = Tower({gx:gx,gy:gy,color:color(90,150,50)});
   lt.type = "Laser Tower";
   lt.attack = function(creep) {
     assign_to_depth(Laser(this,creep),SET.bullet_render_level);
