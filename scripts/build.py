@@ -17,7 +17,7 @@ MERGED_JS_NAME = DEPLOY_DIRECTORY + u"ptd.js"
 MERGED_HTML_NAME = DEPLOY_DIRECTORY + u"ptd.html"
 HTML_FILE_NAME = u"ptd.html"
 FILES_TO_COPY = ("style.css","LICENSE",)
-FOLDERS_TO_COPY = ("soundmanager2","assets")
+FOLDERS_TO_COPY = []#("soundmanager2","assets")
 
 def merge_javascript():
     pass
