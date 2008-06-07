@@ -140,6 +140,7 @@
 <ul>
     <li>[space] – Pause/Resume</li>
     <li>[esc] – Cancel Tower/Missile</li>
+    <li>H – Help!</li>
     <li>L – Build laser tower</li>
     <li>M – Build missile tower</li>
     <li>G – Build gatling tower</li>
@@ -253,7 +254,7 @@
       return false;
     };
     var toggle_help = function() {
-      $('#help').slideToggle();
+      $('#help').toggle();
       $('#help_button').toggleClass('active_mode');
     };
 
