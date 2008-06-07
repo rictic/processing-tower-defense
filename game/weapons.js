@@ -267,6 +267,7 @@ var Weapon = function(tower,target) {
   w.tower = tower;
   w.proximity = 3;
   w.damage = tower.damage;
+  w.last = millis();
   w.impact = function(target) {
     this.is_dead = function() { return true; };
     target.hp -= this.damage;
@@ -277,6 +278,9 @@ var Weapon = function(tower,target) {
       this.impact(this.target);
     }
     else {
+      var elapsed = 1.0 * (SET.now - this.last);
+      var speed = this.speed * (elapsed/1000);
+      this.last = SET.now;
       var path = calc_path(this.x,this.y,target.x,target.y,this.speed);
       this.x += path.x;
       this.y += path.y;
