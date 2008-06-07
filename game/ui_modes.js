@@ -56,18 +56,13 @@ var attempt_to_enter_ui_mode = function(mode, error_msg) {
 };
 
 var BuildTowerMode = function() {
-  this.is_legal = function(x,y) {
-    var gpos = pixel_to_grid(x,y);
-    if (can_build_here(gpos.gx,gpos.gy) == false) return false;
-
-    //usually very fast, as the answer should be cached
-    pathfind({gx:SET.entrance.gx, gy:SET.entrance.gy});
-
+  var is_blocking_paths = function(gpos) {
     //if the proposed tower isn't along any known path, it's not in
     //the way
-    if (!([gpos.gx,gpos.gy] in known_best_paths))
-      return true
-
+    pathfind({gx:SET.entrance.gx, gy:SET.entrance.gy});
+    if (!([gpos.gx,gpos.gy] in known_best_paths)) 
+      return true;
+    
     //check that we can pathfind from the entrance
     //to the exit, and from each creep to the exit
     SET.considering_location = gpos;
@@ -79,10 +74,19 @@ var BuildTowerMode = function() {
     });
     SET.considering_location = undefined;
     reset_pathfinding(previous_pathfinding);
-    if (!valid){
+    if (!valid)
       return false;
-    }
     return true;
+  }
+
+  this.is_legal = function(x,y) {
+    var gpos = pixel_to_grid(x,y);
+    if (can_build_here(gpos.gx,gpos.gy) == false) return false;
+
+    var cache = SET.grid_cache_at(gpos.gx, gpos.gy);
+    if (cache["valid_tower_location"] == undefined)
+      cache["valid_tower_location"] = is_blocking_paths(gpos);
+    return cache["valid_tower_location"];
   };
   this.draw = function(x,y) {
     var gpos = pixel_to_grid(x,y);

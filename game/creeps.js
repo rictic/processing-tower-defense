@@ -249,9 +249,14 @@ var Creep = function(wave) {
 
 /* pathfinding */
 
-var known_best_paths = {}
+var known_best_paths = undefined;
 var reset_pathfinding = function(new_value) {
-  if (new_value == undefined) new_value = {};
+  if (new_value == undefined){
+    var coords = [SET.exit.gx, SET.exit.gy];
+    new_value = {};
+//     SET.grid_cache_reset_all_values_for_key("valid_tower_location");
+    new_value[coords] = {}; //The actual value doesn't really matter
+  }
   var previous = known_best_paths;
   known_best_paths = new_value;
   return previous;
@@ -271,7 +276,7 @@ var pathfind = function(start_block) {
 //     log("path found from cache", known_best_paths[start_block]);
     return known_best_paths[[start_block.gx, start_block.gy]].next_block.gpos;
   }
-//   log("pathfinding started", start_block);
+//   log("pathfinding started [from, to]", [start_block, SET.exit]);
 
   var successors = function(block) {
     var candidates = [];
@@ -316,8 +321,7 @@ var pathfind = function(start_block) {
 //       log("in closed, skipping", closed)
       continue;
     }
-    if (block.gpos.gx == SET.exit.gx && block.gpos.gy == SET.exit.gy){
-      known_best_paths[[block.gpos.gx, block.gpos.gy]] = block;
+    if ([block.gpos.gx, block.gpos.gy] in known_best_paths){
       while ("ancestor" in block) {
         block.ancestor.next_block = block;
         known_best_paths[[block.ancestor.gpos.gx, block.ancestor.gpos.gy]] = block.ancestor
