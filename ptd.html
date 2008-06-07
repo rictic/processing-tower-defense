@@ -40,24 +40,36 @@
     </div>
     <div id="help-towers">
       <p> Towers are your first and last line of defense against creeps. Except for the bomb and the nuke, but thats not the point right now. We're talking about towers, okay? Keep on task, won't ya? </p>
-      <p> There are four different types of towers. <strong>Missile Towers</strong> are slow-firing towers with long range and the gentle caress of a freight truck. <strong>Cannon Towers</strong> are potent beasts whose arcing balls of destruction cause splash damage. <strong>Gatling Towers</strong> unleash a relentless fury of bullets... until they pause to reload. <strong>Laser Towers</strong> are the circular reincarnation of bland reliability: they shoot blue lines at a high rate, and nothing else. </p>
+        <ul>
+          <li><strong class='missile-tower'>Missile Towers</strong> – slow-firing towers with long range and the gentle caress of a freight truck.</li>
+          <li><strong class='cannon-tower'>Cannon Towers</strong> – potent beasts whose arcing balls of destruction cause splash damage</li>
+          <li><strong class='gatling-tower'>Gatling Towers</strong> – unleash a relentless fury of bullets... until they pause to reload</li>
+          <li><strong class='laser-tower'>Laser Towers</strong> – the circular reincarnation of bland reliability: they shoot blue lines at a high rate, and nothing else</li>
+        </ul>
       <p> Towers all have another helpful characteristic: they block the paths of creeps. This lets you build complex mazes in the hope that the creeps will become dizzy and stop for a few moments to recover over a nice cup of tea. At the bare minimum you'll get to shoot at them for longer. </p>
     </div>
     <div id="help-creeps">
       <p> Creeps are the evil scourge which long to plaster the sickening <strong>Game Over</strong> message at the top of your screen. Resisting them is your calling, your purpose, your afternoon you were supposed to spend doing laundry.</p>
-      <p> There are four types of creeps. First, there is the terrifying **Normal** creep. You will know these creeps well, and will prosper by ending their tortured existence. Next, on every third wave you will encounter <strong>Quick</strong> creeps, which move quickly but have fewer hitpoints. On every fifth wave your maze will be ravaged by <strong>Strong</strong> creeps which are slow but extremely hearty. Once in a blue moon a <strong>Boss</strong> creep will appear and lay waste to your moral with its absurd hitpoints and size. </p>
+      <ul>
+        <li><strong class='normal-creep'>Normal</strong> creeps: You will know these creeps well, and will prosper by ending their drab, boring existences</li>
+        <li><strong class='quick-creep'>Quick</strong> creeps arrive every third wave.  These creeps move quickly, but their smaller bodies can take less damage</li>
+        <li><strong class='strong-creep'>Strong</strong> creeps plow through your territory every five waves.  They're slow, but extremely hearty.</li>
+        <li><strong class='boss-creep'>Boss</strong> creep: once in a blue moon, one of these warlords appears and lays waste to your defenses with its absurd hitpoints and size.</li>
+      </ul>
       <p> Each of those categories of creeps can also have one additional behavior. Some creeps are very slow crossing water, some climb mountains at shocking speeds, and some even fly over your towers while mocking the effectiveness of your intricate designs.</p>
     </div>
     <div id="help-terrain">
       <p> Each square on the board is a certain type of terrain. Terrain is randomly assigned each time the game is played, and bestows certain effects upon towers and creeps inside of them. </p>
-      <p> <strong>Neutral</strong> terrain is the most common terrain, and doesn't do anything. </p>
-      <p> <strong>Water</strong> terrain slows most creeps down (the blue squares).</p>
-      <p> <strong>Mountain</strong> terrain slows creeps down, and gives towers a range bonus (the earthy squares). </p>
-      <p> <strong> Power plant </strong> terrain makes creep zip along at double speed, but will also double the damage of any tower built there. </p>
+      <ul>
+        <li> <strong class='neutral-terrain'>Neutral</strong> terrain is the most common terrain, and doesn't do anything. </li>
+        <li> <strong class='water-terrain'>Water</strong> terrain slows most creeps down.</li>
+        <li> <strong class='mountain-terrain'>Mountain</strong> terrain slows creeps down, and gives towers a range bonus. </li>
+        <li> <strong class='power-plant-terrain'> Power plant </strong> terrain makes creep zip along at double speed, but will also double the damage of any tower built there. </li>
+      </ul>
     </div>
     <div id="help-bomb">
-      <p> The <strong>Bomb</strong> is the first of two last resort weapons at your disposal. You have an unlimited supply, but they get a bit more expensive with each passing level. Will severely damage all creeps in its radius (dealing 75% of their max hitpoints), but won't come cheap. </p>
-      <p> The <strong>Nuke</strong> is the last resort weapon of last resort weapons. It will destroy all creeps on the screen, but has two drawbacks. First, you won't recieve any loot from creeps destroyed this way. Second, you only have a limited supply and have no way to replenish that supply once they are exhausted. </p>
+      <p> The <strong class='bomb'>Bomb</strong> is the first of two last resort weapons at your disposal. You have an unlimited supply, but they get a bit more expensive with each passing level. Will severely damage all creeps in its radius (dealing 75% of their max hitpoints), but won't come cheap. </p>
+      <p> The <strong class='nuke'>Nuke</strong> is the last resort weapon of last resort weapons. It will destroy all creeps on the screen, but has two drawbacks. First, you won't recieve any loot from creeps destroyed this way. Second, you only have a limited supply and have no way to replenish that supply once they are exhausted. </p>
     </div>
     </div>
     
@@ -126,6 +138,8 @@
 
 <h4>Hotkeys:</h4>
 <ul>
+    <li>[space] – Pause/Resume</li>
+    <li>[esc] – Cancel Tower/Missile</li>
     <li>L – Build laser tower</li>
     <li>M – Build missile tower</li>
     <li>G – Build gatling tower</li>
@@ -134,8 +148,6 @@
     <li>N – Launch Nuke</li>
     <li>W – Spawn Next Wave</li>
     <li>U – Upgrade Selected Tower</li>
-    <li>[space] – Pause/Resume</li>
-    <li>[esc] – Cancel Tower/Missile</li>
 </ul>
 
 <h4>Source:</h4>
@@ -241,7 +253,7 @@
       return false;
     };
     var toggle_help = function() {
-      $('#help').toggle();
+      $('#help').slideToggle();
       $('#help_button').toggleClass('active_mode');
     };
 

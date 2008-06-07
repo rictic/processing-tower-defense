@@ -102,14 +102,17 @@ div#side {
 }
 
 #help {
-    background: grey;
+    background: white;
     margin-top: 25px;
-    margin-left: 50px;
+    margin-left: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
     width: 500px;
     height: 400px;
     position: absolute;
     z-index: 1000;
     display: none;
+    border: 3px solid black;
 }
 
 
@@ -131,13 +134,31 @@ a.section {
     padding-left: 5px;
     padding-right: 5px;
     text-decoration: none;
-    color: white;
-    border-left: solid 1px white;
-    border-right: solid 1px white;
+    color: black;
+    border-left: solid 1px black;
+    border-right: solid 1px black;
 }
 
 a.section:hover {
-    border-left: solid 1px #999999;
-    border-right: solid 1px #999999;
+    border-left: solid 1px #999;
+    border-right: solid 1px #999;
     color: #AAAAAA;
 }
+
+#help .missile-tower { color: rgb(250,150,50); }
+#help .laser-tower { color: rgb(90,150,50); }
+#help .cannon-tower { color: rgb(100,120,140); }
+#help .gatling-tower { color: rgb(250,250,50); }
+
+#help .normal-creep { color: rgb(255,255,0);}
+#help .quick-creep {color: rgb(200,150,50);}
+#help .strong-creep {color: rgb(0,255,255);}
+#help .boss-creep {color: rgb(255,100,150);}
+
+#help .neutral-terrain {color: rgb(200,200,200);}
+#help .mountain-terrain {color: rgb(228,51,51);}
+#help .water-terrain {color: rgb(78,150,236);}
+#help .power-plant-terrain {color: rgb(189,194,78);}
+
+#help .bomb {color: rgb(100,120,140);}
+#help .nuke {color: rgb(255,70,30);}
