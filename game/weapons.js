@@ -322,7 +322,6 @@ var CannonBall = function(tower, target) {
   c.draw = function() {
     var percent_to_apex = ((this.middist - dist(this.x, this.y, this.midpoint.x, this.midpoint.y)) / this.middist);
     size = ((1 - Math.pow(1 - percent_to_apex, 2)) * this.size_variance) + this.min_size;
-    log("drawing cannonball", size);
     stroke(this.color);
     fill(this.fill_color);
     ellipse(this.x,this.y,size,size);
