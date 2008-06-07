@@ -101,3 +101,43 @@ div#side {
     text-decoration: underline;
 }
 
+#help {
+    background: grey;
+    margin-top: 25px;
+    margin-left: 50px;
+    width: 500px;
+    height: 400px;
+    position: absolute;
+    z-index: 1000;
+    display: none;
+}
+
+
+#help-sections div {
+    display: none;
+}
+
+#help-sections div.visible {
+    display: block;
+}
+
+#help-headers {
+    padding: 10px;
+}
+
+a.section {
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-decoration: none;
+    color: white;
+    border-left: solid 1px white;
+    border-right: solid 1px white;
+}
+
+a.section:hover {
+    border-left: solid 1px #999999;
+    border-right: solid 1px #999999;
+    color: #AAAAAA;
+}
