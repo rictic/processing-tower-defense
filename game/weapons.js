@@ -265,7 +265,7 @@ var Weapon = function(tower,target) {
   w.y = tower.y_mid;
   w.target = target;
   w.tower = tower;
-  w.proximity = 3;
+  w.proximity = 7;
   w.damage = tower.damage;
   w.last = millis();
   w.impact = function(target) {
@@ -389,6 +389,7 @@ var Laser = function(tower,target) {
   l.tail = 20; // length of laser's graphic
   l.color = color(0,0,255);
   l.speed = 10;
+  l.proximity = 10;
   l.draw = function() {
     var path = calc_path(l.x,l.y,tower.x_mid,tower.y_mid,l.tail);
     stroke(l.color);
