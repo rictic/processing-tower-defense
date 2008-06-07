@@ -204,9 +204,9 @@ var CannonTower = function(gx,gy) {
   return lt;
 };
 
-var GattlingTower = function(gx,gy) {
+var GatlingTower = function(gx,gy) {
   var gt = Tower({gx:gx,gy:gy,color:color(250,250,50)});
-  gt.type = "Gattling Tower";
+  gt.type = "Gatling Tower";
   gt.damage = 10;
   gt.upgrade_cost = 50;
   gt.sale_value = 50;
@@ -322,6 +322,7 @@ var CannonBall = function(tower, target) {
   c.draw = function() {
     var percent_to_apex = ((this.middist - dist(this.x, this.y, this.midpoint.x, this.midpoint.y)) / this.middist);
     size = ((1 - Math.pow(1 - percent_to_apex, 2)) * this.size_variance) + this.min_size;
+    log("drawing cannonball", size);
     stroke(this.color);
     fill(this.fill_color);
     ellipse(this.x,this.y,size,size);

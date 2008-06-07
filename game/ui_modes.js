@@ -167,17 +167,17 @@ var build_laser_tower = function() {
   attempt_to_enter_ui_mode(new BuildLaserTowerMode());
 };
 
-var BuildGattlingTowerMode = function() {
+var BuildGatlingTowerMode = function() {
   this.cost = 50;
-  this.tower = GattlingTower;
+  this.tower = GatlingTower;
   this.name = function() {
-    return "BuildGattlingTowerMode";
+    return "BuildGatlingTowerMode";
   }
 };
-BuildGattlingTowerMode.prototype = new BuildTowerMode();
+BuildGatlingTowerMode.prototype = new BuildTowerMode();
 
-var build_gattling_tower = function() {
-  attempt_to_enter_ui_mode(new BuildGattlingTowerMode());
+var build_gatling_tower = function() {
+  attempt_to_enter_ui_mode(new BuildGatlingTowerMode());
 }
 
 

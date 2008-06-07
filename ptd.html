@@ -26,34 +26,33 @@
 
     
     <div id="help-headers">
-      <span><a class="section" href="" onclick="display_help_section('#help-gameplay');">Gameplay</a></span>
-      <span><a class="section" href="" onclick="display_help_section('#help-towers');">Towers</a></span>
-      <span><a class="section" href="" onclick="display_help_section('#help-creeps');">Creeps</a></span>
-      <span><a class="section" href="" onclick="display_help_section('#help-terrain');">Terrain</a></span>
-      <span><a class="section" href="" onclick="display_help_section('#help-bomb');">Bombs & Nukes</a></span>
+      <span><a class="section" href="" onclick="return display_help_section('#help-gameplay');">Gameplay</a></span>
+      <span><a class="section" href="" onclick="return display_help_section('#help-towers');">Towers</a></span>
+      <span><a class="section" href="" onclick="return display_help_section('#help-creeps');">Creeps</a></span>
+      <span><a class="section" href="" onclick="return display_help_section('#help-terrain');">Terrain</a></span>
+      <span><a class="section" href="" onclick="return display_help_section('#help-bomb');">Bombs &amp; Nukes</a></span>
     </div>
     <div id="help-sections">
     <div class="visible" id="help-gameplay">
       <p> Processed Tower Defense is a strategy game where you try to defeat waves of dangerous monsters before they reach your tower. Of course, its less of a tower and more of a blueish square on the right side of the screen, but the idea stands. </p>
       <p> Monsters appear on the only colorful square on the far left edge of the map, sprint towards the only colorful square on the far right edge of the map. Each time a monster reaches your tower, you lose one life. Lose all of your lives and the game ends. </p>
-      <p> You start out with a small treasury of gold, and each time you defeat a creep you recieve a bit more gold to aid in your valiant defense of the lame blue squa... I mean... your tower. You also receive a few more points to your score when you defeat a creep. While gold can be redeemed for more powerful towers, score can only be redeemed as social capital among fellow PTD players, and thus could be fairly described as both invaluable and worthless. </p>
+      <p> You start out with a small treasury of gold, and each time you defeat a creep you receive a bit more gold to aid in your valiant defense of the lame blue squa... I mean... your tower. You also receive a few more points to your score when you defeat a creep. While gold can be redeemed for more powerful towers, score can only be redeemed as social capital among fellow PTD players, and thus could be fairly described as both invaluable and worthless. </p>
     </div>
     <div id="help-towers">
       <p> Towers are your first and last line of defense against creeps. Except for the bomb and the nuke, but thats not the point right now. We're talking about towers, okay? Keep on task, won't ya? </p>
-      <p> There are four different types of towers. <strong>Missile Towers</strong> are slow-firing towers with long range and the gentle caress of a freight truck. <strong>Cannon Towers</strong> are potent beats whose arcing balls of destruction cause splash damage. <strong>Gattling Towers</strong> unleash a relentless fury of bullets... until they pause to reload. <strong>Laser Towers</strong> are the circular reincarnation of bland reliability: they shoot blue lines at a high rate, and nothing else. </p>
+      <p> There are four different types of towers. <strong>Missile Towers</strong> are slow-firing towers with long range and the gentle caress of a freight truck. <strong>Cannon Towers</strong> are potent beasts whose arcing balls of destruction cause splash damage. <strong>Gatling Towers</strong> unleash a relentless fury of bullets... until they pause to reload. <strong>Laser Towers</strong> are the circular reincarnation of bland reliability: they shoot blue lines at a high rate, and nothing else. </p>
       <p> Towers all have another helpful characteristic: they block the paths of creeps. This lets you build complex mazes in the hope that the creeps will become dizzy and stop for a few moments to recover over a nice cup of tea. At the bare minimum you'll get to shoot at them for longer. </p>
-      
     </div>
     <div id="help-creeps">
       <p> Creeps are the evil scourge which long to plaster the sickening <strong>Game Over</strong> message at the top of your screen. Resisting them is your calling, your purpose, your afternoon you were supposed to spend doing laundry.</p>
-      <p> There are four types of creeps. First, there is the terrifying **Normal** creep. You will know these creeps well, and will prosper by ending their tortured existances. Next, on every third wave you will encounter <strong>Quick</strong> creeps, which move quickly but have fewer hitpoints. On every fifth wave your maze will be ravaged by </strong>Strong</strong> creeps which are slow but extremely hearty. Once in a blue moon a <strong>Boss</strong> creep will appear and lay waste to your moral with its absurd hitpoints and size. </p>
-      <p> Each of those categories of creeps can also have one additional behavior. Some creeps are very slow crossing water, some climb mountains at shocking speeds, and some even fly over your towers while mocking the effectiveness of your intrinate designs.</p>
+      <p> There are four types of creeps. First, there is the terrifying **Normal** creep. You will know these creeps well, and will prosper by ending their tortured existence. Next, on every third wave you will encounter <strong>Quick</strong> creeps, which move quickly but have fewer hitpoints. On every fifth wave your maze will be ravaged by <strong>Strong</strong> creeps which are slow but extremely hearty. Once in a blue moon a <strong>Boss</strong> creep will appear and lay waste to your moral with its absurd hitpoints and size. </p>
+      <p> Each of those categories of creeps can also have one additional behavior. Some creeps are very slow crossing water, some climb mountains at shocking speeds, and some even fly over your towers while mocking the effectiveness of your intricate designs.</p>
     </div>
     <div id="help-terrain">
       <p> Terrain. </p>
     </div>
     <div id="help-bomb">
-      <p> Bomb & Nuke. </p>
+      <p> Bomb &amp; Nuke. </p>
     </div>
     </div>
     
@@ -69,7 +68,7 @@
             <td> <button id='laser_button' onclick="build_laser_tower();" accesskey="L">Build <span class='hotkey'>L</span>aser Tower - 50 Gold</button> </td>
           </tr>
           <tr>
-            <td> <button id='gattling_button' onclick="build_gattling_tower();"> Build <span class='hotkey'>G</span>attling Tower - 50 Gold</button></td>
+            <td> <button id='gatling_button' onclick="build_gatling_tower();"> Build <span class='hotkey'>G</span>attling Tower - 50 Gold</button></td>
           </tr>
     
           <tr>
@@ -124,7 +123,7 @@
 <ul>
     <li>L – Build laser tower</li>
     <li>M – Build missile tower</li>
-    <li>G – Build gattling tower</li>
+    <li>G – Build gatling tower</li>
     <li>C – Build cannon tower</li>
     <li>B – Drop Bomb</li>
     <li>N – Launch Nuke</li>
@@ -232,12 +231,9 @@
             $('#game_over').html("Just once more...").fadeOut();
     });
     var display_help_section = function(id) {
-      $('#help-gameplay').hide();
-      $('#help-towers').hide();
-      $('#help-creeps').hide();
-      $('#help-terrain').hide();
-      $('#help-bomb').hide();
+      $('#help-sections div').hide();
       $(id).show();
+      return false;
     };
     var toggle_help = function() {
       $('#help').toggle();
@@ -245,7 +241,7 @@
     };
 
     /* illustrating to the user what mode they're in*/
-    mode_signifiers = {'BuildLaserTowerMode':'laser_button', 'BuildGattlingTowerMode':'gattling_button',
+    mode_signifiers = {'BuildLaserTowerMode':'laser_button', 'BuildGatlingTowerMode':'gatling_button',
                        'BuildCannonTowerMode':'cannon_button', 'BuildMissileTowerMode':'missile_button',
                        'AimBombMode':'bomb_button', 'PauseMode':'pause_button'};
     for (event in mode_signifiers) {
