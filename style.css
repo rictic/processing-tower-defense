@@ -101,3 +101,7 @@ div#side {
     text-decoration: underline;
 }
 
+#background_grid {
+    fill: rgb(200,200,200);
+/*    stroke: black;*/
+}

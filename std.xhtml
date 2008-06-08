@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/2001/REC-xhtml11-20010531/DTD/xhtml11-flat.dtd">
+<!-- <!DOCTYPE XHTML 1.1> -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<title>SVG Tower Defense</title>
+<link href="style.css" media="screen" rel="Stylesheet" type="text/css" />        
+
+</head>
+<body>
+
+<h1>SVG Tower Defense</h1>
+
+    <svg id='tower_defense' width="600" height="400" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+      <defs>
+        <rect id='grid_square' width='25' height='25'/>
+        <circle id='creep' r='5'/>
+      </defs>
+      
+    </svg>
+
+<button onclick='remove_grid()'>Remove Grid</button>
+<div id='log'/>  
+<script src="jquery-1.2.6.min.js" type="text/javascript" charset="utf-8" />
+<script src="game/util.js" type="text/javascript" charset="utf-8"/>
+<script type="text/javascript"><![CDATA[
+    var SVGObj = function(kind, opts) {
+      var obj = document.createElementNS("http://www.w3.org/2000/svg", kind);
+      for (prop in opts){
+        opt = opts[prop];
+        if (opt instanceof Object)
+          obj.setAttributeNS(opt.namespace, prop, opt.value);
+        else
+          obj.setAttribute(prop, opt);
+      }
+      return $(obj)
+    }
+    var Group = function(opts) {
+      return SVGObj("g", opts);
+    }
+    var Square = function(opts) {
+      opts.width = opts.size; opts.height = opts.size;
+      delete opts.size; //is there a better way?
+      return SVGObj("rect", opts);
+    }
+    var CreateKind = function(name, opts) {
+      //href is part of the xlink namespace, not the svg one.  A sticky wicket to say the least
+      opts.href = {namespace: "http://www.w3.org/1999/xlink", value: "#" + name}
+      return SVGObj("use", opts);
+    }
+    var GridSquare = function(x,y) {
+      return CreateKind("grid_square", {x:x, y:y});
+    }
+    var Creep = function(x,y) {
+      return CreateKind("creep", {x:x, y:y});
+    }
+    
+    var stage = $('svg');
+    var width = stage[0].width.baseVal.value; 
+    var height = stage[0].height.baseVal.value;
+    var units_per_square = $('#grid_square')[0].width.baseVal.value;
+    $(document).ready(function(){
+      var grid = Group({id: "background_grid"});
+      //create grid of squares
+      for (var y = 0; y < height + units_per_square + 1; y += units_per_square + 1)
+        for (var x = 0; x < width + units_per_square + 1; x += units_per_square + 1)
+          grid.append(GridSquare(x,y));
+      stage.append(grid);
+    });
+    
+    var remove_grid = function(){
+      $('#background_grid').remove();
+    }
+
+    
+]]></script> 
+
+
+</body></html>
