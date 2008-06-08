@@ -103,6 +103,7 @@ var Tower = function(settings) {
     }
     WIDGETS.tower_sell_button.onclick = function() {
       tower.sell();
+      reset_pathfinding();
     }
     WIDGETS.tower.style.display = "block";
   };
