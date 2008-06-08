@@ -83,13 +83,6 @@ div#side {
     float: left;
 }
 
-#tower {
-    display: none;
-}
-
-#creep {
-    display: none;
-}
 
 #side table {
     margin-left: 10px;
@@ -101,7 +94,14 @@ div#side {
     text-decoration: underline;
 }
 
-#background_grid {
-    fill: rgb(200,200,200);
+#grid_square {
+    fill: #bbb;
 /*    stroke: black;*/
+}
+
+#creep {
+    fill: #f00;
+}
+#background {
+    fill: #999;
 }

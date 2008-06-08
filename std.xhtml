@@ -12,42 +12,25 @@
 <h1>SVG Tower Defense</h1>
 
     <svg id='tower_defense' width="600" height="400" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+      
       <defs>
         <rect id='grid_square' width='25' height='25'/>
-        <circle id='creep' r='5'/>
+        <circle id='creep' cx='0' cy='0' r='5'/>
       </defs>
       
+      <rect id='background' width='100%' height='100%' />
+      <g id='grid_layer'/>
+      <g id='creep_layer'>
+      </g>
+
     </svg>
 
 <button onclick='remove_grid()'>Remove Grid</button>
 <div id='log'/>  
 <script src="jquery-1.2.6.min.js" type="text/javascript" charset="utf-8" />
 <script src="game/util.js" type="text/javascript" charset="utf-8"/>
+<script src="jsvg.js" type="text/javascript" charset="utf-8"/>
 <script type="text/javascript"><![CDATA[
-    var SVGObj = function(kind, opts) {
-      var obj = document.createElementNS("http://www.w3.org/2000/svg", kind);
-      for (prop in opts){
-        opt = opts[prop];
-        if (opt instanceof Object)
-          obj.setAttributeNS(opt.namespace, prop, opt.value);
-        else
-          obj.setAttribute(prop, opt);
-      }
-      return $(obj)
-    }
-    var Group = function(opts) {
-      return SVGObj("g", opts);
-    }
-    var Square = function(opts) {
-      opts.width = opts.size; opts.height = opts.size;
-      delete opts.size; //is there a better way?
-      return SVGObj("rect", opts);
-    }
-    var CreateKind = function(name, opts) {
-      //href is part of the xlink namespace, not the svg one.  A sticky wicket to say the least
-      opts.href = {namespace: "http://www.w3.org/1999/xlink", value: "#" + name}
-      return SVGObj("use", opts);
-    }
     var GridSquare = function(x,y) {
       return CreateKind("grid_square", {x:x, y:y});
     }
@@ -60,19 +43,40 @@
     var height = stage[0].height.baseVal.value;
     var units_per_square = $('#grid_square')[0].width.baseVal.value;
     $(document).ready(function(){
-      var grid = Group({id: "background_grid"});
+      var grid = $('#grid_layer');
       //create grid of squares
       for (var y = 0; y < height + units_per_square + 1; y += units_per_square + 1)
         for (var x = 0; x < width + units_per_square + 1; x += units_per_square + 1)
           grid.append(GridSquare(x,y));
-      stage.append(grid);
+
+
+      var creep = Creep(10,100);
+      $('#creep_layer').append(creep)
+      run();
     });
     
     var remove_grid = function(){
-      $('#background_grid').remove();
+      $('#grid_layer').empty();
     }
-
     
+    var i = 0;
+    var draw = function(){
+      $("#creep_layer > *").each(function() {
+        this.setAttribute("x", this.x.baseVal.value + 2);
+        if (this.x.baseVal.value > width) 
+          $(this).remove();
+      })
+    }
+    
+    var interval = undefined;
+    var run = function() {
+      interval = setInterval(function() {
+        draw();
+      }, 10);
+    }
+    var pause = function() {
+      clearInterval(interval);
+    }
 ]]></script> 
 
 
