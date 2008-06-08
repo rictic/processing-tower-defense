@@ -133,6 +133,7 @@
     <button onclick="spawn_wave();">Spawn Next <span class='hotkey'>W</span>ave</button>
     <button id='mute_button' onclick="mute();">Mute</button>
     <button id='help_button' onclick="toggle_help();"><span class='hotkey'>H</span>elp</button>
+    <button id='logging_button' onclick='toggle_logging();'><span class='hotkey'>D</span>ebug On</button>
   </div>
 </div>
 
@@ -195,13 +196,14 @@
     $('button .hotkey').each(function(){
         //this is bass ackwards, but I got type errors passing around the native click method
         var button = this.parentNode;
-        hotkeys[this.innerHTML] = function() {button.click()};
+        hotkeys[this.innerHTML.toUpperCase()] = function() {button.click()};
     });
     
     //hotkeys that aren't in the dom
     hotkeys["space"] = pause;
     hotkeys["esc"] = unselect;
-
+    hotkeys['Z'] = function() {$('#log').empty()};
+    
     $(document).bind("keydown", function(e) {
         // if the user is holding down ctrl or cmd, let the browser handle it
         if (e.metaKey) return true;
@@ -224,6 +226,22 @@
         mute_unmute();
         $('#mute_button').html(muted ? "Unmute" : "Mute");
     }
+    var logging = true;
+    var prim_log = log;
+    function toggle_logging() {
+        logging = !logging;
+        if (logging)
+          log = prim_log;
+        else
+          log = function(){};
+        $("#logging_button").html(logging? "<span class='hotkey'>D</span>ebug On" : "<span class='hotkey'>D</span>ebug Off");
+    }
+    toggle_logging();
+    
+    if (document.location.hash == "#debug")
+      $('#logging_button').show();
+    else
+      $('#logging_button')[0].onclick = function(){};
     
     /* Messages for the player */
 

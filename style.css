@@ -101,7 +101,9 @@ div#side {
     margin-top: 10px;
     border: solid 1px black;
 }
-
+#logging_button {
+    display: none;
+}
 
 .hotkey {
     text-decoration: underline;
