@@ -265,8 +265,9 @@ var Weapon = function(tower,target) {
   w.y = tower.y_mid;
   w.target = target;
   w.tower = tower;
-  w.proximity = 3;
+  w.proximity = 7;
   w.damage = tower.damage;
+  w.last = millis();
   w.impact = function(target) {
     this.is_dead = function() { return true; };
     target.hp -= this.damage;
@@ -277,6 +278,9 @@ var Weapon = function(tower,target) {
       this.impact(this.target);
     }
     else {
+      var elapsed = 1.0 * (SET.now - this.last);
+      var speed = this.speed * (elapsed/1000);
+      this.last = SET.now;
       var path = calc_path(this.x,this.y,target.x,target.y,this.speed);
       this.x += path.x;
       this.y += path.y;
@@ -385,6 +389,7 @@ var Laser = function(tower,target) {
   l.tail = 20; // length of laser's graphic
   l.color = color(0,0,255);
   l.speed = 10;
+  l.proximity = 10;
   l.draw = function() {
     var path = calc_path(l.x,l.y,tower.x_mid,tower.y_mid,l.tail);
     stroke(l.color);
