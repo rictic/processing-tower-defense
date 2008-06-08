@@ -133,7 +133,7 @@
     <button onclick="spawn_wave();">Spawn Next <span class='hotkey'>W</span>ave</button>
 <!--     <button id='mute_button' onclick="mute();">Mute</button> -->
     <button id='help_button' onclick="toggle_help();"><span class='hotkey'>H</span>elp</button>
-    <button id='logging_button' onclick='toggle_logging();'><span class='hotkey'>D</span>ebug On</button>
+    <button id='logging_button' onclick='toggle_logging();'>Stop <span class='hotkey'>D</span>ebugging</button>
   </div>
 </div>
 
@@ -216,6 +216,7 @@
         return true
     });
     
+    /* Toggle buttons along the bottom */
     var paused = false;
     function pause() {
         paused = !paused;
@@ -234,14 +235,41 @@
           log = prim_log;
         else
           log = function(){};
-        $("#logging_button").html(logging? "<span class='hotkey'>D</span>ebug On" : "<span class='hotkey'>D</span>ebug Off");
+        $("#logging_button").html(logging? "Stop <span class='hotkey'>D</span>ebugging" : "Start <span class='hotkey'>D</span>ebugging");
     }
-    toggle_logging();
     
     if (document.location.hash == "#debug")
       $('#logging_button').show();
-    else
+    else{
+      toggle_logging()
       $('#logging_button')[0].onclick = function(){};
+    }
+    
+
+    var display_help_section = function(id) {
+      $('#help-sections div').hide();
+      $(id).show();
+      return false;
+    };
+    var toggle_help = function() {
+      $('#help').toggle();
+      $('#help_button').toggleClass('active_mode');
+    };
+
+
+    /* illustrating to the user what mode they're in*/
+    mode_signifiers = {'BuildLaserTowerMode':'laser_button', 'BuildGatlingTowerMode':'gatling_button',
+                       'BuildCannonTowerMode':'cannon_button', 'BuildMissileTowerMode':'missile_button',
+                       'AimBombMode':'bomb_button', 'PauseMode':'pause_button'};
+    for (event in mode_signifiers) {
+        $('').bind(event, function(e) {
+            $('#'+mode_signifiers[e.type]).addClass('active_mode');
+        });
+    }
+    $('').bind('no_mode', function() {
+        $('button').removeClass('active_mode');
+    })
+    
     
     /* Messages for the player */
 
@@ -266,28 +294,6 @@
         else
             $('#game_over').html("Just once more...").fadeOut();
     });
-    var display_help_section = function(id) {
-      $('#help-sections div').hide();
-      $(id).show();
-      return false;
-    };
-    var toggle_help = function() {
-      $('#help').toggle();
-      $('#help_button').toggleClass('active_mode');
-    };
-
-    /* illustrating to the user what mode they're in*/
-    mode_signifiers = {'BuildLaserTowerMode':'laser_button', 'BuildGatlingTowerMode':'gatling_button',
-                       'BuildCannonTowerMode':'cannon_button', 'BuildMissileTowerMode':'missile_button',
-                       'AimBombMode':'bomb_button', 'PauseMode':'pause_button'};
-    for (event in mode_signifiers) {
-        $('').bind(event, function(e) {
-            $('#'+mode_signifiers[e.type]).addClass('active_mode');
-        });
-    }
-    $('').bind('no_mode', function() {
-        $('button').removeClass('active_mode');
-    })
     
     /* stub until we pull in sound for reals */
     var play_sound = function(){};

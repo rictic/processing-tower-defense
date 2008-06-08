@@ -122,11 +122,11 @@ var default_set = function() {
   }
 
   set.grid_cache_reset_all_values_for_key = function(key) {
-    set.grid_cache.forEach(function (group) {
-      group.forEach(function (member) {
-        member[key] = undefined;
-      });
-    });
+    for(gx in set.grid_cache) {
+      for (gy in set.grid_cache[gx]) {
+        delete set.grid_cache[gx][gy][key];
+      }
+    }
   }
 
   // colors

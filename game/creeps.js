@@ -254,7 +254,7 @@ var reset_pathfinding = function(new_value) {
   if (new_value == undefined){
     var coords = [SET.exit.gx, SET.exit.gy];
     new_value = {};
-//     SET.grid_cache_reset_all_values_for_key("valid_tower_location");
+    SET.grid_cache_reset_all_values_for_key("valid_tower_location");
     new_value[coords] = {}; //The actual value doesn't really matter
   }
   var previous = known_best_paths;
@@ -277,11 +277,12 @@ var valid_path_location = function(gx, gy) {
 }
 
 var pathfind = function(start_block) {
+//   log("pathfinding [from, to]", [start_block, SET.exit]);
   if ([start_block.gx, start_block.gy] in known_best_paths) {
-    log("path found from cache", start_block);
+//     log("path found from cache", start_block);
     return known_best_paths[[start_block.gx, start_block.gy]].next_block.gpos;
   }
-  log("pathfinding started [from, to]", [start_block, SET.exit]);
+
 
   var successors = function(block) {
     var candidates = [];
@@ -324,19 +325,19 @@ var pathfind = function(start_block) {
     }
     if ([block.gpos.gx, block.gpos.gy] in known_best_paths){
       //logging:
-      rpath = [];
+//       rpath = [];
       
       while ("ancestor" in block) {
         block.ancestor.next_block = block;
         known_best_paths[[block.ancestor.gpos.gx, block.ancestor.gpos.gy]] = block.ancestor
-        rpath.push(block);
+//         rpath.push({gx:block.gx, gy:block.gy});
         block = block.ancestor;
       }
-      rpath.push(block);
-      rpath.reverse();
+//       rpath.push({gx:block.gx, gy:block.gy});
+//       rpath.reverse();
 //       log("known_best_paths", known_best_paths);
       var result = known_best_paths[[start_block.gx, start_block.gy]].next_block.gpos;
-      log("path found!", rpath);
+//       log("path found!", rpath);
       return result;
     }
     closed[[block.gpos.gx, block.gpos.gy]] = true;

@@ -62,14 +62,19 @@ var BuildTowerMode = function() {
     pathfind({gx:SET.entrance.gx, gy:SET.entrance.gy});
     if (!([gpos.gx,gpos.gy] in known_best_paths)) {
       var safe = true;
+//       log("looking at diagonals of",gpos);
       [[1,1],[-1,-1],[1,-1],[-1,1]].forEach(function(pair) {
-        if (!valid_path_location(gpos.gx + pair[0], gpos.gy + pair[1]))
+//         log("diagonal",{gx:gpos.gx + pair[0], gy:gpos.gy + pair[1]});
+        if (!valid_path_location(gpos.gx + pair[0], gpos.gy + pair[1])){
+//           log("diagonal disqualified from free is_blocking call",gpos);
           safe = false;
+        }
       });
       if (safe)
         return true;
     }
-      
+
+//     log("pathfinding on behaf of", gpos);
 
     //check that we can pathfind from the entrance
     //to the exit, and from each creep to the exit
@@ -92,8 +97,13 @@ var BuildTowerMode = function() {
     if (can_build_here(gpos.gx,gpos.gy) == false) return false;
 
     var cache = SET.grid_cache_at(gpos.gx, gpos.gy);
-    if (cache["valid_tower_location"] == undefined)
+    if (cache["valid_tower_location"] == undefined){
+//       log("grid grid miss");
       cache["valid_tower_location"] = is_blocking_paths(gpos);
+//       log("placing tower ok?", cache["valid_tower_location"]);
+    }
+//     else log("in grid cache");
+    
     return cache["valid_tower_location"];
   };
   this.draw = function(x,y) {
