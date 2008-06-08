@@ -57,6 +57,20 @@ var attempt_to_enter_ui_mode = function(mode, error_msg) {
 
 var BuildTowerMode = function() {
   var is_blocking_paths = function(gpos) {
+    //if the proposed tower isn't along any known path, it's not in
+    //the way
+    pathfind({gx:SET.entrance.gx, gy:SET.entrance.gy});
+    if (!([gpos.gx,gpos.gy] in known_best_paths)) {
+      var safe = true;
+      [[1,1],[-1,-1],[1,-1],[-1,1]].forEach(function(pair) {
+        if (!valid_path_location(gpos.gx + pair[0], gpos.gy + pair[1]))
+          safe = false;
+      });
+      if (safe)
+        return true;
+    }
+      
+
     //check that we can pathfind from the entrance
     //to the exit, and from each creep to the exit
     SET.considering_location = gpos;

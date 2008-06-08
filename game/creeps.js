@@ -264,8 +264,13 @@ var reset_pathfinding = function(new_value) {
 
 //Could a creep occupy this square?
 var valid_path_location = function(gx, gy) {
+  //out of bounds
+  if (gx < 0 || gy < 0) return false;
+  if (gx >= SET.gwidth || gy >= SET.gheight) return false;
+  //a tower is present
   if (get_tower_at(gx,gy) != false)
     return false;
+  //a hypothetical tower is present (when selecting a space for a new tower)
   if (SET.considering_location && SET.considering_location.gx == gx && SET.considering_location.gy == gy)
       return false;
   return true;
@@ -283,19 +288,15 @@ var pathfind = function(start_block) {
     var normal_dist = 10;
     [[0,1],[1,0],[-1,0],[0,-1]].forEach(function(pair) {
       var gpos = {gx:block.gpos.gx + pair[0], gy: block.gpos.gy + pair[1], dist:normal_dist};
-      if (!valid_path_location(gpos.gx, gpos.gy)) return;
-      if (gpos.gx < 0 || gpos.gx >= SET.gwidth) return;
-      if (gpos.gy < 0 || gpos.gy >= SET.gheight) return;
-      candidates.push(gpos);
+      if (valid_path_location(gpos.gx, gpos.gy))
+        candidates.push(gpos);
     });
 
     var diag_dist = 14; //sqrt(2) * 10
     [[1,1],[-1,-1],[1,-1],[-1,1]].forEach(function(pair){
       var gpos = {gx:block.gpos.gx + pair[0], gy: block.gpos.gy + pair[1], dist:diag_dist};
-      if (!(valid_path_location(gpos.gx, gpos.gy) && valid_path_location(block.gpos.gx, gpos.gy) && valid_path_location(gpos.gx, block.gpos.gy))) return;
-      if (gpos.gx < 0 || gpos.gx >= SET.gwidth) return;
-      if (gpos.gy < 0 || gpos.gy >= SET.gheight) return;
-      candidates.push(gpos);
+      if (valid_path_location(gpos.gx, gpos.gy) && valid_path_location(block.gpos.gx, gpos.gy) && valid_path_location(gpos.gx, block.gpos.gy))
+        candidates.push(gpos);
     })
     return candidates;
   }
