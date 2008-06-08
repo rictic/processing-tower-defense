@@ -1,6 +1,6 @@
 /*
 Processed Tower Defense by Will Larson lethain@gmail.com
-  
+
 ### Processed Tower Defense
 
 PTD is a simple game I decided to make to get used to
@@ -18,7 +18,7 @@ So, I decided to rewrite the code to be clearer,
 with the hope that it might serve as an useful
 example for others.
 */
-  
+
 /*
   Object life cycle.
  */
@@ -38,12 +38,12 @@ var assign_to_depth = function(obj,depth) {
 
 // updates any groups
 var update_groups = function(groups) {
-  var obj_update = function(x) { 
+  var obj_update = function(x) {
     if (x != undefined) x.update();
   };
   var obj_is_alive = function(x) {
     if ( x == undefined || x.is_dead()) return false;
-    return true; 
+    return true;
   };
   var obj_draw = function(x) { x.draw(); };
   for (var i=groups.length-1;i>=0;i--) {
@@ -82,7 +82,7 @@ var default_set = function() {
     square's tower could be retrieved this way as well.
 
     ### Using the Grid Cache
-    
+
     The Grid Cache is, as it is named, intended to be
     used as a cache. This means it shouldn't be relied upon as the
     definitive answer to a question, but should be used to store
@@ -105,7 +105,7 @@ var default_set = function() {
     in the cache should be extinguished.
    */
   set.grid_cache = {};
-  
+
 
   set.grid_cache_at = function(gx,gy) {
     var gx_cache = set.grid_cache[gx];
@@ -169,6 +169,7 @@ var default_set = function() {
   set.score = 0;
   set.lives = 20;
   set.nukes = 3;
+  set.bomb_cost = 50;
 
   return set
 };
@@ -184,7 +185,8 @@ var fetch_ui_widgets = function() {
   w.creep_variety = document.getElementById("creep_variety");
   w.wave = document.getElementById("wave");
   w.till_next_wave = document.getElementById("till_next_wave");
-  
+  w.bomb_cost = document.getElementById("bomb_cost");
+
   // tower widgets
   w.tower = document.getElementById("tower");
   w.tower_type = document.getElementById("tower_type");
@@ -230,7 +232,7 @@ var SettingUpdater = function() {
 var UIUpdater = function() {
   var uiu = new Object();
   Object.extend(uiu, InertDrawable);
-  
+
   uiu.update = function() {
     WIDGETS.creep_variety.innerHTML = SET.creep_variety;
     WIDGETS.score.innerHTML = SET.score;
@@ -293,15 +295,15 @@ var Square = function(gx,gy,color) {
 
 var spawn_wave = function() {
   //a bonus for bravery, to be paid when the creep wave thus spawned is done
-  var bonus = Math.floor(((SET.creep_wave_controller.last + SET.creep_wave_controller.delay) - SET.now) / 100); 
+  var bonus = Math.floor(((SET.creep_wave_controller.last + SET.creep_wave_controller.delay) - SET.now) / 100);
   SET.creep_wave_controller.spawn_wave(bonus);
 }
 
 var nuke_creeps = function() {
   if (SET.nukes > 0) {
     var creeps = SET.rendering_groups[SET.creep_render_level];
-    creeps.forEach(function(x) { 
-      x.hp = -1; 
+    creeps.forEach(function(x) {
+      x.hp = -1;
       x.value = 0; // no gold for nuked creeps
     });
     play_sound("nuke");
@@ -347,10 +349,11 @@ var generate_map = function() {
   SET.exit.type = "exit";
   populate_terrains();
 }
-  
+
 var reset_game = function() {
   SET = default_set();
   WIDGETS = fetch_ui_widgets();
+  WIDGETS.bomb_cost.innerHTML = SET.bomb_cost;
   SettingUpdater();
   UIUpdater();
   //Grid();
@@ -415,7 +418,7 @@ var error = function(msg) {
   $('').trigger("error", msg);
 }
 
-/* 
+/*
    Main game loop.
  */
 

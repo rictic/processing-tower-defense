@@ -60,9 +60,9 @@ var BuildTowerMode = function() {
     //if the proposed tower isn't along any known path, it's not in
     //the way
     pathfind({gx:SET.entrance.gx, gy:SET.entrance.gy});
-    if (!([gpos.gx,gpos.gy] in known_best_paths)) 
+    if (!([gpos.gx,gpos.gy] in known_best_paths))
       return true;
-    
+
     //check that we can pathfind from the entrance
     //to the exit, and from each creep to the exit
     SET.considering_location = gpos;
@@ -243,7 +243,7 @@ var select_creep = function() {
 /* AimBombMode */
 
 var AimBombMode = function() {
-  this.cost = 50;
+  this.cost = SET.bomb_cost;
   this.radius = SET.missile_blast_radius * SET.pixels_per_square * 1.0;
   this.draw = function(x,y) {
     if (this.mr) this.mr.is_dead = function() { return true; };
@@ -276,6 +276,10 @@ var AimBombMode = function() {
     }
     play_sound("bomb");
     SET.gold -= this.cost;
+    var cost_increase = SET.bomb_cost * 0.25;
+    if (cost_increase < 25) cost_increase = 25;
+    SET.bomb_cost = Math.floor(SET.bomb_cost + cost_increase);
+    WIDGETS.bomb_cost.innerHTML = SET.bomb_cost;
   }
 }
 AimBombMode.prototype = new UserInterfaceMode();
