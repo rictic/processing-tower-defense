@@ -96,6 +96,12 @@ div#side {
     margin-top: 10px;
     border: solid 1px black;
 }
+#side .message_area {
+    margin-left: 10px;
+    margin-top: 10px;
+    border: solid 1px black;
+}
+
 
 .hotkey {
     text-decoration: underline;
