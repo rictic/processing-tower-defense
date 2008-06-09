@@ -17,7 +17,7 @@ MERGED_JS_NAME = DEPLOY_DIRECTORY + u"ptd.js"
 MERGED_HTML_NAME = DEPLOY_DIRECTORY + u"ptd.html"
 HTML_FILE_NAME = u"ptd.html"
 FILES_TO_COPY = ("style.css","LICENSE",)
-FOLDERS_TO_COPY = []#("soundmanager2","assets")
+FOLDERS_TO_COPY = ("excanvas_0002",)#("soundmanager2","assets")
 
 def merge_javascript():
     pass
@@ -37,7 +37,7 @@ def main():
     soup = BeautifulSoup(html.read())
     js_files = soup.findAll("script")
     for tag in js_files:
-        if tag.has_key('src'):
+        if tag.has_key('src') and "excanvas" not in tag['src']:
             merged_js.write(open(tag['src'],'r').read())
     merged_js.close()
     print "Created JS %s" % MERGED_JS_NAME
