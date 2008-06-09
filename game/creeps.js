@@ -148,8 +148,6 @@ var BossMixin = function(creep) {
   return creep;
 }
 
-
-
 var Creep = function(wave) {
   var cp = SET.creeps_spawned;
   var c = new Object();
@@ -213,17 +211,13 @@ var Creep = function(wave) {
       }
 
       var coords = center_of_square(next_block.gx, next_block.gy)
-      var path = calc_path(this.x,this.y,coords.x,coords.y,speed);
-      this.x += path.x;
-      this.y += path.y;
+      move_towards(this,this.x,this.y,coords.x,coords.y,speed);
     }
     else if (this.ignores_towers) {
       var elapsed = SET.now - this.last;
       var terrain_modified_speed = this.terrain_modified_speed();
       var speed = (elapsed/1000) * terrain_modified_speed;
-      var path = calc_path(this.x,this.y,SET.exit.x_mid,SET.exit.y_mid,speed);
-      this.x += path.x;
-      this.y += path.y;
+      move_towards(this, this.x,this.y,SET.exit.x_mid,SET.exit.y_mid,speed)
       this.last = SET.now;
     }
   }
@@ -303,7 +297,9 @@ var pathfind = function(start_block) {
   }
 
 
-  //straight-line distance as our heuristic
+  //Heuristic assumes that we move at a 45˚ angle until we've got a
+  //horizontal or vertical path to the goal, then we move straight
+  //to the goal.  This is the actual behavior when there are no obstructions.
   var heuristic = function(gpos) {
     var dx = Math.abs(gpos.gx - SET.exit.gx);
     var dy = Math.abs(gpos.gy - SET.exit.gy);

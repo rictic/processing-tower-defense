@@ -251,3 +251,14 @@ var insert_sorted = function(array, value, sortKey) {
 //     log("insert_sorted failed inserting",[vkey,rm]);
   return result;
 }
+
+//moves the given object towards the target at speed
+//also ensures that the given object doesn't go outside of the bounds
+//of the map
+var move_towards = function(obj, x,y,tx,ty,speed) {
+  var path = calc_path(x,y,tx,ty,speed);
+  obj.x += path.x;
+  obj.y += path.y;
+  obj.x = Math.max(0, Math.min(SET.width , obj.x));
+  obj.y = Math.max(0, Math.min(SET.height, obj.y));
+}
