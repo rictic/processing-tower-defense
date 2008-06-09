@@ -139,6 +139,8 @@ var BuildTowerMode = function() {
     else return false;
   };
   this.can_leave_mode = function() {
+    //if we don't have enough money, we can't keep building
+    if (SET.gold < this.cost) return true;
     //remain in build mode if shift is held down
     return !shift_down;
   };
