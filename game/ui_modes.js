@@ -103,7 +103,7 @@ var BuildTowerMode = function() {
 //       log("placing tower ok?", cache["valid_tower_location"]);
     }
 //     else log("in grid cache");
-    
+
     return cache["valid_tower_location"];
   };
   this.draw = function(x,y) {
@@ -165,7 +165,7 @@ var build_missile_tower = function() {
 };
 
 var BuildCannonTowerMode = function() {
-  this.cost = 100;
+  this.cost = 75;
   this.tower = CannonTower;
   this.name = function() {
     return "BuildCannonTowerMode";
@@ -179,7 +179,7 @@ var build_cannon_tower = function() {
 };
 
 var BuildLaserTowerMode = function() {
-  this.cost = 50;
+  this.cost = 25;
   this.tower = LaserTower;
   this.name = function() {
     return "BuildLaserTowerMode";
