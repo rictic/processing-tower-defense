@@ -294,7 +294,7 @@ var Square = function(gx,gy,color) {
 
 
 var spawn_wave = function() {
-  if (!SET.state){
+  if (!SET.state || SET.state.name() != "GameOverMode"){
     //a bonus for bravery, to be paid when the creep wave thus spawned is done
     var bonus = Math.floor(((SET.creep_wave_controller.last + SET.creep_wave_controller.delay) - SET.now) / 100);
     SET.creep_wave_controller.spawn_wave(bonus);
