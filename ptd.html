@@ -216,12 +216,18 @@
         return true
     });
     
+
     /* Toggle buttons along the bottom */
+
+    // all of this is really a prime candidate for some cleanup
+    // so much dupiclation and so many global variables for such
+    // simple behavior
+
     var paused = false;
     function pause() {
         paused = !paused;
         pause_resume();
-        $('#pause_button').html(paused ? "Resume" : "Pause");
+        $('#pause_button').html(paused ? "Resume" : "Pause");          
     }
     function mute() {
         mute_unmute();
@@ -251,10 +257,21 @@
       $(id).show();
       return false;
     };
+    var help_displayed = false;
     var toggle_help = function() {
-      $('#help').toggle();
-      $('#help_button').toggleClass('active_mode');
+      help_displayed = !help_displayed;
+      if (!help_displayed){
+        $("#help").show();
+        $("#help_button").addClass("active_mode");
+        if (!paused) pause();
+      }
+      else {
+        $('#help').hide();
+        $('#help_button').removeClass('active_mode');
+        if (paused) pause();
+      }
     };
+
 
 
     /* illustrating to the user what mode they're in*/
