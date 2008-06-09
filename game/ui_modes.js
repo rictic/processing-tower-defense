@@ -138,6 +138,10 @@ var BuildTowerMode = function() {
     if (SET.gold >= this.cost) return true;
     else return false;
   };
+  this.can_leave_mode = function() {
+    //remain in build mode if shift is held down
+    return !shift_down;
+  };
   this.name = function() {
     return "BuildTowerMode";
   };
