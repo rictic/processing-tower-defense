@@ -2,7 +2,6 @@ var CircleZone = function(x,y,r) {
   var cz = new Object();
   Object.extend(cz, InertDrawable);
   var d = 2*r;
-  cz.color = SET.killzone_color;
   cz.draw = function() {
     fill(this.color);
     stroke(255);
@@ -25,12 +24,11 @@ var BuildRadius = function(x,y,r) {
 
 var MissileRadius = function(x,y,r) {
   var mr = KillZone(x,y,r);
-  mr.color = color(0, 40,40,0.5);
   return mr;
 }
 
 var Tower = function(settings) {
-  var tower = GridSquare(settings.gx,settings.gy,settings.color);
+  var tower = GridSquare(settings.gx,settings.gy);
   Object.extend(tower, settings);
   // note, range is in terms of grid squares
   // and is calculated from center of tower
@@ -116,7 +114,7 @@ var Tower = function(settings) {
 };
 
 var MissileTower = function(gx,gy) {
-  var mt = Tower({gx:gx,gy:gy,color:color(250,150,50)});
+  var mt = Tower({gx:gx,gy:gy});
   mt.type = "Missile Tower";
   mt.damage = 5000;
   mt.upgrade_cost = 100;
@@ -145,7 +143,7 @@ var MissileTower = function(gx,gy) {
 }
 
 var LaserTower = function(gx,gy) {
-  var lt = Tower({gx:gx,gy:gy,color:color(90,150,50)});
+  var lt = Tower({gx:gx,gy:gy});
   lt.type = "Laser Tower";
   lt.attack = function(creep) {
     assign_to_depth(Laser(this,creep),SET.bullet_render_level);
@@ -175,7 +173,7 @@ var LaserTower = function(gx,gy) {
 };
 
 var CannonTower = function(gx,gy) {
-  var lt = Tower({gx:gx,gy:gy,color:color(100,120,140)});
+  var lt = Tower({gx:gx,gy:gy});
   lt.type = "Cannon Tower";
   lt.attack = function(creep) {
     assign_to_depth(CannonBall(this,{x:creep.x, y:creep.y, hp:1}),SET.bullet_render_level);
@@ -205,7 +203,7 @@ var CannonTower = function(gx,gy) {
 };
 
 var GattlingTower = function(gx,gy) {
-  var gt = Tower({gx:gx,gy:gy,color:color(250,250,50)});
+  var gt = Tower({gx:gx,gy:gy});
   gt.type = "Gattling Tower";
   gt.damage = 10;
   gt.upgrade_cost = 50;
@@ -293,8 +291,6 @@ var Bullet = function(tower, target) {
   var b = new Object();
   Object.extend(b, Weapon(tower,target));
   b.size = 5;
-  b.color = color(255,255,255);
-  b.fill_color = color(100,255,0);
   b.speed = 8;
   b.damage = tower.damage;
   b.proximity = 10;
@@ -313,8 +309,6 @@ var CannonBall = function(tower, target) {
   c.middist = dist(c.x, c.y, c.midpoint.x, c.midpoint.y);
   c.min_size = 8
   c.size_variance = 4;
-  c.color = color(0,0,0);
-  c.fill_color = color(50,50,50);
   c.speed = 8;
   c.damage = tower.damage;
   c.proximity = 25;
@@ -348,8 +342,6 @@ var Missile = function(tower,target) {
   var m = new Object();
   Object.extend(m, Weapon(tower,target));
   m.size = 10;
-  m.color = color(255,0,0);
-  m.fill_color = color(250,50,50);
   m.speed = 8;
   m.damage = tower.damage;
   m.proximity = 20;
@@ -383,7 +375,6 @@ var Laser = function(tower,target) {
   var l = new Object();
   Object.extend(l, Weapon(tower,target));
   l.tail = 20; // length of laser's graphic
-  l.color = color(0,0,255);
   l.speed = 10;
   l.draw = function() {
     var path = calc_path(l.x,l.y,tower.x_mid,tower.y_mid,l.tail);

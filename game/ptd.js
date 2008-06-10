@@ -63,16 +63,18 @@ var update_groups = function(groups) {
 
 var default_set = function() {
   var set = {};
-
+  
+  set.stage = $('#tower_defense');
   // constants
-  set.pixels_per_square = 25;
-  set.half_pixels_per_square = (1.0 * set.pixels_per_square) / 2;
-  set.height = 450;
-  set.width = 600;
-  set.framerate = 60;
+  set.pixels_per_square = $('#grid_square')[0].width.baseVal.value;;
+  set.half_pixels_per_square = set.pixels_per_square / 2.0;
+  set.height = set.stage[0].height.baseVal.value;
+  set.width = set.stage[0].width.baseVal.value;
   set.gheight = Math.floor(set.height / set.pixels_per_square);
   set.gwidth = Math.floor(set.width / set.pixels_per_square);
-
+  log("set.gheight", set.gheight);
+  log("set.gwidth", set.gwidth);
+  log("set.pixels_per_square", set.pixels_per_square);
   /*
     ### Grid Cache
 
@@ -129,16 +131,6 @@ var default_set = function() {
     });
   }
 
-  // colors
-  set.bg_colors = {neutral:color(90,80,70),
-                   positive:color(60,80,250),
-                   negative:color(250,80,60)};
-  set.bg_color = set.bg_colors.neutral;
-  set.grid_color = color(255,255,255);
-  set.entrance_color = color(255,100,100);
-  set.exit_color = color(100,100,250);
-  set.killzone_color = color(200,50,50,0.5);
-  set.creep_color = color(255,255,0);
 
   // rendering groups
   set.rendering_groups = [];
@@ -211,10 +203,10 @@ var WIDGETS;
 // prototype for grid lines and colored squares
 var InertDrawable = new Object();
 Object.extend(InertDrawable, {
-      update:function() {},
-      is_dead:function() { return false; },
-      draw:function() {}
-  });
+  update:function() {},
+  is_dead:function() { return false; },
+  draw:function() {}
+});
 
 
 // responsible for updating settings in SET
@@ -242,53 +234,6 @@ var UIUpdater = function() {
   assign_to_depth(uiu, SET.system_render_level);
   return uiu;
 }
-
-
-var Grid = function() {
-  var grid = new Object();
-  Object.extend(grid, InertDrawable);
-  grid.draw = function() {
-    stroke(SET.grid_color);
-    var p = SET.pixels_per_square;
-    var w = SET.width;
-    var h = SET.height;
-    for (i = 0; i<w; i+=p) {
-      line(i, 0, i, h);
-    }
-    for (i = 0; i<h; i+=p) {
-      line(0,i,w,i);
-    }
-  };
-  assign_to_depth(grid, SET.grid_render_level);
-  return grid;
-};
-
-
-var GridSquare = function(gx,gy,color) {
-  var square = new Object();
-  Object.extend(square, InertDrawable);
-  square.gx = gx;
-  square.gy = gy;
-  square.x = grid_to_pixel(gx);
-  square.y = grid_to_pixel(gy);
-  var mid = center_of_square(gx,gy);
-  square.x_mid = mid.x;
-  square.y_mid = mid.y;
-  return square;
-}
-
-var Square = function(gx,gy,color) {
-  var square = GridSquare(gx,gy,color);
-  square.color = color;
-  square.draw = function() {
-    noStroke();
-    fill(this.color);
-    draw_square_in_grid(this.gx,this.gy);
-  }
-  assign_to_depth(square, SET.square_render_level);
-  return square;
-};
-
 
 
 var spawn_wave = function() {
@@ -341,10 +286,11 @@ var game_lost = function() {
  */
 
 var generate_map = function() {
-  SET.entrance = Square(0, random(SET.gheight-1), SET.entrance_color);
-  SET.entrance.type = "entrance";
-  SET.exit = Square(SET.gwidth-1, random(SET.gheight-1), SET.exit_color);
-  SET.exit.type = "exit";
+  var grid = $("#grid_layer");
+  grid.empty();
+  SET.entrance = Terrain(0, random(SET.gheight-1), "entrance");
+  SET.exit = Terrain(SET.gwidth-1, random(SET.gheight-1), "exit");
+  $("#grid_layer").append(SET.entrance, SET.exit);
   populate_terrains();
 }
   
@@ -419,24 +365,34 @@ var error = function(msg) {
    Main game loop.
  */
 
-var start_tower_defense = function() {
-  setup = function() {
-    $('#pause_button').html("Pause");
-    set_canvas("tower_defense");
-    reset_game();
-    size(SET.width, SET.height);
-    frameRate(SET.framerate);
-    mouseMoved(on_mouse_moved);
-    mousePressed(on_mouse_press);
-    initProcessing();
+var init_tower_defense = function() {
+  $('#pause_button').html("Pause");
+  reset_game();
+  frameRate(SET.framerate);
+//   mouseMoved(on_mouse_moved);
+//   mousePressed(on_mouse_press);
+  run_tower_defense();
+}
+
+var millisBetweenUpdates = 10;
+var frameRate = function(rate) {
+  millisBetweenUpdates = 1000.0 / rate
+}
+
+var interval = undefined;
+var run_tower_defense = function(){
+  interval = setInterval(run_tower_step, millisBetweenUpdates);
+}
+var stop_tower_defense = function(){
+  clearInterval(interval);
+}
+
+// a single step in the game
+var run_tower_step = function() {
+  if (SET.state) {
+    var state_name = SET.state.name();
+    if (state_name == "GameOverMode" || state_name == "PauseMode") return
   }
-  draw = function() {
-    if (SET.state) {
-      var state_name = SET.state.name();
-      if (state_name == "GameOverMode" || state_name == "PauseMode") return
-    }
-    background(SET.bg_color);
-    update_groups(SET.rendering_groups);
-  }
-  setup();
+  //get objects
+  //call objects.update or whatever
 }

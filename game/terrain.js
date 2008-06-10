@@ -1,35 +1,32 @@
 
 /* File to contain Terrain implementation.  */
-
-var NeutralTerrain = function(gx,gy) {
-  var terrain_color = color(200,200,200);
-  var t = Square(gx,gy,terrain_color);
-  t.type = "neutral";
-  t.tower_range_modifier = 1.0;
-  t.tower_damage_modifier = 1.0;
-  t.tower_frequency_modifier = 1.0;
-  return t;
+var Terrain = function(gx,gy, type) {
+  type = type || "neutral";
+  var coords = grid_to_pixel(gx, gy);
+  var square = CreateKind(type + "-terrain", {x:coords.x, y:coords.y});
+  square.type = type;
+  square.gx = gx; square.gy = gy;
+  var mid = center_of_square(gx,gy);
+  square.x_mid = mid.x;
+  square.y_mid = mid.y;
+  square.tower_range_modifier = 1.0;
+  square.tower_damage_modifier = 1.0;
+  square.tower_frequency_modifier = 1.0;
+  return square;
 }
 
 var WaterTerrain = function(gx,gy) {
-  var t = NeutralTerrain(gx,gy);
-  t.color = color(78,150,236);
-  t.type = "water";
-  return t;
+  return Terrain(gx,gy,"water");
 }
   
 var MountainTerrain = function(gx,gy) {
-  var t = NeutralTerrain(gx,gy);
-  t.color = color(228,51,51);
-  t.type = "mountain";
+  var t = Terrain(gx,gy,"mountain");
   t.tower_range_modifier = 1.25;
   return t;
 }
 
 var PowerPlantTerrain = function(gx,gy) {
-  var t = NeutralTerrain(gx,gy);
-  t.color = color(189,194,78);
-  t.type = "power plant";
+  var t = Terrain(gx,gy,"power-plant");
   t.tower_damage_modifier = 2.0;
   return t;
 }
@@ -50,28 +47,33 @@ var populate_terrains = function() {
   var gwidth = SET.gwidth;
   var gheight = SET.gheight;
   
-  // column with entrance & exit squares
-  // are all neutral terrain
+  var grid = $('#grid_layer');
+  
+//   column with entrance & exit squares
+//   are all neutral terrain
   for (var gy=0; gy<gheight; gy++) {
     if ( gy != entrance.gy ) {
-      NeutralTerrain(0,gy);
+      grid.append(Terrain(0,gy));
     }
     if ( gy != exit.gy ) {
-      NeutralTerrain(gwidth-1,gy);
+      grid.append(Terrain(gwidth-1,gy));
     }
   }
 
+  
   for (var gx=1; gx<gwidth-1; gx++) {
     for (var gy=0; gy<gheight; gy++) {
       var n = Math.random();
+      var t = undefined;
       if (n <= range_mountain)
-        MountainTerrain(gx,gy);
+        t = MountainTerrain(gx,gy);
       else if (n <= range_water)
-        WaterTerrain(gx,gy);
+        t = WaterTerrain(gx,gy);
       else if (n <= range_power_plant)
-        PowerPlantTerrain(gx,gy);
+        t = PowerPlantTerrain(gx,gy);
       else
-        NeutralTerrain(gx,gy);
+        t = Terrain(gx,gy);
+      grid.append(t);
     }
   }
 

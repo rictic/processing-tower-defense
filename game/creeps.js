@@ -121,7 +121,6 @@ var ImmuneMixin = function(creep) {
 }
 
 var StrongMixin = function(creep) {
-  creep.color = color(0,255,255);
   creep.size = creep.size * 1.3;
   creep.hp = Math.floor(creep.hp * 2);
   creep.value = Math.floor(creep.value * 1.5);
@@ -131,7 +130,6 @@ var StrongMixin = function(creep) {
 
 var QuickMixin = function(creep) {
   creep.creep_type = "Quick " + creep.creep_type;
-  creep.color = color(200,150,50);
   creep.speed = creep.speed * 1.5;
   creep.hp = Math.floor(creep.hp * .75);
   creep.size = creep.size * 0.9;
@@ -141,7 +139,6 @@ var QuickMixin = function(creep) {
 
 var BossMixin = function(creep) {
   creep.creep_type = "Boss " + creep.creep_type;
-  creep.color = color(255,100,150);
   creep.size = creep.size * 1.5;
   creep.hp = Math.floor(creep.hp * 10);
   creep.value = Math.floor(creep.value * 20);
@@ -153,11 +150,10 @@ var BossMixin = function(creep) {
 var Creep = function(wave) {
   var cp = SET.creeps_spawned;
   var c = new Object();
-  c.terrain = {"entrance":1.0,"exit":1.0,"mountain":0.75,"water":0.5,"neutral":1.0,"power plant":2.0};
+  c.terrain = {"entrance":1.0,"exit":1.0,"mountain":0.75,"water":0.5,"neutral":1.0,"power-plant":2.0};
 
   c.x = SET.entrance.x_mid;
   c.y = SET.entrance.y_mid;
-  c.color = SET.creep_color;
   c.size = SET.creep_size;
   c.hp = Math.floor(SET.creep_hp * Math.pow(1.4,wave));
   c.value = SET.creep_value + wave;

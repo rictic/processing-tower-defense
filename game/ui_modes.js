@@ -95,10 +95,11 @@ var BuildTowerMode = function() {
     if (this.br)
       this.br.is_dead = function() { return true; }
     this.br = BuildRadius(mid.x,mid.y,radius);
-    if (this.is_legal(x,y))
-      this.br.color = SET.bg_colors.positive;
-    else
-      this.br.color = SET.bg_colors.negative;
+//TODO: change this to set a class
+//     if (this.is_legal(x,y))
+//       this.br.color = SET.bg_colors.positive;
+//     else
+//       this.br.color = SET.bg_colors.negative;
 
   };
   this.set_up = function(x,y) {

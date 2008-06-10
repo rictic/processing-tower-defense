@@ -94,14 +94,56 @@ div#side {
     text-decoration: underline;
 }
 
-#grid_square {
-    fill: #bbb;
-/*    stroke: black;*/
+#side .creep {
+    display: none;
+}
+#side .tower {
+    display: none;
 }
 
 #creep {
-    fill: #f00;
+    fill: #ff0;
 }
 #background {
     fill: #999;
+}
+#grid_square {
+    stroke: #444;
+    stroke-width: 0.3;
+}
+
+.missile-tower { color: rgb(250,150,50); }
+.laser-tower { color: rgb(90,150,50); }
+.cannon-tower { color: rgb(100,120,140); }
+.gatling-tower { color: rgb(250,250,50); }
+
+.normal-creep { fill: rgb(255,255,0);}
+.quick-creep {color: rgb(200,150,50);}
+.strong-creep {color: rgb(0,255,255);}
+.boss-creep {color: rgb(255,100,150);}
+
+.neutral-terrain {fill: rgb(200,200,200);}
+.mountain-terrain {fill: rgb(228,51,51);}
+.water-terrain {fill: rgb(78,150,236);}
+.power-plant-terrain {fill: rgb(189,194,78);}
+.entrance-terrain {fill: rgb(255,100,100);}
+.exit-terrain {fill: rgb(100,100,255);}
+
+.bomb {color: rgb(100,120,140);}
+.nuke {color: rgb(255,70,30);}
+
+#bullet {
+    fill: rgb(100,255,0);
+    stroke: rgb(255,255,255);
+}
+#cannonball {
+    stroke: rgb(0,0,0);
+    fill: rgb(50,50,50);
+}
+#missile {
+    stroke: rgb(255,0,0);
+    fill: rgb(250,50,50);
+}
+#laser {
+    stroke: rgb(0,0,255);
 }

@@ -4,8 +4,7 @@
 <head>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 <title>SVG Tower Defense</title>
-<link href="style.css" media="screen" rel="Stylesheet" type="text/css" />        
-
+<link href="style.css" media="screen" rel="Stylesheet" type="text/css" />     
 </head>
 
 <body>
@@ -24,7 +23,27 @@
   </div>
 
   <div id="middle">
-    <svg xmlns="http://www.w3.org/2000/svg" id='tower_defense' width="600" height="400"></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" id='tower_defense' width="600" height="400" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <defs>
+        <g>
+          <rect id='grid_square' width='25' height='25'/>
+          <use id='neutral-terrain' xlink:href='#grid_square' class='neutral-terrain'/>
+          <use id='mountain-terrain' xlink:href='#grid_square' class='mountain-terrain'/>
+          <use id='water-terrain' xlink:href='#grid_square' class='water-terrain'/>
+          <use id='power-plant-terrain' xlink:href='#grid_square' class='power-plant-terrain'/>
+          <use id='entrance-terrain' xlink:href='#grid_square' class='entrance-terrain'/>
+          <use id='exit-terrain' xlink:href='#grid_square' class='exit-terrain'/>
+        </g>
+        
+        <g>
+          <circle id='creep' cx='0' cy='0' r='5'/>
+        </g>
+      </defs>
+      
+      
+      <g id='grid_layer'/>
+      <g id='creep_layer'/>
+    </svg>
 
     <div id="side">
       <div id="controls">
@@ -53,7 +72,7 @@
         </table>
       </div>
 
-      <div id="tower">
+      <div class="tower">
         <table>
           <tr><td></td><td> <em>Tower Details</em> </td></tr>
           <tr><td> Type: </td><td id="tower_type"></td></tr>
@@ -64,7 +83,7 @@
           <tr><td><button id="tower_upgrade_button"><span class='hotkey'>U</span>pgrade!</button></td></tr>
         </table>  
       </div>
-      <div id="creep">
+      <div class="creep">
         <table>
           <tr><td></td><td> <em> Creep Details </em></td></tr>
           <tr><td> Type: </td><td id="creep_type"></td></tr>
@@ -108,24 +127,23 @@
 
 
 <div id="js_imports">
-<!-- Putting script elements as late in the document as possible gives
-    a better, faster initial render. -->
-<script src="processing.js" type="text/javascript" charset="utf-8" ></script>
-<script src="jsfprocessing.js" type="text/javascript" charset="utf-8" ></script>
-<script src="jquery-1.2.6.min.js" type="text/javascript" charset="utf-8" ></script>
-<script src="game/creep_waves.js" type="text/javascript" charset="utf-8" ></script>
-<script src="game/terrain.js" type="text/javascript" charset="utf-8" ></script>
-<script src="game/util.js" type="text/javascript" charset="utf-8" ></script>
-<script src="game/creeps.js" type="text/javascript" charset="utf-8" ></script>
-<script src="game/ui_modes.js" type="text/javascript" charset="utf-8" ></script>
-<script src="game/weapons.js" type="text/javascript" charset="utf-8" ></script>
-<script src="game/ptd.js" type="text/javascript" charset="utf-8" ></script>
+  <!-- Putting script elements as late in the document as possible gives
+      a better, faster initial render. -->
+  <script src="jquery-1.2.6.min.js" type="text/javascript" charset="utf-8" />
+  <script src="game/creep_waves.js" type="text/javascript" charset="utf-8" />
+  <script src="game/terrain.js" type="text/javascript" charset="utf-8" />
+  <script src="game/util.js" type="text/javascript" charset="utf-8" />
+  <script src="game/creeps.js" type="text/javascript" charset="utf-8" />
+  <script src="game/ui_modes.js" type="text/javascript" charset="utf-8" />
+  <script src="game/weapons.js" type="text/javascript" charset="utf-8" />
+  <script src="game/ptd.js" type="text/javascript" charset="utf-8" />
+  <script src="jsvg.js" type="text/javascript" charset="utf-8" />
 </div>
 
 <script type="text/javascript" charset="utf-8">
     /* initialization */
     $(document).ready(function() {
-        start_tower_defense();
+        init_tower_defense();
     })
     
     
@@ -163,7 +181,7 @@
     var paused = false;
     function pause() {
         paused = !paused;
-        pause_resume();
+//         pause_resume();
         $('#pause_button').html(paused ? "Resume" : "Pause");
     }
     function mute() {
