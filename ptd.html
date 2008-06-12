@@ -26,11 +26,11 @@
 
     
     <div id="help-headers">
-      <span><a class="section" href="" onclick="return display_help_section('#help-gameplay');">Gameplay</a></span>
-      <span><a class="section" href="" onclick="return display_help_section('#help-towers');">Towers</a></span>
-      <span><a class="section" href="" onclick="return display_help_section('#help-creeps');">Creeps</a></span>
-      <span><a class="section" href="" onclick="return display_help_section('#help-terrain');">Terrain</a></span>
-      <span><a class="section" href="" onclick="return display_help_section('#help-bomb');">Bombs &amp; Nukes</a></span>
+      <span><a class="section active" href="#help-gameplay">Gameplay</a></span>
+      <span><a class="section" href="#help-towers">Towers</a></span>
+      <span><a class="section" href="#help-creeps">Creeps</a></span>
+      <span><a class="section" href="#help-terrain">Terrain</a></span>
+      <span><a class="section" href="#help-bomb">Bombs &amp; Nukes</a></span>
     </div>
     <div id="help-sections">
     <div class="visible" id="help-gameplay">
@@ -271,12 +271,17 @@
       $('#logging_button')[0].onclick = function(){};
     }
     
-
-    var display_help_section = function(id) {
-      $('#help-sections div').hide();
-      $(id).show();
+    var getIdFromURL = function(url) {
+      return url.slice(url.indexOf("#"));
+    }
+    $("#help-headers .section").click(function() {
+      $("#help-sections div").hide();
+      $(getIdFromURL(this.href)).show();
+      $("#help-headers .section").removeClass("active");
+      $(this).addClass("active");
       return false;
-    };
+    })
+
     var help_displayed = false;
     var toggle_help = function() {
       help_displayed = !help_displayed;

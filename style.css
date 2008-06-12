@@ -152,6 +152,8 @@ a.section:hover {
     border-right: solid 1px #999;
     color: #AAAAAA;
 }
+a.section.active {       color: #2259a5; font-weight: bold;}
+a.section.active:hover { color: #2259a5;}
 
 #help .missile-tower { color: rgb(250,150,50); }
 #help .laser-tower { color: rgb(90,150,50); }
