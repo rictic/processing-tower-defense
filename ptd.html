@@ -128,7 +128,7 @@
 
   <div id="bottom_controls">
     <button id='pause_button' class='mode_button' onclick="pause();">Pause</button>
-    <button onclick="reset_game();">Reset Game</button>
+    <button id='reset_button' onclick="reset_game();">Reset Game</button>
     <button onclick="spawn_wave();">Spawn Next <span class='hotkey'>W</span>ave</button>
 <!--     <button id='mute_button' onclick="mute();">Mute</button> -->
     <button id='help_button' onclick="toggle_help();"><span class='hotkey'>H</span>elp</button>
@@ -174,6 +174,8 @@
 <script src="game/ui_modes.js" type="text/javascript" charset="utf-8" ></script>
 <script src="game/weapons.js" type="text/javascript" charset="utf-8" ></script>
 <script src="game/ptd.js" type="text/javascript" charset="utf-8" ></script>
+<script src="jquery.ui-1.5/ui/effects.core.js" type="text/javascript" charset="utf-8"></script>
+<script src="jquery.ui-1.5/ui/effects.highlight.js" type="text/javascript" charset="utf-8"></script>
 </div>
 
 <script type="text/javascript" charset="utf-8">
@@ -199,13 +201,14 @@
     $('button .hotkey').each(function(){
         //this is bass ackwards, but I got type errors passing around the native click method
         var button = this.parentNode;
-        hotkeys[this.innerHTML.toUpperCase()] = function() {button.click()};
+        hotkeys[$(this).html().toUpperCase()] = function() {button.click()};
     });
     
     //hotkeys that aren't in the dom
     hotkeys["space"] = pause;
     hotkeys["esc"] = unselect;
     hotkeys['Z'] = function() {$('#log').empty()};
+    hotkeys['R'] = function() {if (SET.state.name() == "GameOverMode") reset_game();}
     
     //modifiers to be called on keydown and keyup
     modifierkeys["shift"] = function() { shift_down = !shift_down; };
@@ -330,11 +333,18 @@
         });
     });
     $('#game_over').hide();
-    $('').bind('game_over', function(e,hide){
-        if (hide == true)
+    $('').bind('game_over', function(e,over){
+        if (over == true){
+            log("game over");
             $('#game_over').html("Game Over! Final score: " + $("#score").html()).fadeIn();
-        else
-            $('#game_over').html("Just once more...").fadeOut();
+            //tempt tempt tempt
+            for (var i=0; i < 3; i++)
+              $("#reset_button").effect("highlight",{color:"#f60"},3000); 
+        }
+        else{
+          log("game (re?)started");
+          $('#game_over').html("Just once more...").fadeOut();
+        }
     });
     
     /* stub until we pull in sound for reals */
