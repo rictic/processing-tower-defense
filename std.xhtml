@@ -15,32 +15,17 @@
       
       <defs>
         <rect id='grid_square' width='25' height='25'/>
-        <circle id='creep' cx='0' cy='0' r='5'/>
+        
+        <symbol id='creep'>
+          <circle cx='50%' cy='50%' r='50%'/>
+        </symbol>
       </defs>
       
       <rect id='background' width='100%' height='100%' />
       <g id='grid_layer'/>
       <g id='creep_layer'>
       </g>
-      <use xlink:href='#creep' x='10' y='10'>
-        <animate attributeName="x" attributeType="XML" begin="0s" dur="3s" fill="freeze" to="300" />
-      </use>
-      <use xlink:href='#creep' x='10' y='50'>
-        <animate attributeName="x" attributeType="XML" begin="0s" dur="3s" fill="freeze" to="300" />
-      </use>
-      <use xlink:href='#creep' x='10' y='90'>
-        <animate attributeName="x" attributeType="XML" begin="0s" dur="3s" fill="freeze" to="300" />
-      </use>
-      <use xlink:href='#creep' x='10' y='160'>
-        <animate attributeName="x" attributeType="XML" begin="0s" dur="3s" fill="freeze" to="300" />
-      </use>
-      <use xlink:href='#creep' x='10' y='240'>
-        <animate attributeName="x" attributeType="XML" begin="0s" dur="3s" fill="freeze" to="300" />
-      </use>
-      <use xlink:href='#creep' x='10' y='290'>
-        <animate attributeName="x" attributeType="XML" begin="0s" dur="3s" fill="freeze" to="300" />
-      </use>
-      <use xlink:href='#creep' x='10' y='315'>
+      <use xlink:href='#creep' x='10' y='315' width='20' height='20' >
         <animate attributeName="x" attributeType="XML" begin="0s" dur="3s" fill="freeze" to="300" />
       </use>
       
@@ -57,8 +42,8 @@
       opts.x = x; opts.y = y;
       return CreateKind("grid_square", opts);
     }
-    var Creep = function(x,y) {
-      return CreateKind("creep", {x:x, y:y});
+    var Creep = function(x,y, diameter) {
+      return CreateKind("creep", {x:x, y:y, width:diameter, height:diameter});
     }
     
     var stage = $('svg');
@@ -82,7 +67,7 @@
           
       
 
-      var creep = Creep(10,100);
+      var creep = Creep(10,100, 10);
       $('#creep_layer').append(creep)
       run();
     });
