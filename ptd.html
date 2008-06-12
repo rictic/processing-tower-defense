@@ -82,19 +82,19 @@
       <div id="controls">
         <table>
           <tr>
-            <td> <button id='laser_button' onclick="build_laser_tower();" accesskey="L">Build <span class='hotkey'>L</span>aser Tower - 25 Gold</button> </td>
+            <td> <button id='laser_button' class='mode_button' onclick="build_laser_tower();" accesskey="L">Build <span class='hotkey'>L</span>aser Tower - 25 Gold</button> </td>
           </tr>
           <tr>
-            <td> <button id='gatling_button' onclick="build_gatling_tower();"> Build <span class='hotkey'>G</span>attling Tower - 50 Gold</button></td>
+            <td> <button id='gatling_button' class='mode_button' onclick="build_gatling_tower();"> Build <span class='hotkey'>G</span>attling Tower - 50 Gold</button></td>
           </tr>
 	  <tr>
-            <td> <button id='cannon_button' onclick="build_cannon_tower();" accesskey="M">Build <span class='hotkey'>C</span>annon Tower - 75 Gold</button> </td>
+            <td> <button id='cannon_button' class='mode_button' onclick="build_cannon_tower();" accesskey="M">Build <span class='hotkey'>C</span>annon Tower - 75 Gold</button> </td>
           </tr>
           <tr>
-            <td> <button id='missile_button' onclick="build_missile_tower();" accesskey="M">Build <span class='hotkey'>M</span>issile Tower - 100 Gold</button> </td>
+            <td> <button id='missile_button' class='mode_button' onclick="build_missile_tower();" accesskey="M">Build <span class='hotkey'>M</span>issile Tower - 100 Gold</button> </td>
           </tr>
           <tr>  
-            <td> <button id='bomb_button' onclick="aim_bomb();" accesskey="S">Drop <span class='hotkey'>B</span>omb - <span id="bomb_cost">50</span> Gold</button></td>
+            <td> <button id='bomb_button' class='mode_button' onclick="aim_bomb();" accesskey="S">Drop <span class='hotkey'>B</span>omb - <span id="bomb_cost">50</span> Gold</button></td>
           </tr>
           <tr>
             <td> <button onclick="nuke_creeps();" accesskey="N"> Launch <span class='hotkey'>N</span>uke - <span id="nukes_left"> 3 left </span></button></td>
@@ -127,12 +127,12 @@
   </div>
 
   <div id="bottom_controls">
-    <button id='pause_button' onclick="pause();">Pause</button>
+    <button id='pause_button' class='mode_button' onclick="pause();">Pause</button>
     <button onclick="reset_game();">Reset Game</button>
     <button onclick="spawn_wave();">Spawn Next <span class='hotkey'>W</span>ave</button>
 <!--     <button id='mute_button' onclick="mute();">Mute</button> -->
     <button id='help_button' onclick="toggle_help();"><span class='hotkey'>H</span>elp</button>
-    <button id='logging_button' onclick='toggle_logging();'>Stop <span class='hotkey'>D</span>ebugging</button>
+    <button id='logging_button' onclick='toggle_logging();' class='active_mode'>Stop <span class='hotkey'>D</span>ebugging</button>
   </div>
 </div>
 
@@ -256,11 +256,12 @@
     var prim_log = log;
     function toggle_logging() {
         logging = !logging;
+        
         if (logging)
           log = prim_log;
         else
           log = function(){};
-        $("#logging_button").html(logging? "Stop <span class='hotkey'>D</span>ebugging" : 'Start <span class="hotkey">D</span>ebugging');
+        $("#logging_button").toggleClass("active_mode").html(logging? "Stop <span class='hotkey'>D</span>ebugging" : 'Start <span class="hotkey">D</span>ebugging');
     }
     
     if (document.location.hash == "#debug")
@@ -279,7 +280,7 @@
     var help_displayed = false;
     var toggle_help = function() {
       help_displayed = !help_displayed;
-      if (!help_displayed){
+      if (help_displayed){
         $("#help").show();
         $("#help_button").addClass("active_mode");
         if (!paused) pause();
@@ -303,7 +304,7 @@
         });
     }
     $('').bind('no_mode', function() {
-        $('button').removeClass('active_mode');
+        $('.mode_button').removeClass('active_mode');
     })
     
     
