@@ -134,6 +134,7 @@ div#side {
 
 #help-headers {
     padding: 10px;
+    border-bottom: 2px solid black;
 }
 
 a.section {
@@ -143,14 +144,10 @@ a.section {
     padding-right: 5px;
     text-decoration: none;
     color: black;
-    border-left: solid 1px black;
-    border-right: solid 1px black;
 }
 
 a.section:hover {
-    border-left: solid 1px #999;
-    border-right: solid 1px #999;
-    color: #AAAAAA;
+    color: #AAA;
 }
 a.section.active {       color: #2259a5; font-weight: bold;}
 a.section.active:hover { color: #2259a5;}
