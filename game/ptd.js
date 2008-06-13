@@ -135,8 +135,8 @@ var default_set = function() {
                    negative:color(250,80,60)};
   set.bg_color = set.bg_colors.neutral;
   set.grid_color = color(255,255,255);
-  set.entrance_color = color(255,100,100);
-  set.exit_color = color(100,100,250);
+  set.entrance_color = color(100,255,100);
+  set.exit_color = color(255,100,50);
   set.killzone_color = color(200,50,50,0.5);
   set.creep_color = color(255,255,0);
 
@@ -290,7 +290,19 @@ var Square = function(gx,gy,color) {
   assign_to_depth(square, SET.square_render_level);
   return square;
 };
-
+var ExitSquare = function(gx,gy) {
+  var square = Square(gx,gy,SET.exit_color);
+  square.type = "exit";
+  square.draw = function() {
+    noStroke();
+    fill(SET.exit_color);
+    draw_square_in_grid(this.gx,this.gy);
+    noFill();
+    stroke("black");
+    draw_circle_in_grid(this.gx,this.gy);
+  }
+  return square;
+}
 
 
 var spawn_wave = function() {
@@ -349,8 +361,7 @@ var game_lost = function() {
 var generate_map = function() {
   SET.entrance = Square(0, random(SET.gheight-1), SET.entrance_color);
   SET.entrance.type = "entrance";
-  SET.exit = Square(SET.gwidth-1, random(SET.gheight-1), SET.exit_color);
-  SET.exit.type = "exit";
+  SET.exit = ExitSquare(SET.gwidth-1, random(SET.gheight-1));
   populate_terrains();
 }
 

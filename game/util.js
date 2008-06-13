@@ -99,7 +99,7 @@ var draw_circle_in_grid = function(gx,gy) {
   var pos = grid_to_pixel(gx,gy);
   var h = SET.half_pixels_per_square;
   var l = SET.pixels_per_square;
-  ellipse(pos.x+h,pos.y+h,l,l);
+  ellipse(pos.x+h,pos.y+h,l-1,l-1);
 };
 
 /*
