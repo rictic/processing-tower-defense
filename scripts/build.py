@@ -14,8 +14,8 @@ from BeautifulSoup import BeautifulSoup, Tag
 
 DEPLOY_DIRECTORY = u"deploy/"
 MERGED_JS_NAME = DEPLOY_DIRECTORY + u"ptd.js"
-MERGED_HTML_NAME = DEPLOY_DIRECTORY + u"ptd.html"
-HTML_FILE_NAME = u"ptd.html"
+MERGED_HTML_NAME = DEPLOY_DIRECTORY + u"ptd.xhtml"
+HTML_FILE_NAME = u"ptd.xhtml"
 FILES_TO_COPY = ("style.css","LICENSE",)
 FOLDERS_TO_COPY = []#("soundmanager2","assets")
 
@@ -24,7 +24,7 @@ def merge_javascript():
 
 def main():
     print "Building Processed Tower Defense Deployment Files..."
-    html = open('ptd.html', 'r')
+    html = open(HTML_FILE_NAME, 'r')
 
     try:
         os.mkdir(u"deploy")
