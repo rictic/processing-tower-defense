@@ -145,8 +145,6 @@ var BossMixin = function(creep) {
   return creep;
 }
 
-
-
 var Creep = function(wave) {
   var cp = SET.creeps_spawned;
   var c = new CreateKind("creep", {x:SET.entrance.x_mid, y:SET.entrance.y_mid, width:SET.creep_size, height:SET.creep_size});
@@ -213,10 +211,8 @@ var Creep = function(wave) {
       var elapsed = SET.now - this.last;
       var terrain_modified_speed = this.terrain_modified_speed();
       var speed = (elapsed/1000) * terrain_modified_speed;
-      var path = calc_path(this.x,this.y,SET.exit.x_mid,SET.exit.y_mid,speed);
-      this.x += path.x;
-      this.y += path.y;
       this.last = SET.now;
+      move_towards(this, SET.exit.x_mid,SET.exit.y_mid,speed);
     }
   }
   c.draw = function() {
@@ -246,7 +242,7 @@ var reset_pathfinding = function(new_value) {
   if (new_value == undefined){
     var coords = [SET.exit.gx, SET.exit.gy];
     new_value = {};
-//     SET.grid_cache_reset_all_values_for_key("valid_tower_location");
+    SET.grid_cache_reset_all_values_for_key("valid_tower_location");
     new_value[coords] = {}; //The actual value doesn't really matter
   }
   var previous = known_best_paths;
@@ -256,44 +252,48 @@ var reset_pathfinding = function(new_value) {
 
 //Could a creep occupy this square?
 var valid_path_location = function(gx, gy) {
+  //out of bounds
+  if (gx < 0 || gy < 0) return false;
+  if (gx >= SET.gwidth || gy >= SET.gheight) return false;
+  //a tower is present
   if (get_tower_at(gx,gy) != false)
     return false;
+  //a hypothetical tower is present (when selecting a space for a new tower)
   if (SET.considering_location && SET.considering_location.gx == gx && SET.considering_location.gy == gy)
       return false;
   return true;
 }
 
 var pathfind = function(start_block) {
+//   log("pathfinding [from, to]", [start_block, SET.exit]);
   if ([start_block.gx, start_block.gy] in known_best_paths) {
-//     log("path found from cache", known_best_paths[start_block]);
+//     log("path found from cache", start_block);
     return known_best_paths[[start_block.gx, start_block.gy]].next_block.gpos;
   }
-//   log("pathfinding started [from, to]", [start_block, SET.exit]);
+
 
   var successors = function(block) {
     var candidates = [];
     var normal_dist = 10;
     [[0,1],[1,0],[-1,0],[0,-1]].forEach(function(pair) {
       var gpos = {gx:block.gpos.gx + pair[0], gy: block.gpos.gy + pair[1], dist:normal_dist};
-      if (!valid_path_location(gpos.gx, gpos.gy)) return;
-      if (gpos.gx < 0 || gpos.gx >= SET.gwidth) return;
-      if (gpos.gy < 0 || gpos.gy >= SET.gheight) return;
-      candidates.push(gpos);
+      if (valid_path_location(gpos.gx, gpos.gy))
+        candidates.push(gpos);
     });
 
     var diag_dist = 14; //sqrt(2) * 10
     [[1,1],[-1,-1],[1,-1],[-1,1]].forEach(function(pair){
       var gpos = {gx:block.gpos.gx + pair[0], gy: block.gpos.gy + pair[1], dist:diag_dist};
-      if (!(valid_path_location(gpos.gx, gpos.gy) && valid_path_location(block.gpos.gx, gpos.gy) && valid_path_location(gpos.gx, block.gpos.gy))) return;
-      if (gpos.gx < 0 || gpos.gx >= SET.gwidth) return;
-      if (gpos.gy < 0 || gpos.gy >= SET.gheight) return;
-      candidates.push(gpos);
+      if (valid_path_location(gpos.gx, gpos.gy) && valid_path_location(block.gpos.gx, gpos.gy) && valid_path_location(gpos.gx, block.gpos.gy))
+        candidates.push(gpos);
     })
     return candidates;
   }
 
 
-  //straight-line distance as our heuristic
+  //Heuristic assumes that we move at a 45˚ angle until we've got a
+  //horizontal or vertical path to the goal, then we move straight
+  //to the goal.  This is the actual behavior when there are no obstructions.
   var heuristic = function(gpos) {
     var dx = Math.abs(gpos.gx - SET.exit.gx);
     var dy = Math.abs(gpos.gy - SET.exit.gy);
@@ -314,14 +314,20 @@ var pathfind = function(start_block) {
       continue;
     }
     if ([block.gpos.gx, block.gpos.gy] in known_best_paths){
+      //logging:
+//       rpath = [];
+      
       while ("ancestor" in block) {
         block.ancestor.next_block = block;
         known_best_paths[[block.ancestor.gpos.gx, block.ancestor.gpos.gy]] = block.ancestor
+//         rpath.push({gx:block.gx, gy:block.gy});
         block = block.ancestor;
       }
+//       rpath.push({gx:block.gx, gy:block.gy});
+//       rpath.reverse();
 //       log("known_best_paths", known_best_paths);
       var result = known_best_paths[[start_block.gx, start_block.gy]].next_block.gpos;
-//       log("path found!", result);
+//       log("path found!", rpath);
       return result;
     }
     closed[[block.gpos.gx, block.gpos.gy]] = true;

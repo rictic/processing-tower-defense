@@ -60,9 +60,22 @@ var BuildTowerMode = function() {
     //if the proposed tower isn't along any known path, it's not in
     //the way
     pathfind({gx:SET.entrance.gx, gy:SET.entrance.gy});
-    if (!([gpos.gx,gpos.gy] in known_best_paths)) 
-      return true;
-    
+    if (!([gpos.gx,gpos.gy] in known_best_paths)) {
+      var safe = true;
+//       log("looking at diagonals of",gpos);
+      [[1,1],[-1,-1],[1,-1],[-1,1]].forEach(function(pair) {
+//         log("diagonal",{gx:gpos.gx + pair[0], gy:gpos.gy + pair[1]});
+        if (!valid_path_location(gpos.gx + pair[0], gpos.gy + pair[1])){
+//           log("diagonal disqualified from free is_blocking call",gpos);
+          safe = false;
+        }
+      });
+      if (safe)
+        return true;
+    }
+
+//     log("pathfinding on behaf of", gpos);
+
     //check that we can pathfind from the entrance
     //to the exit, and from each creep to the exit
     SET.considering_location = gpos;
@@ -84,8 +97,13 @@ var BuildTowerMode = function() {
     if (can_build_here(gpos.gx,gpos.gy) == false) return false;
 
     var cache = SET.grid_cache_at(gpos.gx, gpos.gy);
-    if (cache["valid_tower_location"] == undefined)
+    if (cache["valid_tower_location"] == undefined){
+//       log("grid grid miss");
       cache["valid_tower_location"] = is_blocking_paths(gpos);
+//       log("placing tower ok?", cache["valid_tower_location"]);
+    }
+//     else log("in grid cache");
+
     return cache["valid_tower_location"];
   };
   this.draw = function(x,y) {
@@ -121,6 +139,12 @@ var BuildTowerMode = function() {
     if (SET.gold >= this.cost) return true;
     else return false;
   };
+  this.can_leave_mode = function() {
+    //if we don't have enough money, we can't keep building
+    if (SET.gold < this.cost) return true;
+    //remain in build mode if shift is held down
+    return !shift_down;
+  };
   this.name = function() {
     return "BuildTowerMode";
   };
@@ -142,7 +166,7 @@ var build_missile_tower = function() {
 };
 
 var BuildCannonTowerMode = function() {
-  this.cost = 100;
+  this.cost = 75;
   this.tower = CannonTower;
   this.name = function() {
     return "BuildCannonTowerMode";
@@ -156,7 +180,7 @@ var build_cannon_tower = function() {
 };
 
 var BuildLaserTowerMode = function() {
-  this.cost = 50;
+  this.cost = 25;
   this.tower = LaserTower;
   this.name = function() {
     return "BuildLaserTowerMode";
@@ -168,17 +192,17 @@ var build_laser_tower = function() {
   attempt_to_enter_ui_mode(new BuildLaserTowerMode());
 };
 
-var BuildGattlingTowerMode = function() {
+var BuildGatlingTowerMode = function() {
   this.cost = 50;
-  this.tower = GattlingTower;
+  this.tower = GatlingTower;
   this.name = function() {
-    return "BuildGattlingTowerMode";
+    return "BuildGatlingTowerMode";
   }
 };
-BuildGattlingTowerMode.prototype = new BuildTowerMode();
+BuildGatlingTowerMode.prototype = new BuildTowerMode();
 
-var build_gattling_tower = function() {
-  attempt_to_enter_ui_mode(new BuildGattlingTowerMode());
+var build_gatling_tower = function() {
+  attempt_to_enter_ui_mode(new BuildGatlingTowerMode());
 }
 
 
@@ -244,7 +268,7 @@ var select_creep = function() {
 /* AimBombMode */
 
 var AimBombMode = function() {
-  this.cost = 50;
+  this.cost = SET.bomb_cost;
   this.radius = SET.missile_blast_radius * SET.pixels_per_square * 1.0;
   this.draw = function(x,y) {
     if (this.mr) this.mr.is_dead = function() { return true; };
@@ -277,6 +301,10 @@ var AimBombMode = function() {
     }
     play_sound("bomb");
     SET.gold -= this.cost;
+    var cost_increase = SET.bomb_cost * 0.25;
+    if (cost_increase < 25) cost_increase = 25;
+    SET.bomb_cost = Math.floor(SET.bomb_cost + cost_increase);
+    WIDGETS.bomb_cost.innerHTML = SET.bomb_cost;
   }
 }
 AimBombMode.prototype = new UserInterfaceMode();

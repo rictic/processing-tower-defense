@@ -21,6 +21,58 @@
     <span class='item'> Creep Variety: <span id="creep_variety"></span></span>
     <span class='item'> Next Wave in <span id="till_next_wave"></span> seconds</span>
   </div>
+  <div id="help">
+
+    
+    <div id="help-headers">
+      <span><a class="section active" href="#help-gameplay">Gameplay</a></span>
+      <span><a class="section" href="#help-towers">Towers</a></span>
+      <span><a class="section" href="#help-creeps">Creeps</a></span>
+      <span><a class="section" href="#help-terrain">Terrain</a></span>
+      <span><a class="section" href="#help-bomb">Bombs &amp; Nukes</a></span>
+    </div>
+    <div id="help-sections">
+    <div class="visible" id="help-gameplay">
+      <p> Processed Tower Defense is a strategy game where you try to defeat waves of dangerous monsters before they reach your tower. Of course, its less of a tower and more of a blueish square on the right side of the screen, but the idea stands. </p>
+      <p> Monsters appear on the only colorful square on the far left edge of the map, sprint towards the only colorful square on the far right edge of the map. Each time a monster reaches your tower, you lose one life. Lose all of your lives and the game ends. </p>
+      <p> You start out with a small treasury of gold, and each time you defeat a creep you receive a bit more gold to aid in your valiant defense of the lame blue squa... I mean... your tower. You also receive a few more points to your score when you defeat a creep. While gold can be redeemed for more powerful towers, score can only be redeemed as social capital among fellow PTD players, and thus could be fairly described as both invaluable and worthless. </p>
+    </div>
+    <div id="help-towers">
+      <p> Towers are your first and last line of defense against creeps. Except for the bomb and the nuke, but thats not the point right now. We're talking about towers, okay? Keep on task, won't ya? </p>
+        <ul>
+          <li><strong class='missile-tower'>Missile Towers</strong> – slow-firing towers with long range and the gentle caress of a freight truck.</li>
+          <li><strong class='cannon-tower'>Cannon Towers</strong> – potent beasts whose arcing balls of destruction cause splash damage</li>
+          <li><strong class='gatling-tower'>Gatling Towers</strong> – unleash a relentless fury of bullets... until they pause to reload</li>
+          <li><strong class='laser-tower'>Laser Towers</strong> – the circular reincarnation of bland reliability: they shoot blue lines at a high rate, and nothing else</li>
+        </ul>
+      <p> Towers all have another helpful characteristic: they block the paths of creeps. This lets you build complex mazes in the hope that the creeps will become dizzy and stop for a few moments to recover over a nice cup of tea. At the bare minimum you'll get to shoot at them for longer. </p>
+    </div>
+    <div id="help-creeps">
+      <p> Creeps are the evil scourge which long to plaster the sickening <strong>Game Over</strong> message at the top of your screen. Resisting them is your calling, your purpose, your afternoon you were supposed to spend doing laundry.</p>
+      <ul>
+        <li><strong class='normal-creep'>Normal</strong> creeps: You will know these creeps well, and will prosper by ending their drab, boring existences</li>
+        <li><strong class='quick-creep'>Quick</strong> creeps arrive every third wave.  These creeps move quickly, but their smaller bodies can take less damage</li>
+        <li><strong class='strong-creep'>Strong</strong> creeps plow through your territory every five waves.  They're slow, but extremely hearty.</li>
+        <li><strong class='boss-creep'>Boss</strong> creep: once in a blue moon, one of these warlords appears and lays waste to your defenses with its absurd hitpoints and size.</li>
+      </ul>
+      <p> Each of those categories of creeps can also have one additional behavior. Some creeps are very slow crossing water, some climb mountains at shocking speeds, and some even fly over your towers while mocking the effectiveness of your intricate designs.</p>
+    </div>
+    <div id="help-terrain">
+      <p> Each square on the board is a certain type of terrain. Terrain is randomly assigned each time the game is played, and bestows certain effects upon towers and creeps inside of them. </p>
+      <ul>
+        <li> <strong class='neutral-terrain'>Neutral</strong> terrain is the most common terrain, and doesn't do anything. </li>
+        <li> <strong class='water-terrain'>Water</strong> terrain slows most creeps down.</li>
+        <li> <strong class='mountain-terrain'>Mountain</strong> terrain slows creeps down, and gives towers a range bonus. </li>
+        <li> <strong class='power-plant-terrain'> Power plant </strong> terrain makes creep zip along at double speed, but will also double the damage of any tower built there. </li>
+      </ul>
+    </div>
+    <div id="help-bomb">
+      <p> The <strong class='bomb'>Bomb</strong> is the first of two last resort weapons at your disposal. You have an unlimited supply, but they get a bit more expensive with each passing level. Will severely damage all creeps in its radius (dealing 75% of their max hitpoints), but won't come cheap. </p>
+      <p> The <strong class='nuke'>Nuke</strong> is the last resort weapon of last resort weapons. It will destroy all creeps on the screen, but has two drawbacks. First, you won't recieve any loot from creeps destroyed this way. Second, you only have a limited supply and have no way to replenish that supply once they are exhausted. </p>
+    </div>
+    </div>
+    
+  </div>
 
   <div id="middle">
     <svg xmlns="http://www.w3.org/2000/svg" id='tower_defense' width="600" height="400" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -51,38 +103,37 @@
         </g>
       </defs>
       
-      <g id='grid_layer'/>
-      <g id='killzone_layer'/>
-      <g id='tower_layer'/>
-      <g id='build_layer'/>
-      <g id='creep_layer'/>
-      <g id='bullet_layer'/>
+      <g id='game_layers'>
+        <g id='grid_layer'/>
+        <g id='killzone_layer'/>
+        <g id='tower_layer'/>
+        <g id='build_layer'/>
+        <g id='creep_layer'/>
+        <g id='bullet_layer'/>
+      </g>
     </svg>
 
     <div id="side">
       <div id="controls">
         <table>
           <tr>
-            <td> <button id='laser_button' onclick="build_laser_tower();" accesskey="L">Build <span class='hotkey'>L</span>aser Tower - 50 Gold</button> </td>
+            <td> <button id='laser_button' class='mode_button' onclick="build_laser_tower();" accesskey="L">Build <span class='hotkey'>L</span>aser Tower - 25 Gold</button> </td>
           </tr>
           <tr>
-            <td> <button id='gattling_button' onclick="build_gattling_tower();"> Build <span class='hotkey'>G</span>attling Tower - 50 Gold</button></td>
+            <td> <button id='gatling_button' class='mode_button' onclick="build_gatling_tower();"> Build <span class='hotkey'>G</span>attling Tower - 50 Gold</button></td>
           </tr>
-    
-          <tr>
-            <td> <button id='missile_button' onclick="build_missile_tower();" accesskey="M">Build <span class='hotkey'>M</span>issile Tower - 100 Gold</button> </td>
+	  <tr>
+            <td> <button id='cannon_button' class='mode_button' onclick="build_cannon_tower();" accesskey="M">Build <span class='hotkey'>C</span>annon Tower - 75 Gold</button> </td>
           </tr>
           <tr>
-            <td> <button id='cannon_button' onclick="build_cannon_tower();" accesskey="M">Build <span class='hotkey'>C</span>annon Tower - 100 Gold</button> </td>
+            <td> <button id='missile_button' class='mode_button' onclick="build_missile_tower();" accesskey="M">Build <span class='hotkey'>M</span>issile Tower - 100 Gold</button> </td>
           </tr>
           <tr>  
-            <td> <button id='bomb_button' onclick="aim_bomb();" accesskey="S">Drop <span class='hotkey'>B</span>omb - 50 Gold</button></td>
+            <td> <button id='bomb_button' class='mode_button' onclick="aim_bomb();" accesskey="S">Drop <span class='hotkey'>B</span>omb - <span id="bomb_cost">50</span> Gold</button></td>
           </tr>
           <tr>
             <td> <button onclick="nuke_creeps();" accesskey="N"> Launch <span class='hotkey'>N</span>uke - <span id="nukes_left"> 3 left </span></button></td>
           </tr>
-          <tr><td><div class='error'></div></td></tr>
-          <tr><td><div class='message'></div></td></tr>
         </table>
       </div>
 
@@ -105,29 +156,34 @@
           <tr><td> Value: </td><td id="creep_value"></td></tr>
         </table>
       </div>
+      <div class='error message_area'></div>
+      <div class='message message_area'></div>
     </div>
   </div>
 
   <div id="bottom_controls">
-    <button id='pause_button' onclick="pause();">Pause</button>
-    <button onclick="reset_game();">Reset Game</button>
+    <button id='pause_button' class='mode_button' onclick="pause();">Pause</button>
+    <button id='reset_button' onclick="reset_game();">Reset Game</button>
     <button onclick="spawn_wave();">Spawn Next <span class='hotkey'>W</span>ave</button>
-    <button id='mute_button' onclick="mute();">Mute</button>
+<!--     <button id='mute_button' onclick="mute();">Mute</button> -->
+    <button id='help_button' onclick="toggle_help();"><span class='hotkey'>H</span>elp</button>
+    <button id='logging_button' onclick='toggle_logging();' class='active_mode'>Stop <span class='hotkey'>D</span>ebugging</button>
   </div>
 </div>
 
 <h4>Hotkeys:</h4>
 <ul>
+    <li>[space] – Pause/Resume</li>
+    <li>[esc] – Cancel Tower/Missile</li>
+    <li>H – Help!</li>
     <li>L – Build laser tower</li>
     <li>M – Build missile tower</li>
-    <li>G – Build gattling tower</li>
+    <li>G – Build gatling tower</li>
     <li>C – Build cannon tower</li>
     <li>B – Drop Bomb</li>
     <li>N – Launch Nuke</li>
     <li>W – Spawn Next Wave</li>
     <li>U – Upgrade Selected Tower</li>
-    <li>[space] – Pause/Resume</li>
-    <li>[esc] – Cancel Tower/Missile</li>
 </ul>
 
 <h4>Source:</h4>
@@ -141,20 +197,22 @@
 
 
 <div id="js_imports">
-  <!-- Putting script elements as late in the document as possible gives
-      a better, faster initial render. -->
-  <script src="jquery-1.2.6.min.js" type="text/javascript" charset="utf-8" />
-  <script src="game/creep_waves.js" type="text/javascript" charset="utf-8" />
-  <script src="game/terrain.js" type="text/javascript" charset="utf-8" />
-  <script src="game/util.js" type="text/javascript" charset="utf-8" />
-  <script src="game/creeps.js" type="text/javascript" charset="utf-8" />
-  <script src="game/ui_modes.js" type="text/javascript" charset="utf-8" />
-  <script src="game/weapons.js" type="text/javascript" charset="utf-8" />
-  <script src="game/ptd.js" type="text/javascript" charset="utf-8" />
-  <script src="jsvg.js" type="text/javascript" charset="utf-8" />
+<!-- Putting script elements as late in the document as possible gives
+    a better, faster initial render. -->
+<script src="jquery-1.2.6.min.js" type="text/javascript" charset="utf-8" />
+<script src="game/creep_waves.js" type="text/javascript" charset="utf-8" />
+<script src="game/terrain.js" type="text/javascript" charset="utf-8" />
+<script src="game/util.js" type="text/javascript" charset="utf-8" />
+<script src="game/creeps.js" type="text/javascript" charset="utf-8" />
+<script src="game/ui_modes.js" type="text/javascript" charset="utf-8" />
+<script src="game/weapons.js" type="text/javascript" charset="utf-8" />
+<script src="game/ptd.js" type="text/javascript" charset="utf-8" />
+<script src="jsvg.js" type="text/javascript" charset="utf-8"/>
+<script src="jquery.ui-1.5/ui/effects.core.js" type="text/javascript" charset="utf-8"/>
+<script src="jquery.ui-1.5/ui/effects.highlight.js" type="text/javascript" charset="utf-8"/>
 </div>
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript" charset="utf-8"><![CDATA[
     /* initialization */
     $(document).ready(function() {
         init_tower_defense();
@@ -164,34 +222,63 @@
     /* Hotkeys! */
     special_keys = {
         27: 'esc', 9: 'tab', 32:'space', 13: 'return', 8:'backspace', 145: 'scroll', 20: 'capslock', 
-        144: 'numlock', 19:'pause', 45:'insert', 36:'home', 46:'del',35:'end', 33: 'pageup', 
+        144: 'numlock', 19:'pause', 45:'insert', 36:'home', 46:'del',35:'end', 33: 'pageup', 16: 'shift', 
         34:'pagedown', 37:'left', 38:'up', 39:'right',40:'down', 112:'f1',113:'f2', 114:'f3', 
         115:'f4', 116:'f5', 117:'f6', 118:'f7', 119:'f8', 120:'f9', 121:'f10', 122:'f11', 123:'f12'};
+    
+    /* Modifier keys */
+    var modifierkeys = {};
+    var shift_down = false;
     
     //extract hotkeys from the DOM
     var hotkeys = {};
     $('button .hotkey').each(function(){
         //this is bass ackwards, but I got type errors passing around the native click method
         var button = this.parentNode;
-        hotkeys[$(this).html()] = function() {button.click()};
+        hotkeys[$(this).html().toUpperCase()] = function() {button.click()};
     });
     
     //hotkeys that aren't in the dom
     hotkeys["space"] = pause;
     hotkeys["esc"] = unselect;
-
+    hotkeys['Z'] = function() {$('#log').empty()};
+    hotkeys['R'] = function() {if (SET.state.name() == "GameOverMode") reset_game();}
+    
+    //modifiers to be called on keydown and keyup
+    modifierkeys["shift"] = function() { shift_down = !shift_down; };
+    
     $(document).bind("keydown", function(e) {
         // if the user is holding down ctrl or cmd, let the browser handle it
         if (e.metaKey) return true;
-        
         var key = special_keys[e.keyCode] || String.fromCharCode(e.keyCode);
         if (key in hotkeys){
             hotkeys[key]();
-            return false
+            return false;
         }
-        return true
+        if (key in modifierkeys){
+            modifierkeys[key]();
+            return false;
+        }
+        return true;
     });
     
+    $(document).bind("keyup", function(e) {
+        if (e.metaKey) return true;
+        var key = special_keys[e.keyCode] || String.fromCharCode(e.keyCode);
+        if (key in modifierkeys){
+            modifierkeys[key]();
+            return false;
+        }
+        return true;
+    });
+    
+
+    /* Toggle buttons along the bottom */
+
+    // all of this is really a prime candidate for some cleanup
+    // so much dupiclation and so many global variables for such
+    // simple behavior
+
     var paused = false;
     function pause() {
         paused = !paused;
@@ -205,6 +292,66 @@
         mute_unmute();
         $('#mute_button').html(muted ? "Unmute" : "Mute");
     }
+    var logging = true;
+    var prim_log = log;
+    function toggle_logging() {
+        logging = !logging;
+        
+        if (logging)
+          log = prim_log;
+        else
+          log = function(){};
+        $("#logging_button").toggleClass("active_mode").html(logging? "Stop <span class='hotkey'>D</span>ebugging" : 'Start <span class="hotkey">D</span>ebugging');
+    }
+    
+    if (document.location.hash == "#debug")
+      $('#logging_button').show();
+    else{
+      toggle_logging()
+      $('#logging_button')[0].onclick = function(){};
+    }
+    
+    var getIdFromURL = function(url) {
+      return url.slice(url.indexOf("#"));
+    }
+    $("#help-headers .section").click(function() {
+      $("#help-sections div").hide();
+      $(getIdFromURL(this.href)).show();
+      $("#help-headers .section").removeClass("active");
+      $(this).addClass("active");
+      return false;
+    })
+
+    var help_displayed = false;
+    var toggle_help = function() {
+      help_displayed = !help_displayed;
+      if (help_displayed){
+        $("#help").show();
+        $("#help_button").addClass("active_mode");
+        if (!paused) pause();
+      }
+      else {
+        $('#help').hide();
+        $('#help_button').removeClass('active_mode');
+        if (paused) pause();
+      }
+    };
+
+
+
+    /* illustrating to the user what mode they're in*/
+    mode_signifiers = {'BuildLaserTowerMode':'laser_button', 'BuildGatlingTowerMode':'gatling_button',
+                       'BuildCannonTowerMode':'cannon_button', 'BuildMissileTowerMode':'missile_button',
+                       'AimBombMode':'bomb_button', 'PauseMode':'pause_button'};
+    for (event in mode_signifiers) {
+        $('').bind(event, function(e) {
+            $('#'+mode_signifiers[e.type]).addClass('active_mode');
+        });
+    }
+    $('').bind('no_mode', function() {
+        $('.mode_button').removeClass('active_mode');
+    })
+    
     
     /* Messages for the player */
 
@@ -223,30 +370,23 @@
         });
     });
     $('#game_over').hide();
-    $('').bind('game_over', function(e,hide){
-        if (hide == true)
+    $('').bind('game_over', function(e,over){
+        if (over == true){
+            log("game over");
             $('#game_over').html("Game Over! Final score: " + $("#score").html()).fadeIn();
-        else
-            $('#game_over').html("Just once more...").fadeOut();
+            //tempt tempt tempt
+            for (var i=0; i < 3; i++)
+              $("#reset_button").effect("highlight",{color:"#f60"},3000); 
+        }
+        else{
+          log("game (re?)started");
+          $('#game_over').html("Just once more...").fadeOut();
+        }
     });
-
-
-    /* illustrating to the user what mode they're in*/
-    mode_signifiers = {'BuildLaserTowerMode':'laser_button', 'BuildGattlingTowerMode':'gattling_button',
-                       'BuildCannonTowerMode':'cannon_button', 'BuildMissileTowerMode':'missile_button',
-                       'AimBombMode':'bomb_button', 'PauseMode':'pause_button'};
-    for (event in mode_signifiers) {
-        $('').bind(event, function(e) {
-            $('#'+mode_signifiers[e.type]).addClass('active_mode');
-        });
-    }
-    $('').bind('no_mode', function() {
-        $('button').removeClass('active_mode');
-    })
     
     /* stub until we pull in sound for reals */
     var play_sound = function(){};
-</script>
+]]></script>
 
 <hr/>
 <p><a rel="license" href="http://www.opensource.org/licenses/mit-license.php">MIT License</a>, by <a href="http://lethain.com">Will Larson</a> and <a href="http://blog.rictic.com/">Peter Burns</a></p>

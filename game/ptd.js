@@ -1,6 +1,6 @@
 /*
 Processed Tower Defense by Will Larson lethain@gmail.com
-  
+
 ### Processed Tower Defense
 
 PTD is a simple game I decided to make to get used to
@@ -35,9 +35,7 @@ var default_set = function() {
   set.width = set.stage[0].width.baseVal.value;
   set.gheight = Math.floor(set.height / set.pixels_per_square);
   set.gwidth = Math.floor(set.width / set.pixels_per_square);
-  log("set.gheight", set.gheight);
-  log("set.gwidth", set.gwidth);
-  log("set.pixels_per_square", set.pixels_per_square);
+
   /*
     ### Grid Cache
 
@@ -87,11 +85,11 @@ var default_set = function() {
   }
 
   set.grid_cache_reset_all_values_for_key = function(key) {
-    set.grid_cache.forEach(function (group) {
-      group.forEach(function (member) {
-        member[key] = undefined;
-      });
-    });
+    for(gx in set.grid_cache) {
+      for (gy in set.grid_cache[gx]) {
+        delete set.grid_cache[gx][gy][key];
+      }
+    }
   }
 
   set.grid = {};
@@ -123,6 +121,7 @@ var default_set = function() {
   set.score = 0;
   set.lives = 20;
   set.nukes = 3;
+  set.bomb_cost = 50;
 
   return set
 };
@@ -138,7 +137,8 @@ var fetch_ui_widgets = function() {
   w.creep_variety = $("#creep_variety");
   w.wave = $("#wave");
   w.till_next_wave = $("#till_next_wave");
-  
+  w.bomb_cost = $("#bomb_cost");
+
   // tower widgets
   w.tower = $("#tower");
   w.tower_type = $("#tower_type");
@@ -183,7 +183,7 @@ var SettingUpdater = function() {
 var UIUpdater = function() {
   var uiu = new Object();
   Object.extend(uiu, InertDrawable);
-  
+
   uiu.update = function() {
     WIDGETS.creep_variety.html(SET.creep_variety);
     WIDGETS.score.html(SET.score);
@@ -197,17 +197,80 @@ var UIUpdater = function() {
 }
 
 
+var Grid = function() {
+  var grid = new Object();
+  Object.extend(grid, InertDrawable);
+  grid.draw = function() {
+    stroke(SET.grid_color);
+    var p = SET.pixels_per_square;
+    var w = SET.width;
+    var h = SET.height;
+    for (i = 0; i<w; i+=p) {
+      line(i, 0, i, h);
+    }
+    for (i = 0; i<h; i+=p) {
+      line(0,i,w,i);
+    }
+  };
+  assign_to_depth(grid, SET.grid_render_level);
+  return grid;
+};
+
+
+var GridSquare = function(gx,gy,color) {
+  var square = new Object();
+  Object.extend(square, InertDrawable);
+  square.gx = gx;
+  square.gy = gy;
+  square.x = grid_to_pixel(gx);
+  square.y = grid_to_pixel(gy);
+  var mid = center_of_square(gx,gy);
+  square.x_mid = mid.x;
+  square.y_mid = mid.y;
+  return square;
+}
+
+var Square = function(gx,gy,color) {
+  var square = GridSquare(gx,gy,color);
+  square.color = color;
+  square.draw = function() {
+    noStroke();
+    fill(this.color);
+    draw_square_in_grid(this.gx,this.gy);
+  }
+  assign_to_depth(square, SET.square_render_level);
+  return square;
+};
+var ExitSquare = function(gx,gy) {
+  var square = Square(gx,gy,SET.exit_color);
+  square.type = "exit";
+  square.draw = function() {
+    noStroke();
+    fill(SET.exit_color);
+    draw_square_in_grid(this.gx,this.gy);
+    noFill();
+    stroke("black");
+    draw_circle_in_grid(this.gx,this.gy);
+  }
+  return square;
+}
+
+
 var spawn_wave = function() {
-  //a bonus for bravery, to be paid when the creep wave thus spawned is done
-  var bonus = Math.floor(((SET.creep_wave_controller.last + SET.creep_wave_controller.delay) - SET.now) / 100); 
-  SET.creep_wave_controller.spawn_wave(bonus);
+  if (!SET.state ||
+      (SET.state.name() != "GameOverMode" &&
+       SET.state.name() != "PauseMode")) {
+    //a bonus for bravery, to be paid when the creep wave thus spawned is done
+    var bonus = Math.floor(((SET.creep_wave_controller.last + SET.creep_wave_controller.delay) - SET.now) / 100);
+    SET.creep_wave_controller.spawn_wave(bonus);
+  }
 }
 
 var nuke_creeps = function() {
   if (SET.nukes > 0) {
     var creeps = SET.rendering_groups[SET.creep_render_level];
-    creeps.forEach(function(x) { 
-      x.hp = -1; 
+    creeps.forEach(function(x) {
+      x.hp = -1;
       x.value = 0; // no gold for nuked creeps
     });
     play_sound("nuke");
@@ -254,10 +317,12 @@ var generate_map = function() {
   grid.append(SET.entrance, SET.exit);
   populate_terrains();
 }
-  
+
 var reset_game = function() {
+  $("#game_layers > g").empty()// empty out the game layers
   SET = default_set();
   WIDGETS = fetch_ui_widgets();
+  WIDGETS.bomb_cost.innerHTML = SET.bomb_cost;
   SettingUpdater();
   UIUpdater();
   //Grid();
@@ -322,9 +387,7 @@ var error = function(msg) {
   $('').trigger("error", msg);
 }
 
-
-
-/* 
+/*
    Main game loop.
  */
 

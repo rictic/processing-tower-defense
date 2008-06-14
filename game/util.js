@@ -99,7 +99,7 @@ var draw_circle_in_grid = function(gx,gy) {
   var pos = grid_to_pixel(gx,gy);
   var h = SET.half_pixels_per_square;
   var l = SET.pixels_per_square;
-  ellipse(pos.x+h,pos.y+h,l,l);
+  ellipse(pos.x+h,pos.y+h,l-1,l-1);
 };
 
 /*
@@ -252,6 +252,9 @@ var move_towards = function(obj, tx, ty, speed) {
   //something that used transforms might be better
   var x = obj.x.baseVal.value; var y = obj.y.baseVal.value;
   var path = calc_path(x, y, tx, ty, speed);
-  obj.setAttribute("x",path.x + x);
-  obj.setAttribute("y",path.y + y);
+  var new_x = Math.max(0, Math.min(SET.width , path.x + x));
+  var new_y = Math.max(0, Math.min(SET.height, path.y + y));
+  
+  obj.setAttribute("x",new_x);
+  obj.setAttribute("y",new_y);
 }

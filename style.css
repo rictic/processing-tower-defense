@@ -89,6 +89,14 @@ div#side {
     margin-top: 10px;
     border: solid 1px black;
 }
+#side .message_area {
+    margin-left: 10px;
+    margin-top: 10px;
+    border: solid 1px black;
+}
+#logging_button {
+    display: none;
+}
 
 .hotkey {
     text-decoration: underline;
@@ -112,25 +120,76 @@ div#side {
     stroke-width: 0.3;
 }
 
-.missile-tower { color: rgb(250,150,50); }
-.laser-tower { color: rgb(90,150,50); }
-.cannon-tower { color: rgb(100,120,140); }
-.gatling-tower { color: rgb(250,250,50); }
 
-.normal-creep { fill: rgb(255,255,0);}
-.quick-creep {color: rgb(200,150,50);}
-.strong-creep {color: rgb(0,255,255);}
-.boss-creep {color: rgb(255,100,150);}
 
-.neutral-terrain {fill: rgb(200,200,200);}
-.mountain-terrain {fill: rgb(228,51,51);}
-.water-terrain {fill: rgb(78,150,236);}
-.power-plant-terrain {fill: rgb(189,194,78);}
-.entrance-terrain {fill: rgb(100,255,100);}
-.exit-terrain {fill: rgb(255,100,50);}
+/* Style game elements, and text talking about them */
+.missile-tower {
+    fill:  rgb(250,150,50);
+    color: rgb(250,150,50);
+}
+.laser-tower {
+    fill:  rgb(90,150,50);
+    color: rgb(90,150,50);
+}
+.cannon-tower {
+    fill:  rgb(100,120,140);
+    color: rgb(100,120,140);
+}
+.gatling-tower {
+    fill:  rgb(250,250,50);
+    color: rgb(250,250,50);
+}
 
-.bomb {color: rgb(100,120,140);}
-.nuke {color: rgb(255,70,30);}
+.normal-creep {
+    fill:  rgb(255,255,0);
+    color: rgb(255,255,0);
+}
+.quick-creep {
+    fill:  rgb(200,150,50);
+    color: rgb(200,150,50);
+}
+.strong-creep {
+    fill:  rgb(0,255,255);
+    color: rgb(0,255,255);
+}
+.boss-creep {
+    fill:  rgb(255,100,150);
+    color: rgb(255,100,150);
+}
+
+.neutral-terrain {
+    fill:  rgb(200,200,200); 
+    color: rgb(200,200,200);
+}
+.mountain-terrain {
+    fill:  rgb(228,51,51);
+    color: rgb(228,51,51);
+}
+.water-terrain {
+    fill:  rgb(78,150,236);
+    color: rgb(78,150,236);
+}
+.power-plant-terrain {
+    fill:  rgb(189,194,78);
+    color: rgb(189,194,78);
+}
+.entrance-terrain {
+    fill:  rgb(100,255,100);
+    color: rgb(100,255,100);
+}
+.exit-terrain {
+    fill:  rgb(255,100,50);
+    color: rgb(255,100,50);
+}
+
+.bomb {
+    fill:  rgb(100,120,140);
+    color: rgb(100,120,140);
+}
+.nuke {
+    fill:  rgb(255,70,30);
+    color: rgb(255,70,30);
+}
 
 #bullet {
     fill: rgb(100,255,0);
@@ -147,3 +206,46 @@ div#side {
 #laser {
     stroke: rgb(0,0,255);
 }
+#help {
+    background: white;
+    margin-top: 25px;
+    margin-left: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
+    width: 500px;
+    height: 400px;
+    position: absolute;
+    z-index: 1000;
+    display: none;
+    border: 3px solid black;
+}
+
+
+#help-sections div {
+    display: none;
+}
+
+#help-sections div.visible {
+    display: block;
+}
+
+#help-headers {
+    padding: 10px;
+    border-bottom: 2px solid black;
+}
+
+a.section {
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-decoration: none;
+    color: black;
+}
+
+a.section:hover {
+    color: #AAA;
+}
+a.section.active {       color: #2259a5; font-weight: bold;}
+a.section.active:hover { color: #2259a5;}
+

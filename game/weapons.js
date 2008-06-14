@@ -1,5 +1,6 @@
 var CircleZone = function(x,y,r) {
   var cz = new Object();
+  Object.extend(cz, InertDrawable);
   var d = 2*r;
   cz.draw = function() {
     fill(this.color);
@@ -100,6 +101,7 @@ var Tower = function(settings) {
     });
     WIDGETS.tower_sell_button.click(function() {
       tower.sell();
+      reset_pathfinding();
     });
     WIDGETS.tower.show();
   };
@@ -147,8 +149,8 @@ var LaserTower = function(gx,gy) {
   lt.attack = function(creep) {
     add_to_update_loop(Laser(this,creep));
   };
-  lt.upgrade_cost = 50;
-  lt.sale_value = 50;
+  lt.upgrade_cost = 25;
+  lt.sale_value = 13;
   lt.upgrade = function() {
     if (SET.gold >= this.upgrade_cost) {
       SET.gold -= this.upgrade_cost;
@@ -177,8 +179,8 @@ var CannonTower = function(gx,gy) {
   lt.attack = function(creep) {
     add_to_update_loop(CannonBall(this,{x:creep.x, y:creep.y, hp:1}));
   };
-  lt.upgrade_cost = 100;
-  lt.sale_value = 100;
+  lt.upgrade_cost = 75;
+  lt.sale_value = 50;
   lt.upgrade = function() {
     if (SET.gold >= this.upgrade_cost) {
       SET.gold -= this.upgrade_cost;
@@ -201,18 +203,18 @@ var CannonTower = function(gx,gy) {
   return lt;
 };
 
-var GattlingTower = function(gx,gy) {
+var GatlingTower = function(gx,gy) {
   var gt = Tower({gx:gx,gy:gy});
-  gt.type = "Gattling Tower";
-  gt.damage = 10;
-  gt.upgrade_cost = 50;
+  gt.type = "Gatling Tower";
+  gt.damage = 50;
+  gt.upgrade_cost = 25;
   gt.sale_value = 50;
   gt.set_range(3.5);
 
   gt.reload_rate = 100;
-  gt.shots_per_volley = 6;
+  gt.shots_per_volley = 12;
   gt.shots_left_in_volley = gt.shots_per_volley;
-  gt.pause_after_volley = 1000;
+  gt.pause_after_volley = 2000;
   gt.finish_reload_at = 0;
   gt.reloading = false;
   gt.fire_next_at = 0;
@@ -262,8 +264,9 @@ var Weapon = function(tower,target) {
   w.y = tower.y_mid;
   w.target = target;
   w.tower = tower;
-  w.proximity = 3;
+  w.proximity = 7;
   w.damage = tower.damage;
+  w.last = millis();
   w.impact = function(target) {
     this.is_dead = function() { return true; };
     target.hp -= this.damage;
@@ -274,9 +277,10 @@ var Weapon = function(tower,target) {
       this.impact(this.target);
     }
     else {
-      var path = calc_path(this.x,this.y,target.x,target.y,this.speed);
-      this.x += path.x;
-      this.y += path.y;
+      var elapsed = 1.0 * (SET.now - this.last);
+      var speed = this.speed * (elapsed/1000);
+      this.last = SET.now;
+      move_towards(this, this.x,this.y,target.x,target.y,this.speed);
     }
   }
   w.is_dead = function() {
@@ -375,6 +379,7 @@ var Laser = function(tower,target) {
   Object.extend(l, Weapon(tower,target));
   l.tail = 20; // length of laser's graphic
   l.speed = 10;
+  l.proximity = 10;
   l.draw = function() {
     var path = calc_path(l.x,l.y,tower.x_mid,tower.y_mid,l.tail);
     stroke(l.color);
