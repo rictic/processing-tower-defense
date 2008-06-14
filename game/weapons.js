@@ -280,7 +280,7 @@ var Weapon = function(tower,target) {
       var elapsed = 1.0 * (SET.now - this.last);
       var speed = this.speed * (elapsed/1000);
       this.last = SET.now;
-      move_towards(this, this.x,this.y,target.x,target.y,this.speed);
+      move_towards(this,target.x,target.y,this.speed);
     }
   }
   w.is_dead = function() {

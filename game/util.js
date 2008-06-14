@@ -84,23 +84,6 @@ var center_of_square = function(gx,gy) {
       y:coords.y + SET.half_pixels_per_square};
 };
 
-/*
-  Drawing functions.
- */
-
-// draw a square filling square (gx,gy)
-var draw_square_in_grid = function(gx,gy) {
-  var pos = grid_to_pixel(gx,gy);
-  rect(pos.x,pos.y,SET.pixels_per_square,SET.pixels_per_square);
-}
-
-// draw a circle filling (gx,gy)
-var draw_circle_in_grid = function(gx,gy) {
-  var pos = grid_to_pixel(gx,gy);
-  var h = SET.half_pixels_per_square;
-  var l = SET.pixels_per_square;
-  ellipse(pos.x+h,pos.y+h,l-1,l-1);
-};
 
 /*
   Various game utility functions.
@@ -249,8 +232,8 @@ var move_towards = function(obj, tx, ty, speed) {
   //something that used transforms might be better
   var x = obj.x.baseVal.value; var y = obj.y.baseVal.value;
   var path = calc_path(x, y, tx, ty, speed);
-  var new_x = Math.max(0, Math.min(SET.width , path.x + x));
-  var new_y = Math.max(0, Math.min(SET.height, path.y + y));
+  var new_x = Math.max(0, Math.min(tx, path.x + x));
+  var new_y = Math.max(0, Math.min(ty, path.y + y));
   
   obj.setAttribute("x",new_x);
   obj.setAttribute("y",new_y);
