@@ -268,10 +268,9 @@ var spawn_wave = function() {
 
 var nuke_creeps = function() {
   if (SET.nukes > 0) {
-    var creeps = SET.rendering_groups[SET.creep_render_level];
-    creeps.forEach(function(x) {
-      x.hp = -1;
-      x.value = 0; // no gold for nuked creeps
+    get_creeps().each(function() {
+      this.hp = -1;
+      this.value = 0; // no gold for nuked creeps
     });
     play_sound("nuke");
     SET.nukes--;

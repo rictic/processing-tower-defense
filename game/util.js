@@ -139,18 +139,15 @@ var get_terrain_at = function(gx,gy) {
 
 var get_creep_nearest = function(x,y,sensitivity) {
   if (!sensitivity) sensitivity = 10;
-  var creeps = SET.rendering_groups[SET.creep_render_level];
-  var len = creeps.length;
   var nearest_creep;
   var distance = sensitivity;
-  for (var i=0;i<len;i++) {
-    var creep = creeps[i];
-    var d = dist(x,y,creep.x,creep.y);
+  get_creeps().each(function() {
+    var d = dist(x,y,this.x,this.y);
     if (d < distance) {
       distance = d;
-      nearest_creep = creep;
+      nearest_creep = this;
     }
-  }
+  });
   return (distance < sensitivity) ? nearest_creep : undefined;
 }
 

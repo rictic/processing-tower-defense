@@ -1,4 +1,4 @@
-
+var get_creeps = function() {return $("#creep_layer > *");}
 
 /*
   Used in by the Creep method "display stats" to

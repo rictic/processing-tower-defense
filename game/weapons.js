@@ -58,7 +58,7 @@ var Tower = function(settings) {
     return false;
   };
   tower.update = function() {
-    var creeps = SET.rendering_groups[SET.creep_render_level];
+    var creeps = get_creeps();
     if (creeps.length == 0) return;
     var closest_creep;
     var closest_distance;
@@ -326,7 +326,7 @@ var CannonBall = function(tower, target) {
   };
   c.impact = function(target) {
     this.is_dead = function() { return true; };
-    var creeps = SET.rendering_groups[SET.creep_render_level];
+    var creeps = get_creeps();
     var l = creeps.length;
     var range = Math.floor(this.splash_range);
     for (var i=0;i<l;i++) {

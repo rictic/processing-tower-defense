@@ -81,9 +81,8 @@ var BuildTowerMode = function() {
     SET.considering_location = gpos;
     var previous_pathfinding = reset_pathfinding();
     var valid = pathfind({gx:SET.entrance.gx, gy:SET.entrance.gy});
-    var creeps = SET.rendering_groups[SET.creep_render_level];
-    creeps.forEach(function(creep){
-      valid = valid && pathfind(pixel_to_grid(creep));
+    get_creeps().each(function(){
+      valid = valid && pathfind(pixel_to_grid({x:this.x.baseVal.value, y:this.y.baseVal.value}));
     });
     SET.considering_location = undefined;
     reset_pathfinding(previous_pathfinding);
@@ -290,7 +289,7 @@ var AimBombMode = function() {
   };
   this.is_legal = function() { return true; };
   this.action = function(x,y) {
-    var creeps = SET.rendering_groups[SET.creep_render_level];
+    var creeps = get_creeps();
     var l = creeps.length;
     var range = Math.floor(this.radius);
     for (var i=0;i<l;i++) {
@@ -324,11 +323,9 @@ var PauseMode = function() {
   }
   this.tear_down = function() {
     var elapsed = millis() - this.began_at;
-    SET.rendering_groups.forEach(function(group) {
-      group.forEach(function(member) {
+    SET.active_objects.forEach(function(member) {
       if (member.last)
         member.last += elapsed;
-      });
     });
   }
   this.name = function() { return "PauseMode"; };
