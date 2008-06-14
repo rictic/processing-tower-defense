@@ -18,44 +18,7 @@ So, I decided to rewrite the code to be clearer,
 with the hope that it might serve as an useful
 example for others.
 */
-  
-/*
-  Object life cycle.
- */
 
-// assign @obj to render at @depth until it dies.
-// 0 is the topmost layer, and thus something at
-// layer 1 will render before something at layer 0.
-// Something at layer 10 will render before something
-// at layer 4, and so on. This means that something
-// rendered at layer 0 will draw itself ontop of anything
-// rendered before layer 0.
-var assign_to_depth = function(obj,depth) {
-  var rendering_group = SET.rendering_groups[depth];
-  if (rendering_group == undefined) SET.rendering_groups[depth] = [obj];
-  else rendering_group.push(obj);
-}
-
-// updates any groups
-var update_groups = function(groups) {
-  var obj_update = function(x) { 
-    if (x != undefined) x.update();
-  };
-  var obj_is_alive = function(x) {
-    if ( x == undefined || x.is_dead()) return false;
-    return true; 
-  };
-  var obj_draw = function(x) { x.draw(); };
-  for (var i=groups.length-1;i>=0;i--) {
-    var group = groups[i];
-    if (group != undefined) {
-      group.forEach(obj_update);
-      var alive = group.filter(obj_is_alive);
-      alive.forEach(obj_draw);
-      groups[i] = alive;
-    }
-  }
-}
 
 /*
   Configuration & settings.
@@ -131,18 +94,17 @@ var default_set = function() {
     });
   }
 
-
+  set.grid = {};
+  set.stage.mousemove(function(e) {
+    var scrollX = window.scrollX != null ? window.scrollX : window.pageXOffset;
+    var scrollY = window.scrollY != null ? window.scrollY : window.pageYOffset;
+    
+    set.mouseX = e.clientX - set.stage.offset().left + scrollX;
+    set.mouseY = e.clientY - set.stage.offset().top + scrollY;
+  })
+  
   // rendering groups
-  set.rendering_groups = [];
-  for (var i=0;        i <= 7; i++) set.rendering_groups.push([]);
-  set.system_render_level = 7;
-  set.square_render_level = 6;
-  set.killzone_render_level = 5;
-  set.grid_render_level = 4;
-  set.tower_render_level = 3;
-  set.build_zone_render_level = 2;
-  set.creep_render_level = 1;
-  set.bullet_render_level = 0;
+  set.active_objects = [];
 
   // game state
   set.state = undefined;
@@ -169,28 +131,28 @@ var SET;
 var fetch_ui_widgets = function() {
   var w = {};
   // status bar widgets
-  w.score = document.getElementById("score");
-  w.gold = document.getElementById("gold");
-  w.lives = document.getElementById("lives");
-  w.nukes_left = document.getElementById("nukes_left");
-  w.creep_variety = document.getElementById("creep_variety");
-  w.wave = document.getElementById("wave");
-  w.till_next_wave = document.getElementById("till_next_wave");
+  w.score = $("#score");
+  w.gold = $("#gold");
+  w.lives = $("#lives");
+  w.nukes_left = $("#nukes_left");
+  w.creep_variety = $("#creep_variety");
+  w.wave = $("#wave");
+  w.till_next_wave = $("#till_next_wave");
   
   // tower widgets
-  w.tower = document.getElementById("tower");
-  w.tower_type = document.getElementById("tower_type");
-  w.tower_range = document.getElementById("tower_range");
-  w.tower_damage = document.getElementById("tower_damage");
-  w.tower_rate = document.getElementById("tower_rate");
-  w.tower_upgrade_button = document.getElementById("tower_upgrade_button");
-  w.tower_sell_button = document.getElementById("tower_sell_button");
+  w.tower = $("#tower");
+  w.tower_type = $("#tower_type");
+  w.tower_range = $("#tower_range");
+  w.tower_damage = $("#tower_damage");
+  w.tower_rate = $("#tower_rate");
+  w.tower_upgrade_button = $("#tower_upgrade_button");
+  w.tower_sell_button = $("#tower_sell_button");
 
   // creep widgets
-  w.creep = document.getElementById("creep");
-  w.creep_type = document.getElementById("creep_type");
-  w.creep_hp = document.getElementById("creep_hp");
-  w.creep_value = document.getElementById("creep_value");
+  w.creep = $("#creep");
+  w.creep_type = $("#creep_type");
+  w.creep_hp = $("#creep_hp");
+  w.creep_value = $("#creep_value");
 
   return w;
 };
@@ -205,7 +167,6 @@ var InertDrawable = new Object();
 Object.extend(InertDrawable, {
   update:function() {},
   is_dead:function() { return false; },
-  draw:function() {}
 });
 
 
@@ -215,7 +176,7 @@ var SettingUpdater = function() {
   var su = new Object();
   Object.extend(su, InertDrawable);
   su.update = function() { SET.now = millis(); }
-  assign_to_depth(su, SET.system_render_level);
+  add_to_update_loop(su);
   return su;
 };
 
@@ -224,14 +185,14 @@ var UIUpdater = function() {
   Object.extend(uiu, InertDrawable);
   
   uiu.update = function() {
-    WIDGETS.creep_variety.innerHTML = SET.creep_variety;
-    WIDGETS.score.innerHTML = SET.score;
-    WIDGETS.gold.innerHTML = SET.gold;
-    WIDGETS.lives.innerHTML = SET.lives;
-    WIDGETS.nukes_left.innerHTML = SET.nukes + " left";
-    WIDGETS.till_next_wave.innerHTML = Math.floor(((SET.creep_wave_controller.last + SET.creep_wave_controller.delay) - SET.now) / 1000)
+    WIDGETS.creep_variety.html(SET.creep_variety);
+    WIDGETS.score.html(SET.score);
+    WIDGETS.gold.html(SET.gold);
+    WIDGETS.lives.html(SET.lives);
+    WIDGETS.nukes_left.html(SET.nukes + " left");
+    WIDGETS.till_next_wave.html(Math.floor(((SET.creep_wave_controller.last + SET.creep_wave_controller.delay) - SET.now) / 1000));
   };
-  assign_to_depth(uiu, SET.system_render_level);
+  add_to_update_loop(uiu);
   return uiu;
 }
 
@@ -290,7 +251,7 @@ var generate_map = function() {
   grid.empty();
   SET.entrance = Terrain(0, random(SET.gheight-1), "entrance");
   SET.exit = Terrain(SET.gwidth-1, random(SET.gheight-1), "exit");
-  $("#grid_layer").append(SET.entrance, SET.exit);
+  grid.append(SET.entrance, SET.exit);
   populate_terrains();
 }
   
@@ -361,6 +322,8 @@ var error = function(msg) {
   $('').trigger("error", msg);
 }
 
+
+
 /* 
    Main game loop.
  */
@@ -381,18 +344,37 @@ var frameRate = function(rate) {
 
 var interval = undefined;
 var run_tower_defense = function(){
-  interval = setInterval(run_tower_step, millisBetweenUpdates);
+  interval = setInterval(run_td_step, millisBetweenUpdates);
 }
 var stop_tower_defense = function(){
   clearInterval(interval);
 }
 
+var obj_update = function(x) { 
+  if (x != undefined) x.update();
+};
+var obj_is_alive = function(x) {
+  if ( x == undefined || x.is_dead()) return false;
+  return true; 
+};
+
 // a single step in the game
-var run_tower_step = function() {
+var run_td_step = function() {
   if (SET.state) {
     var state_name = SET.state.name();
     if (state_name == "GameOverMode" || state_name == "PauseMode") return
   }
-  //get objects
-  //call objects.update or whatever
+  
+  var group = SET.active_objects;
+  if (group != undefined) {
+    group.forEach(obj_update);
+    var alive = group.filter(obj_is_alive);
+    SET.active_objects = alive;
+  }
+}
+
+// assign @obj to the update loop until its is_dead() function returns true 
+// or something else removes it
+var add_to_update_loop = function(obj) {
+  SET.active_objects.push(obj);
 }

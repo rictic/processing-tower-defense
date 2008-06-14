@@ -32,17 +32,31 @@
           <use id='water-terrain' xlink:href='#grid_square' class='water-terrain'/>
           <use id='power-plant-terrain' xlink:href='#grid_square' class='power-plant-terrain'/>
           <use id='entrance-terrain' xlink:href='#grid_square' class='entrance-terrain'/>
-          <use id='exit-terrain' xlink:href='#grid_square' class='exit-terrain'/>
+          <g id='exit-terrain' >
+            <use xlink:href='#grid_square' class='exit-terrain'/>
+            <circle r='11.5' cx='12.5' cy='12.5' stroke='black' fill='none' />
+          </g>
         </g>
         
         <g>
-          <circle id='creep' cx='0' cy='0' r='5'/>
+          <!--  Defining this as a symbol lets us rescale it easier.  Rescaling is possible without making
+                  it a symbol, but to just set its width and height, this seems easiest.-->
+          <symbol id='creep'>
+            <circle cx='50%' cy='50%' r='50%'/>
+          </symbol>
+        </g>
+        
+        <g>
+          <circle id='tower' r='12.5'/>
         </g>
       </defs>
       
-      
       <g id='grid_layer'/>
+      <g id='killzone_layer'/>
+      <g id='tower_layer'/>
+      <g id='build_layer'/>
       <g id='creep_layer'/>
+      <g id='bullet_layer'/>
     </svg>
 
     <div id="side">
@@ -159,7 +173,7 @@
     $('button .hotkey').each(function(){
         //this is bass ackwards, but I got type errors passing around the native click method
         var button = this.parentNode;
-        hotkeys[this.innerHTML] = function() {button.click()};
+        hotkeys[$(this).html()] = function() {button.click()};
     });
     
     //hotkeys that aren't in the dom
@@ -181,7 +195,10 @@
     var paused = false;
     function pause() {
         paused = !paused;
-//         pause_resume();
+        if (paused)
+          stop_tower_defense();
+        else
+          run_tower_defense();
         $('#pause_button').html(paused ? "Resume" : "Pause");
     }
     function mute() {

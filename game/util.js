@@ -116,32 +116,25 @@ var can_build_here = function(gx,gy) {
 
 var get_tower_at = function(gx,gy) {
   var cached = SET.grid_cache_at(gx,gy);
-  if (cached.tower) return cached.tower;
+  if (cached.tower == undefined)
+    $("tower_layer").children().each(function() {
+      SET.grid_cache_at(this.gx, this.gy).tower = this;
+    });
 
-  var towers = SET.rendering_groups[SET.tower_render_level];
-  for (var i=0;i<towers.length;i++) {
-    var tower = towers[i];
-    if (tower.gx == gx && tower.gy == gy) {
-      cached.tower = tower;
-      return tower;      
-    }
-  }
   return false;
 };
 
 var get_terrain_at = function(gx,gy) {
   var cached = SET.grid_cache_at(gx,gy);
-  if (cached.terrain) return cached.terrain;
 
-  var squares = SET.rendering_groups[SET.square_render_level];
-  for (var i=0;i<squares.length;i++) {
-    var square = squares[i];
-    if (square.gx == gx && square.gy == gy) {
-      cached.terrain = square;
-      return square;
-    }
-  }
-  return;
+  //if the cache misses, fill up the cache!
+
+  if (cached.terrain == undefined)
+    $("#grid_layer > *").each(function() {
+      SET.grid_cache_at(this.gx, this.gy).terrain = this;
+    });
+
+  return cached.terrain;
 }
 
 var get_creep_nearest = function(x,y,sensitivity) {
@@ -229,10 +222,6 @@ var insert_sorted = function(array, value, sortKey) {
       break;
     }
     mid = Math.floor((max+min)/2);
-    if (mid >= array.length || mid < 0) {
-      log("outofbounds in insert sorted");
-      break;
-    }
     if (vkey <= sortKey(array[mid]))
       max = mid-1;
     else
@@ -250,4 +239,19 @@ var insert_sorted = function(array, value, sortKey) {
 //   if (!rm.equals(rm.slice().sort(function(a,b){return a-b})))
 //     log("insert_sorted failed inserting",[vkey,rm]);
   return result;
+}
+var millis = function() {
+  return (new Date).getTime() //- start
+}
+
+var mouse_pos = function() {
+  return {x:SET.mouseX, y:SET.mouseY};
+}
+
+var move_towards = function(obj, tx, ty, speed) {
+  //something that used transforms might be better
+  var x = obj.x.baseVal.value; var y = obj.y.baseVal.value;
+  var path = calc_path(x, y, tx, ty, speed);
+  obj.setAttribute("x",path.x + x);
+  obj.setAttribute("y",path.y + y);
 }

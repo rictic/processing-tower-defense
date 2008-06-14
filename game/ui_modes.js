@@ -193,11 +193,11 @@ var TowerSelectMode = function() {
       this.killzone = KillZone(this.tower.x_mid,
       this.tower.y_mid,
       this.tower.range*SET.pixels_per_square);
-      WIDGETS.tower.style.display = "block";
+      WIDGETS.tower.show();
     }
   };
   this.tear_down = function() {
-    WIDGETS.tower.style.display = "none";
+    WIDGETS.tower.hide();
     if (this.killzone)
       this.killzone.is_dead = function() { return true; };
   };
@@ -221,12 +221,12 @@ var CreepSelectMode = function() {
     this.creep = get_creep_nearest(x,y);
     if (this.creep) {
       this.creep.display_stats();
-      WIDGETS.creep.style.display = "block";
+      WIDGETS.creep.show();
       this.hp_updater = CreepHpUpdater(this.creep);
     }
   };
   this.tear_down = function() {
-    WIDGETS.creep.style.display = "none";
+    WIDGETS.creep.hide();
     if (this.hp_updater) {
       this.hp_updater.should_die = true;
     }

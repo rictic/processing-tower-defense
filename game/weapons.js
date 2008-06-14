@@ -1,6 +1,5 @@
 var CircleZone = function(x,y,r) {
   var cz = new Object();
-  Object.extend(cz, InertDrawable);
   var d = 2*r;
   cz.draw = function() {
     fill(this.color);
@@ -12,13 +11,13 @@ var CircleZone = function(x,y,r) {
 
 var KillZone = function(x,y,r) {
   var kz = new CircleZone(x,y,r);
-  assign_to_depth(kz, SET.killzone_render_level);
+  add_to_update_loop(kz);
   return kz;
 };
 
 var BuildRadius = function(x,y,r) {
   var br = KillZone(x,y,r);
-  assign_to_depth(br, SET.build_zone_render_level);
+  add_to_update_loop(br);
   return br;
 };
 
@@ -89,27 +88,27 @@ var Tower = function(settings) {
     unselect();
   }
   tower.display_stats = function() {
-    WIDGETS.tower_type.innerHTML = this.type;
-    WIDGETS.tower_range.innerHTML = this.range;
-    WIDGETS.tower_damage.innerHTML = this.damage;
-    WIDGETS.tower_rate.innerHTML = this.reload_rate;
-    WIDGETS.tower_sell_button.innerHTML = "Sell tower for " + Math.floor(this.sale_value * 0.75) + " gold!";
-    WIDGETS.tower_upgrade_button.innerHTML = "<u>U</u>pgrade for " + Math.floor(this.upgrade_cost) + " gold!";
+    WIDGETS.tower_type.html(this.type);
+    WIDGETS.tower_range.html(this.range);
+    WIDGETS.tower_damage.html(this.damage);
+    WIDGETS.tower_rate.html(this.reload_rate);
+    WIDGETS.tower_sell_button.html("Sell tower for " + Math.floor(this.sale_value * 0.75) + " gold!");
+    WIDGETS.tower_upgrade_button.html("<u>U</u>pgrade for " + Math.floor(this.upgrade_cost) + " gold!");
 
-    WIDGETS.tower_upgrade_button.onclick = function() {
+    WIDGETS.tower_upgrade_button.click(function() {
       tower.upgrade();
-    }
-    WIDGETS.tower_sell_button.onclick = function() {
+    });
+    WIDGETS.tower_sell_button.click(function() {
       tower.sell();
-    }
-    WIDGETS.tower.style.display = "block";
+    });
+    WIDGETS.tower.show();
   };
   tower.draw = function() {
     noStroke();
     fill(this.color);
     draw_circle_in_grid(this.gx,this.gy);
   }
-  assign_to_depth(tower, SET.tower_render_level);
+  add_to_update_loop(tower);
   return tower;
 };
 
@@ -122,7 +121,7 @@ var MissileTower = function(gx,gy) {
   mt.set_range(5.5);
   mt.reload_rate = 2000;
   mt.attack = function(creep) {
-    assign_to_depth(Missile(this,creep),SET.bullet_render_level);
+    add_to_update_loop(Missile(this,creep));
   }
   mt.upgrade = function() {
     if (SET.gold >= this.upgrade_cost) {
@@ -146,7 +145,7 @@ var LaserTower = function(gx,gy) {
   var lt = Tower({gx:gx,gy:gy});
   lt.type = "Laser Tower";
   lt.attack = function(creep) {
-    assign_to_depth(Laser(this,creep),SET.bullet_render_level);
+    add_to_update_loop(Laser(this,creep));
   };
   lt.upgrade_cost = 50;
   lt.sale_value = 50;
@@ -176,7 +175,7 @@ var CannonTower = function(gx,gy) {
   var lt = Tower({gx:gx,gy:gy});
   lt.type = "Cannon Tower";
   lt.attack = function(creep) {
-    assign_to_depth(CannonBall(this,{x:creep.x, y:creep.y, hp:1}),SET.bullet_render_level);
+    add_to_update_loop(CannonBall(this,{x:creep.x, y:creep.y, hp:1}));
   };
   lt.upgrade_cost = 100;
   lt.sale_value = 100;
@@ -230,7 +229,7 @@ var GattlingTower = function(gx,gy) {
   };
 
   gt.attack = function(creep) {
-    assign_to_depth(Bullet(this,creep),SET.bullet_render_level);
+    add_to_update_loop(Bullet(this,creep));
     gt.shots_left_in_volley--;
     gt.fire_next_at = SET.now + gt.reload_rate;
     if (gt.shots_left_in_volley < 1) {

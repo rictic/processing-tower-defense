@@ -19,7 +19,7 @@ var CreepHpUpdater = function(creep) {
   var chp = new Object();
   Object.extend(chp, InertDrawable);
   chp.update = function() {
-    WIDGETS.creep_hp.innerHTML = creep.hp;
+    WIDGETS.creep_hp.html(creep.hp);
   }
   chp.should_die = false;
   chp.is_dead = function() {
@@ -36,7 +36,7 @@ var CreepHpUpdater = function(creep) {
     chp.kz = KillZone(creep.x,creep.y,15);
   }
 
-  assign_to_depth(chp, SET.system_render_level);
+  add_to_update_loop(chp);
   return chp;
 }
 
@@ -149,12 +149,8 @@ var BossMixin = function(creep) {
 
 var Creep = function(wave) {
   var cp = SET.creeps_spawned;
-  var c = new Object();
+  var c = new CreateKind("creep", {x:SET.entrance.x_mid, y:SET.entrance.y_mid, width:SET.creep_size, height:SET.creep_size});
   c.terrain = {"entrance":1.0,"exit":1.0,"mountain":0.75,"water":0.5,"neutral":1.0,"power-plant":2.0};
-
-  c.x = SET.entrance.x_mid;
-  c.y = SET.entrance.y_mid;
-  c.size = SET.creep_size;
   c.hp = Math.floor(SET.creep_hp * Math.pow(1.4,wave));
   c.value = SET.creep_value + wave;
   c.speed = SET.creep_speed;
@@ -163,6 +159,7 @@ var Creep = function(wave) {
     if (this.hp <= 0) {
       SET.gold += this.value;
       SET.score += this.value;
+      $(c).remove();
       return true;
     }
     return false;
@@ -174,6 +171,8 @@ var Creep = function(wave) {
       var terrain_modifier = c.terrain[terrain_type];
     }
     else {
+      log("unknown terrain",terrain);
+      log("terrain known",c.terrain);
       var terrain_modifier = 1.0;
     }
     return c.speed * terrain_modifier;
@@ -182,7 +181,7 @@ var Creep = function(wave) {
   c.ignores_towers = false;
 
   c.update = function() {
-    var gpos = pixel_to_grid(this);
+    var gpos = pixel_to_grid({x:this.x.baseVal.value, y:this.y.baseVal.value});
     this.gx = gpos.gx;
     this.gy = gpos.gy;
     // if it reaches the exit, kill it, but reduce the players
@@ -207,11 +206,8 @@ var Creep = function(wave) {
         log("creep",this);
         return;
       }
-
       var coords = center_of_square(next_block.gx, next_block.gy)
-      var path = calc_path(this.x,this.y,coords.x,coords.y,speed);
-      this.x += path.x;
-      this.y += path.y;
+      move_towards(this, coords.x, coords.y, speed);
     }
     else if (this.ignores_towers) {
       var elapsed = SET.now - this.last;
@@ -230,13 +226,13 @@ var Creep = function(wave) {
   }
   c.creep_type = "Normal Creep";
   c.display_stats = function() {
-    WIDGETS.creep_type.innerHTML = this.creep_type;
-    WIDGETS.creep_hp.innerHTML = this.hp;
-    WIDGETS.creep_value.innerHTML = this.value + " gold";
-    WIDGETS.creep.style.display = "block";
+    WIDGETS.creep_type.html(this.creep_type);
+    WIDGETS.creep_hp.html(this.hp);
+    WIDGETS.creep_value.html(this.value + " gold");
+    WIDGETS.creep.show();
   }
   SET.creeps_spawned++;
-  assign_to_depth(c, SET.creep_render_level);
+  add_to_update_loop(c);
   return c;
 };
 

@@ -5,7 +5,7 @@ var CreepWaveController = function() {
   cwc.last = millis()-20000;
   cwc.wave = 1;
   cwc.spawn_wave = function(bonus) {
-    WIDGETS.wave.innerHTML = this.wave;
+    WIDGETS.wave.html(this.wave);
     var settings = {wave:this.wave, bonus:bonus};
     var mixins = [];
 
@@ -40,7 +40,7 @@ var CreepWaveController = function() {
       this.spawn_wave();
     }
   }
-  assign_to_depth(cwc, SET.system_render_level);
+  add_to_update_loop(cwc);
   return cwc;
 };
 
@@ -52,7 +52,10 @@ var CreepWave = function(settings) {
   cw.last = 0;
   cw.interval = 1000;
   Object.extend(cw, settings);
-  cw.spawn_creep = function() { Creep(this.wave); };
+  cw.spawn_creep = function() { 
+    
+    $("#creep_layer").append(Creep(this.wave)); 
+  };
   cw.spawn = function() {
     this.remaining--;
     this.spawn_creep();
@@ -69,7 +72,7 @@ var CreepWave = function(settings) {
       this.spawn();
     }
   }
-  assign_to_depth(cw, SET.system_render_level);
+  add_to_update_loop(cw);
   SET.creep_variety = "Normal Creeps";
   return cw;
 };
@@ -85,6 +88,7 @@ var create_creep_wave_with_mixins = function(settings, mixins) {
       SET.creep_variety = c.creep_type + "s";
       cw.knows_creep_variety = true;
     }
+    $("#creep_layer").append(c);
   }
   return cw;
 }
