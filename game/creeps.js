@@ -171,7 +171,7 @@ var Creep = function(wave) {
       var terrain_modifier = c.terrain[terrain_type];
     }
     else {
-      log("unknown terrain",terrain);
+      log("unknown terrain [terrain, at]",[terrain, [this.gx,this.gy]]);
       log("terrain known",c.terrain);
       var terrain_modifier = 1.0;
     }

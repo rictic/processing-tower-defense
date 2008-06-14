@@ -328,6 +328,9 @@ var error = function(msg) {
    Main game loop.
  */
 
+var start_time = (new Date).getTime();
+var pause_time = start_time;
+var pause_offset = 0; //to hide the time spent paused
 var init_tower_defense = function() {
   $('#pause_button').html("Pause");
   reset_game();
@@ -342,12 +345,16 @@ var frameRate = function(rate) {
   millisBetweenUpdates = 1000.0 / rate
 }
 
+
 var interval = undefined;
 var run_tower_defense = function(){
+  start_time = (new Date).getTime();
+  pause_offset += start_time - pause_time;
   interval = setInterval(run_td_step, millisBetweenUpdates);
 }
 var stop_tower_defense = function(){
   clearInterval(interval);
+  pause_time = (new Date).getTime();
 }
 
 var obj_update = function(x) { 

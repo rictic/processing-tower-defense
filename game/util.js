@@ -164,8 +164,8 @@ Object.extend = function(destination, source) {
 
 // Pretty-printing of objects
 var pp = function(obj, depth) {
-  if (depth == undefined) depth = 4;
-  depth -= 1;
+  if (depth == undefined) depth = 3;
+  depth--;
   if (depth <= 0)
     return '' + obj;
   if (obj instanceof Array) {
@@ -241,7 +241,7 @@ var insert_sorted = function(array, value, sortKey) {
   return result;
 }
 var millis = function() {
-  return (new Date).getTime() //- start
+  return (new Date).getTime() - pause_offset;
 }
 
 var mouse_pos = function() {
