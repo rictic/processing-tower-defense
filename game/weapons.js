@@ -64,7 +64,8 @@ var Tower = function(settings) {
     if (creeps.length == 0) return;
     var closest_creep;
     var closest_distance;
-    creeps.forEach(function(creep) {
+    jQuery.each(creeps, function(creep) {
+      creep = this;
       var distance = dist(tower.x_mid,tower.y_mid,creep.x,creep.y);
       if (distance < tower.prange) {
         if (!closest_creep) {

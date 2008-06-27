@@ -281,14 +281,16 @@ var pathfind = function(start_block) {
   var successors = function(block) {
     var candidates = [];
     var normal_dist = 10;
-    [[0,1],[1,0],[-1,0],[0,-1]].forEach(function(pair) {
+    jQuery.each([[0,1],[1,0],[-1,0],[0,-1]], function() {
+      pair = this;
       var gpos = {gx:block.gpos.gx + pair[0], gy: block.gpos.gy + pair[1], dist:normal_dist};
       if (valid_path_location(gpos.gx, gpos.gy))
         candidates.push(gpos);
     });
 
     var diag_dist = 14; //sqrt(2) * 10
-    [[1,1],[-1,-1],[1,-1],[-1,1]].forEach(function(pair){
+    jQuery.each([[1,1],[-1,-1],[1,-1],[-1,1]], function(){
+      pair = this;
       var gpos = {gx:block.gpos.gx + pair[0], gy: block.gpos.gy + pair[1], dist:diag_dist};
       if (valid_path_location(gpos.gx, gpos.gy) && valid_path_location(block.gpos.gx, gpos.gy) && valid_path_location(gpos.gx, block.gpos.gy))
         candidates.push(gpos);
@@ -338,11 +340,11 @@ var pathfind = function(start_block) {
     }
     closed[[block.gpos.gx, block.gpos.gy]] = true;
 //     log("closed", closed);
-    successors(block).forEach(function(s) {
-      var suc = {gpos:s, g:s.dist + block.g, ancestor:block};
-      suc.f = suc.g + heuristic(suc.gpos);
-
-      pqueue = insert_sorted(pqueue, suc, function(bl) {
+      jQuery.each(successors(block), function() {
+        s = this;
+        var suc = {gpos:s, g:s.dist + block.g, ancestor:block};
+        suc.f = suc.g + heuristic(suc.gpos);
+        pqueue = insert_sorted(pqueue, suc, function(bl) {
         return bl.f
       });
     })

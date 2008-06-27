@@ -320,7 +320,8 @@
 
     //Temporary messages are a bit of a pain
     var timeToHide = null;
-    ["error","message"].forEach(function(s){
+    jQuery.each(["error","message"], function(s){
+        s = this;
         $('.'+s).hide();
         $('').bind(s,function(e,message){
             timeToHide = new Date().getTime() + 2500;

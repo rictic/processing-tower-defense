@@ -177,8 +177,8 @@ var pp = function(obj, depth) {
     return '' + obj;
   if (obj instanceof Array) {
     var str = "[";
-    obj.forEach(function(i){
-      str += pp(i,depth) + ", ";
+    jQuery.each(obj, function(){
+      str += pp(this,depth) + ", ";
     });
     return str + "]";
   }

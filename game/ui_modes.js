@@ -63,7 +63,8 @@ var BuildTowerMode = function() {
     if (!([gpos.gx,gpos.gy] in known_best_paths)) {
       var safe = true;
 //       log("looking at diagonals of",gpos);
-      [[1,1],[-1,-1],[1,-1],[-1,1]].forEach(function(pair) {
+      jQuery.each([[1,1],[-1,-1],[1,-1],[-1,1]], function(pair) {
+        pair = this;
 //         log("diagonal",{gx:gpos.gx + pair[0], gy:gpos.gy + pair[1]});
         if (!valid_path_location(gpos.gx + pair[0], gpos.gy + pair[1])){
 //           log("diagonal disqualified from free is_blocking call",gpos);
@@ -82,7 +83,8 @@ var BuildTowerMode = function() {
     var previous_pathfinding = reset_pathfinding();
     var valid = pathfind({gx:SET.entrance.gx, gy:SET.entrance.gy});
     var creeps = SET.rendering_groups[SET.creep_render_level];
-    creeps.forEach(function(creep){
+    jQuery.each(creeps, function(){
+      creep = this;
       valid = valid && pathfind(pixel_to_grid(creep));
     });
     SET.considering_location = undefined;
@@ -323,8 +325,10 @@ var PauseMode = function() {
   }
   this.tear_down = function() {
     var elapsed = millis() - this.began_at;
-    SET.rendering_groups.forEach(function(group) {
-      group.forEach(function(member) {
+    jQuery.each(SET.rendering_groups, function() {
+      group = this
+      jQuery.each(group, function() {
+        member = this;
       if (member.last)
         member.last += elapsed;
       });

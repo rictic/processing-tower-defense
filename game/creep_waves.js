@@ -80,7 +80,7 @@ var create_creep_wave_with_mixins = function(settings, mixins) {
   cw.knows_creep_variety = false;
   cw.spawn_creep = function() {
     var c = Creep(cw.wave);
-    mixins.forEach(function(mixin) { mixin(c); });
+    jQuery.each(mixins, function() { this(c); });
     if (cw.knows_creep_variety == false) {
       SET.creep_variety = c.creep_type + "s";
       cw.knows_creep_variety = true;

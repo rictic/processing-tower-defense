@@ -38,20 +38,20 @@ var assign_to_depth = function(obj,depth) {
 
 // updates any groups
 var update_groups = function(groups) {
-  var obj_update = function(x) {
-    if (x != undefined) x.update();
+  var obj_update = function() {
+    if (this != undefined) this.update();
   };
-  var obj_is_alive = function(x) {
+  var obj_is_alive = function(x, i) {
     if ( x == undefined || x.is_dead()) return false;
     return true;
   };
-  var obj_draw = function(x) { x.draw(); };
+  var obj_draw = function() { this.draw(); };
   for (var i=groups.length-1;i>=0;i--) {
     var group = groups[i];
     if (group != undefined) {
-      group.forEach(obj_update);
-      var alive = group.filter(obj_is_alive);
-      alive.forEach(obj_draw);
+      jQuery.each(group, obj_update);
+      var alive = jQuery.grep(group,obj_is_alive);
+      jQuery.each(alive, obj_draw);
       groups[i] = alive;
     }
   }
@@ -318,9 +318,9 @@ var spawn_wave = function() {
 var nuke_creeps = function() {
   if (SET.nukes > 0) {
     var creeps = SET.rendering_groups[SET.creep_render_level];
-    creeps.forEach(function(x) {
-      x.hp = -1;
-      x.value = 0; // no gold for nuked creeps
+    jQuery.each(creeps, function() {
+      this.hp = -1;
+      this.value = 0; // no gold for nuked creeps
     });
     play_sound("nuke");
     SET.nukes--;
